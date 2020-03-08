@@ -36,6 +36,7 @@ public class User {
     @UpdateTimestamp
     private Date updatedAt;
 
+
     public User() {
     }
 
@@ -150,5 +151,20 @@ public class User {
         public User build() {
             return new User(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", fullname='" + fullname + '\'' +
+                ", email='" + email + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", password='" + password + '\'' +
+                ", company='" + company + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }
