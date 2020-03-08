@@ -12,8 +12,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User save(@Valid UserRequest userRequest){
+    public User save(User user){
 
-        return userRepository.save(userRequest.toUser());
+        return userRepository.save(user);
     }
 }
