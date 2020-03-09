@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
 public class AttendanceRequest {
-    //@NotBlank
     private UUID userId;
 
 
