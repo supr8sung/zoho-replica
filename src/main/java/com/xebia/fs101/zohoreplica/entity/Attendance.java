@@ -4,31 +4,27 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.UUID;
 @Entity
 public class Attendance {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @NotBlank
     private LocalDate date;
     private LocalTime checkin;
     private LocalTime checkout;
     @ManyToOne
-    private UUID userId;
+    private User user;
 
-    private Attendance(Builder builder) {
-        id = builder.id;
-        date = builder.date;
-        checkin = builder.checkin;
-        checkout = builder.checkout;
-        userId = builder.userId;
+    public Attendance(){
+
     }
+
 
     public long getId() {
         return id;
@@ -46,24 +42,33 @@ public class Attendance {
         return checkout;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public Attendance(long id, @NotBlank LocalDate date, LocalTime checkin, LocalTime checkout, UUID userId) {
+    public Attendance(long id, LocalDate date, LocalTime checkin, LocalTime checkout, User user) {
         this.id = id;
         this.date = date;
         this.checkin = checkin;
         this.checkout = checkout;
-        this.userId = userId;
+        this.user = user;
     }
+
+    private Attendance(Builder builder) {
+        id = builder.id;
+        date = builder.date;
+        checkin = builder.checkin;
+        checkout = builder.checkout;
+        user = builder.user;
+    }
+
 
     public static final class Builder {
         private long id;
-        private @NotBlank LocalDate date;
+        private LocalDate date;
         private LocalTime checkin;
         private LocalTime checkout;
-        private UUID userId;
+        private User user;
 
         public Builder() {
         }
@@ -88,24 +93,13 @@ public class Attendance {
             return this;
         }
 
-        public Builder withUserId(UUID val) {
-            userId = val;
+        public Builder withUsername(User val) {
+            user = val;
             return this;
         }
 
         public Attendance build() {
             return new Attendance(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Attendance{" +
-                "id=" + id +
-                ", date=" + date +
-                ", checkin=" + checkin +
-                ", checkout=" + checkout +
-                ", userId=" + userId +
-                '}';
     }
 }

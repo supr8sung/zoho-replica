@@ -24,13 +24,13 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserRequest userRequest) {
 
-        User savedUser = userService.save(userRequest);
+        User savedUser = userService.save(userRequest.toUser());
         ZohoReplicaResponse zohoReplicaResponse =
                 new ZohoReplicaResponse.Builder()
                         .withStatus(ApplicationConstant.TXN_SUCCESS)
                         .withData(savedUser)
                         .withMessage("User saved successfully")
                         .build();
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        return new ResponseEntity<>(zohoReplicaResponse, HttpStatus.CREATED);
     }
 }

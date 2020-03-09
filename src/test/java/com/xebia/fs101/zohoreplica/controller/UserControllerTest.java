@@ -49,8 +49,9 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.username").value("supr8sung"))
-                .andExpect(jsonPath("$.id").isNotEmpty());
+                .andExpect(jsonPath("$.data.username").value("supr8sung"))
+                .andExpect(jsonPath("$.data.id").isNotEmpty())
+                .andExpect(jsonPath("$.status").value("S"));
 
     }
 }
