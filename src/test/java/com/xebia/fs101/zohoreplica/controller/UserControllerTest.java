@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -52,6 +53,26 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.data.username").value("supr8sung"))
                 .andExpect(jsonPath("$.data.id").isNotEmpty())
                 .andExpect(jsonPath("$.status").value("S"));
+
+    }
+
+    @Test
+    public void should_be_able_to_find_an_user_by_username() throws  Exception{
+        UserRequest userRequest = new UserRequest.Builder()
+                .withUsername("supr8sung")
+                .withFullname("Supreet Singh")
+                .withEmail("supreetsingh@xebia.com")
+                .withPassword("hola@bitch")
+                .withMobile("9643496936")
+                .withCompany("XEBIA")
+                .build();
+        userRepository.save(userRequest.toUser());
+        this.mockMvc.perform(get("/profiles/{username}","supr8sung"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.fullname").value("Supreet Singh"))
+                .andExpect(jsonPath("$.status").value("S"));
+
 
     }
 }
