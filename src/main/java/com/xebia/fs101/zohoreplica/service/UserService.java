@@ -22,4 +22,8 @@ public class UserService {
     public User findUserById(UUID id){
         return userRepository.findById(id).orElseThrow(()->new UserNotFoundException("User id is not valid"));
     }
+
+    public User findUser(String username) {
+        return userRepository.findByUsername(username);
+    }
 }
