@@ -17,9 +17,12 @@ public class UserService {
     public User save(User user){
 
         return userRepository.save(user);
+<<<<<<< HEAD
     }
 
     public User findUserById(UUID id){
         return userRepository.findById(id).orElseThrow(()->new UserNotFoundException("User id is not valid"));
+=======
+>>>>>>> 240ffdb39b352f4e50bb6f1800ad2219afc0e50b
     }
 }
