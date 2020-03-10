@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-import java.util.UUID;
-
 import static org.springframework.http.HttpStatus.CREATED;
 @RestController
 public class AttendanceController {
@@ -33,7 +31,7 @@ public class AttendanceController {
         Attendance checkinDetails = attendanceService.save(attendanceRequest.checkin(user));
 
         ZohoReplicaResponse zohoReplicaResponse = new ZohoReplicaResponse.Builder()
-                .withStatus(ApplicationConstant.TXN_SUCCESS)
+                .withStatus(ApplicationConstant.TXN_SUCESS)
                 .withMessage("Checked in successful")
                 .withData(checkinDetails)
                 .build();
@@ -48,7 +46,7 @@ public class AttendanceController {
         Attendance checkoutDetails = attendanceService.save(attendanceRequest.checkout(user));
 
         ZohoReplicaResponse zohoReplicaResponse = new ZohoReplicaResponse.Builder()
-                .withStatus(ApplicationConstant.TXN_SUCCESS)
+                .withStatus(ApplicationConstant.TXN_SUCESS)
                 .withMessage("Checked in successful")
                 .withData(checkoutDetails)
                 .build();
