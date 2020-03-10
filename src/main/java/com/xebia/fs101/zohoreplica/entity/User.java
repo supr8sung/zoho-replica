@@ -1,12 +1,15 @@
 package com.xebia.fs101.zohoreplica.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
@@ -17,6 +20,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     @NotBlank
+    @Column(unique = true)
     private String username;
     @NotBlank
     private String fullname;
@@ -33,7 +37,9 @@ public class User {
     private Date createdAt;
     @UpdateTimestamp
     private Date updatedAt;
-
+    @Lob
+    @JsonIgnore
+    private byte[] photo;
 
     public User() {
     }
@@ -74,6 +80,14 @@ public class User {
         return updatedAt;
     }
 
+    public byte[] getPhoto(){
+        return photo;
+
+    }
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
+
     private User(Builder builder) {
         id = builder.id;
         username = builder.username;
@@ -84,10 +98,12 @@ public class User {
         company = builder.company;
         createdAt = builder.createdAt;
         updatedAt = builder.updatedAt;
+        photo=builder.photo;
     }
 
 
     public static final class Builder {
+        public byte[] photo;
         private UUID id;
         private @NotBlank String username;
         private @NotBlank String fullname;
@@ -143,6 +159,10 @@ public class User {
 
         public Builder withUpdatedAt(Date val) {
             updatedAt = val;
+            return this;
+        }
+        public Builder withPhoto(byte[] val){
+            photo=val;
             return this;
         }
 
