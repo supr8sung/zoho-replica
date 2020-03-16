@@ -2,8 +2,7 @@ package com.xebia.fs101.zohoreplica.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
-import com.xebia.fs101.zohoreplica.repository.UserRepository;
-import org.aspectj.lang.annotation.Before;
+import com.xebia.fs101.zohoreplica.repository.EmployeeRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,13 +11,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
@@ -33,14 +29,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserControllerTest {
+@ActiveProfiles("test")
+
+class EmployeeControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private UserRepository userRepository;
+    private EmployeeRepository employeeRepository;
     @Autowired
     private WebApplicationContext webApplicationContext;
 
@@ -55,24 +53,17 @@ class UserControllerTest {
                 .withMobile("9643496936")
                 .withCompany("XEBIA")
                 .build();
-        userRepository.save(userRequest.toUser());
+        employeeRepository.save(userRequest.toUser());
     }
 
     @AfterEach
     void tearDown() {
-        userRepository.deleteAll();
+        employeeRepository.deleteAll();
     }
 
     @Test
     public void user_should_be_able_to_upload_profile_picture() throws Exception {
         ResultMatcher ok= MockMvcResultMatchers.status().isOk();
-
-
-
-//        MockMultipartFile mockMultipartFile = new MockMultipartFile("data", "filename.png", "text/plain",
-//                "some xml".getBytes());
-
-
         MockMultipartFile mockMultipartFile =
                 new MockMultipartFile(
                         "file",
@@ -80,7 +71,7 @@ class UserControllerTest {
                         MediaType.IMAGE_JPEG_VALUE,
                         "<<pdf data>>".getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart("/upload/{username}","supr8sung")
+        mockMvc.perform(multipart("/zoho/profiles/upload/{username}","supr8sung")
                 .file(mockMultipartFile))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("test.jpeg uploaded"));
@@ -97,7 +88,7 @@ class UserControllerTest {
                 .withCompany("XEBIA")
                 .build();
         String json = objectMapper.writeValueAsString(userRequest);
-        this.mockMvc.perform(post("/signup").accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/zoho/signup").accept(MediaType.APPLICATION_JSON)
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -111,7 +102,7 @@ class UserControllerTest {
     @Test
     public void should_be_able_to_find_an_user_by_username() throws  Exception{
 
-        this.mockMvc.perform(get("/profiles/{username}","supr8sung"))
+        this.mockMvc.perform(get("/zoho/profiles/{username}","supr8sung"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.fullname").value("Supreet Singh"))

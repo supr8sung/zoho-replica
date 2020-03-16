@@ -4,12 +4,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.LocalTime;
 @Entity
+@Table(name = "attendance")
 public class Attendance {
 
     @Id
@@ -19,7 +20,7 @@ public class Attendance {
     private LocalTime checkin;
     private LocalTime checkout;
     @ManyToOne
-    private User user;
+    private Employee employee;
 
     public Attendance(){
 
@@ -34,24 +35,24 @@ public class Attendance {
         return date;
     }
 
-    public LocalTime getCheckin() {
+    public LocalTime getCheckinHours() {
         return checkin;
     }
 
-    public LocalTime getCheckout() {
+    public LocalTime getCheckoutHours() {
         return checkout;
     }
 
-    public User getUser() {
-        return user;
+    public Employee getEmployee() {
+        return employee;
     }
 
-    public Attendance(long id, LocalDate date, LocalTime checkin, LocalTime checkout, User user) {
+    public Attendance(long id, LocalDate date, LocalTime checkin, LocalTime checkout, Employee employee) {
         this.id = id;
         this.date = date;
         this.checkin = checkin;
         this.checkout = checkout;
-        this.user = user;
+        this.employee = employee;
     }
 
     private Attendance(Builder builder) {
@@ -59,7 +60,7 @@ public class Attendance {
         date = builder.date;
         checkin = builder.checkin;
         checkout = builder.checkout;
-        user = builder.user;
+        employee = builder.employee;
     }
 
 
@@ -68,7 +69,7 @@ public class Attendance {
         private LocalDate date;
         private LocalTime checkin;
         private LocalTime checkout;
-        private User user;
+        private Employee employee;
 
         public Builder() {
         }
@@ -93,13 +94,26 @@ public class Attendance {
             return this;
         }
 
-        public Builder withUsername(User val) {
-            user = val;
+        public Builder withEmployee(Employee val) {
+            employee = val;
             return this;
         }
 
         public Attendance build() {
             return new Attendance(this);
         }
+
+
+    }
+
+    @Override
+    public String toString() {
+        return "Attendance{" +
+                "id=" + id +
+                ", date=" + date +
+                ", checkin=" + checkin +
+                ", checkout=" + checkout +
+                ", user=" + employee +
+                '}';
     }
 }

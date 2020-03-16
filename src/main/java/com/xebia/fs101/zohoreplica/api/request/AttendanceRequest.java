@@ -1,41 +1,39 @@
 package com.xebia.fs101.zohoreplica.api.request;
 
 import com.xebia.fs101.zohoreplica.entity.Attendance;
-import com.xebia.fs101.zohoreplica.entity.User;
+import com.xebia.fs101.zohoreplica.entity.Employee;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.UUID;
 public class AttendanceRequest {
-    private UUID userId;
+    private String username;
 
 
-    public UUID getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
 
     public AttendanceRequest() {
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public AttendanceRequest(UUID userId) {
-        this.userId = userId;
+    public AttendanceRequest(String username) {
+        this.username = username;
     }
 
-    public Attendance checkin(User user){
-        return new Attendance.Builder().withUsername(user)
+    public Attendance checkin(Employee employee){
+        return new Attendance.Builder().withEmployee(employee)
                 .withDate(LocalDate.now())
                 .withCheckin(LocalTime.now())
                 .build();
 
     }
-    public Attendance checkout(User user){
-        return new Attendance.Builder().withUsername(user)
+    public Attendance checkout(Employee employee){
+        return new Attendance.Builder().withEmployee(employee)
                 .withDate(LocalDate.now())
                 .withCheckout(LocalTime.now())
                 .build();

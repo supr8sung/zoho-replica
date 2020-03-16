@@ -1,6 +1,6 @@
 package com.xebia.fs101.zohoreplica.api.request;
 
-import com.xebia.fs101.zohoreplica.entity.User;
+import com.xebia.fs101.zohoreplica.entity.Employee;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -57,9 +57,9 @@ public class UserRequest {
         company = builder.company;
     }
 
-    public User toUser() {
+    public Employee toUser() {
 
-        return new User.Builder()
+        return new Employee.Builder()
                 .withUsername(this.username)
                 .withFullname(this.fullname)
                 .withEmail(this.email)

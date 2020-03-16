@@ -15,7 +15,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.UUID;
 @Entity
-public class User {
+public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -41,7 +41,7 @@ public class User {
     @JsonIgnore
     private byte[] photo;
 
-    public User() {
+    public Employee() {
     }
 
     public UUID getId() {
@@ -88,7 +88,7 @@ public class User {
         this.photo = photo;
     }
 
-    private User(Builder builder) {
+    private Employee(Builder builder) {
         id = builder.id;
         username = builder.username;
         fullname = builder.fullname;
@@ -166,8 +166,8 @@ public class User {
             return this;
         }
 
-        public User build() {
-            return new User(this);
+        public Employee build() {
+            return new Employee(this);
         }
     }
 
