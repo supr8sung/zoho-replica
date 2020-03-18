@@ -9,8 +9,6 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 
 public class AttendanceUtility {
     public static String calculateDailyHours(LocalTime checkin, LocalTime checkout) {
-        DecimalFormat decimalFormat = new DecimalFormat("0.00");
-
         if (Objects.isNull(checkin) || Objects.isNull(checkout))
             return "00:00";
         long totalHours = HOURS.between(checkin, checkout);

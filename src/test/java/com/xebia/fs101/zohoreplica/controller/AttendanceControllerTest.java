@@ -96,11 +96,11 @@ class AttendanceControllerTest {
         attendanceRequest.checkin(employee);
         attendanceService.doCheckin(attendanceRequest.checkin(employee));
 
-        attendanceService.doCheckout(employee.getId(), LocalTime.now().plus(8, HOURS).plus(5, MINUTES));
+        attendanceService.doCheckout(employee.getId(), LocalTime.now().plus(8,MINUTES));
         this.mockMvc.perform(get("/zoho/dailyhours/{username}", "supr8sung"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").value("08:05"));
+                .andExpect(jsonPath("$.data").value("00:08"));
 
     }
 
