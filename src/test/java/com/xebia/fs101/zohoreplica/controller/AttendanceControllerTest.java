@@ -44,7 +44,6 @@ class AttendanceControllerTest {
     private Employee employee;
 
 
-
     @BeforeEach
     public void setUp() {
         UserRequest userRequest = new UserRequest.Builder()
@@ -76,7 +75,6 @@ class AttendanceControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("S"));
-
     }
 
     @Test
@@ -93,19 +91,17 @@ class AttendanceControllerTest {
     }
 
     @Test
-    void should_get_daily_working_hours() throws Exception{
+    void should_get_daily_working_hours() throws Exception {
         AttendanceRequest attendanceRequest = new AttendanceRequest(employee.getUsername());
         attendanceRequest.checkin(employee);
         attendanceService.doCheckin(attendanceRequest.checkin(employee));
 
-        attendanceService.doCheckout(employee.getId(), LocalTime.now().plus(8,HOURS).plus(5,MINUTES));
-       this.mockMvc.perform(get("/zoho/dailyhours/{username}","supr8sung"))
-               .andDo(print())
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.data").value("08:05"));
+        attendanceService.doCheckout(employee.getId(), LocalTime.now().plus(8, HOURS).plus(5, MINUTES));
+        this.mockMvc.perform(get("/zoho/dailyhours/{username}", "supr8sung"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value("08:05"));
 
     }
-
-
 
 }

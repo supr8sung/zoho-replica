@@ -82,7 +82,7 @@ class EmployeeControllerTest {
         UserRequest userRequest = new UserRequest.Builder()
                 .withUsername("supr9sung")
                 .withFullname("Supreet Singh")
-                .withEmail("supreetsingh@xebia.com")
+                .withEmail("supreetsingh5@xebia.com")
                 .withPassword("hola@bitch")
                 .withMobile("9643496936")
                 .withCompany("XEBIA")
