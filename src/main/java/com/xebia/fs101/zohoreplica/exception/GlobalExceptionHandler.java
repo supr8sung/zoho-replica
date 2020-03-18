@@ -1,4 +1,4 @@
-package com.xebia.fs101.zohoreplica.execption;
+package com.xebia.fs101.zohoreplica.exception;
 
 import com.xebia.fs101.zohoreplica.api.response.ZohoReplicaResponse;
 import org.springframework.http.ResponseEntity;

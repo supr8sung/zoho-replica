@@ -74,7 +74,7 @@ class EmployeeControllerTest {
         mockMvc.perform(multipart("/zoho/profiles/upload/{username}","supr8sung")
                 .file(mockMultipartFile))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("test.jpeg uploaded"));
+                .andExpect(jsonPath("$.message").value("profile picture uploaded"));
     }
 
     @Test

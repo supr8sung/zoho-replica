@@ -1,7 +1,7 @@
 package com.xebia.fs101.zohoreplica.service;
 
 import com.xebia.fs101.zohoreplica.entity.Employee;
-import com.xebia.fs101.zohoreplica.execption.UserNotFoundException;
+import com.xebia.fs101.zohoreplica.exception.UserNotFoundException;
 import com.xebia.fs101.zohoreplica.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

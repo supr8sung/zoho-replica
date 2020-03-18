@@ -26,6 +26,7 @@ public class Employee {
     private String fullname;
     @NotBlank
     @Email
+    @Column(unique = true)
     private String email;
     @NotBlank
     private String mobile;
