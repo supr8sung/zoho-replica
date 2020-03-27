@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.USER;
+import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.EMPLOYEE;
 public class UserRequest {
 
 
@@ -77,7 +77,7 @@ public class UserRequest {
                 .withMobile(this.mobile)
                 .withCompany(this.company.toUpperCase())
                 .withPassword(passwordEncoder.encode(this.password))
-                .withRole(this.role==null? USER: role)
+                .withRole(this.role==null? EMPLOYEE: role)
                 .build();
     }
 

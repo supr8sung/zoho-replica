@@ -4,12 +4,9 @@ import com.xebia.fs101.zohoreplica.api.request.AttendanceRequest;
 import com.xebia.fs101.zohoreplica.api.response.ZohoReplicaResponse;
 import com.xebia.fs101.zohoreplica.entity.Attendance;
 import com.xebia.fs101.zohoreplica.entity.Employee;
-import com.xebia.fs101.zohoreplica.repository.EmployeeRepository;
 import com.xebia.fs101.zohoreplica.service.AttendanceService;
 import com.xebia.fs101.zohoreplica.service.EmployeeService;
-import com.xebia.fs101.zohoreplica.service.GmailService;
 import com.xebia.fs101.zohoreplica.service.MailService;
-import com.xebia.fs101.zohoreplica.utility.AttendanceUtility;
 import com.xebia.fs101.zohoreplica.utility.MailUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 import java.time.LocalTime;
-import java.util.Objects;
-import java.util.concurrent.Future;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
 import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.calculateDailyHours;
@@ -81,7 +76,7 @@ public class AttendanceController {
     public ResponseEntity<?> sendMail(@PathVariable(value = "username") String username) {
         Employee employee = employeeService.findByName(username);
         Attendance attendance = attendanceService.attendanceDetails(employee);
-        String mailBody = MailUtility.generateBody(employee.getFullname(),
+        String mailBody = MailUtility.generateReportBody(employee.getFullname(),
                 attendance.getCheckinHours(),attendance.getCheckoutHours());
         mailService.sendMail(employee.getEmail(), mailBody);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Mail Sent successfully", null);

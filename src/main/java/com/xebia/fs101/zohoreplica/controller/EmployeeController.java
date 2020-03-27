@@ -2,12 +2,15 @@ package com.xebia.fs101.zohoreplica.controller;
 
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
+import com.xebia.fs101.zohoreplica.api.request.ChangePasswordRequest;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.api.response.ZohoReplicaResponse;
 import com.xebia.fs101.zohoreplica.entity.Employee;
 import com.xebia.fs101.zohoreplica.exception.EmptyFileException;
 import com.xebia.fs101.zohoreplica.security.AdminOnly;
 import com.xebia.fs101.zohoreplica.service.EmployeeService;
+import com.xebia.fs101.zohoreplica.service.MailService;
+import com.xebia.fs101.zohoreplica.utility.MailUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +27,7 @@ import java.io.IOException;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_BAD_REQUEST;
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
+import static com.xebia.fs101.zohoreplica.utility.OtpUtility.generateOtp;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 @RestController
@@ -34,6 +38,8 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
+    @Autowired
+    private MailService mailService;
 
 
     @PostMapping("/signup")
@@ -50,10 +56,38 @@ public class EmployeeController {
     public ResponseEntity<?> viewUser(@PathVariable(value = "username") String username) {
         Employee employee = employeeService.findByName(username);
         ZohoReplicaResponse zohoReplicaResponse = employee != null ?
-                getResponse(TXN_SUCESS, null, employee) :
-                getResponse(TXN_BAD_REQUEST, "No user found", null);
+                getResponse(TXN_SUCESS, "", employee) :
+                getResponse(TXN_BAD_REQUEST, "No user found", "");
         return new ResponseEntity<>(zohoReplicaResponse, OK);
 
+    }
+
+    @GetMapping("/profiles/{username}/forgotpasword")
+    public ResponseEntity<?> forgotPasswordMail(@PathVariable(value = "username") String username){
+        Employee employee = employeeService.findByName(username);
+        String otp=generateOtp();
+        String mailBody = MailUtility.generateOtpBody(otp, employee.getFullname());
+        mailService.sendMail(employee.getEmail(),mailBody);
+        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"Mail Sent Successfully",otp);
+        return new ResponseEntity<>(zohoReplicaResponse,OK);
+
+    }
+    @PostMapping("profiles/{username}/recoverpassword")
+    public ResponseEntity<?> recoverPassword(@PathVariable(value = "username")String  username,
+                                             @Valid@RequestBody ChangePasswordRequest request){
+        Employee employee = employeeService.findByName(username);
+        Employee savedEmployee = employeeService.changePassword(employee, request.getNewPassword());
+        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"Password Changes Successfully",
+                savedEmployee);
+        return new ResponseEntity<>(zohoReplicaResponse,OK);
+    }
+    @PostMapping("/profiles/{username}/changepassword")
+    public ResponseEntity<?> changePassword(@PathVariable(value = "username") String username ,
+                                            @Valid @RequestBody ChangePasswordRequest request){
+        Employee employee = employeeService.findByName(username,request.getOldPassword());
+        Employee savedEmployee = employeeService.changePassword(employee, request.getNewPassword());
+        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"Password changes successfully",savedEmployee);
+        return new ResponseEntity<>(zohoReplicaResponse,OK);
     }
 
 

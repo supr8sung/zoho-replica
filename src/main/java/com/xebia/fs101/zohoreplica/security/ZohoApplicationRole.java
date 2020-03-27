@@ -1,7 +1,7 @@
 package com.xebia.fs101.zohoreplica.security;
 
 public enum ZohoApplicationRole {
-    WRITER, EDITOR, ADMIN, USER;
+    ADMIN, EMPLOYEE,EMPLOYER;
 
     public String getRoleName() {
 

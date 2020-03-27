@@ -9,7 +9,7 @@ class MailUtilityTest {
 
     @Test
     void should_generate_a_mail_header_with_your_name_initials() {
-        String body = MailUtility.generateBody("Supreet Singh",
+        String body = MailUtility.generateReportBody("Supreet Singh",
                 LocalTime.of(9,45,34),LocalTime.of(20,34,20));
         assertEquals(body.contains("Hi Supreet,"),true);
     }

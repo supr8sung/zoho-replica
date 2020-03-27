@@ -19,6 +19,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(zohoReplicaResponse, OK);
 
     }
+    @ExceptionHandler(WrongPasswordException.class)
+    public ResponseEntity<?> wrongPassword(Exception e){
+        ZohoReplicaResponse zohoReplicaResponse=new ZohoReplicaResponse.Builder()
+                .withMessage(e.toString())
+                .withStatus(TXN_BAD_REQUEST)
+                .build();
+        return new ResponseEntity<>(zohoReplicaResponse,OK);
+    }
 
     @ExceptionHandler(EmptyFileException.class)
     public ResponseEntity<?> emptyFile(Exception e){

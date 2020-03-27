@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.calculateDailyHours;
 public class MailUtility {
 
-    public static String generateBody(String fullname, LocalTime inTime,LocalTime outTime){
+    public static String generateReportBody(String fullname, LocalTime inTime, LocalTime outTime){
 
 
         String hours= calculateDailyHours(inTime,outTime);
@@ -24,4 +24,17 @@ public class MailUtility {
     }
 
 
+    public static String generateOtpBody(String otp,String fullname) {
+        StringBuilder body=new StringBuilder();
+        body.append("Hi "+fullname.split(" ")[0]+",\n\n\n");  // taking name initials
+
+
+        body.append("Your OTP for changing password is "+ otp+ "\n");
+        body.append("Use this password for validation. If you have not requested this please rasie " +
+                "concern\n\n");
+
+
+        body.append(">>>>>>>> End Of Message <<<<<<<<<<\n\n\n");
+        return body.toString();
+    }
 }

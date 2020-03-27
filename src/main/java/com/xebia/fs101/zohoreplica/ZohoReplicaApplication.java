@@ -11,24 +11,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableScheduling
 public class ZohoReplicaApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ZohoReplicaApplication.class, args);
+    public static void main(String[] args) {
+        SpringApplication.run(ZohoReplicaApplication.class, args);
 
-	}
+    }
 
-
-
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
-			}
-		};
-	}
-
-
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+            }
+        };
+    }
 
 }
 
