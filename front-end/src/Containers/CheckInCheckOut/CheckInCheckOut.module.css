@@ -1,0 +1,14 @@
+.CheckInCheckOut{
+    width: 250px;
+    height: 250px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: purple;
+    color: white;
+    border-radius: 3px;
+    margin-top: 8px;
+    font-size: 20px;
+}

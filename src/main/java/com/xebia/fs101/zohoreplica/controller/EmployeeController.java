@@ -6,6 +6,7 @@ import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.api.response.ZohoReplicaResponse;
 import com.xebia.fs101.zohoreplica.entity.Employee;
 import com.xebia.fs101.zohoreplica.exception.EmptyFileException;
+import com.xebia.fs101.zohoreplica.security.AdminOnly;
 import com.xebia.fs101.zohoreplica.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,17 +39,21 @@ public class EmployeeController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserRequest userRequest) {
 
-        Employee savedEmployee = employeeService.save(userRequest.toUser());
+        Employee savedEmployee = employeeService.save(userRequest);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "User saved successfully",
                 savedEmployee);
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
     @GetMapping("/profiles/{username}")
+    @AdminOnly
     public ResponseEntity<?> viewUser(@PathVariable(value = "username") String username) {
         Employee employee = employeeService.findByName(username);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, null, employee);
+        ZohoReplicaResponse zohoReplicaResponse = employee != null ?
+                getResponse(TXN_SUCESS, null, employee) :
+                getResponse(TXN_BAD_REQUEST, "No user found", null);
         return new ResponseEntity<>(zohoReplicaResponse, OK);
+
     }
 
 

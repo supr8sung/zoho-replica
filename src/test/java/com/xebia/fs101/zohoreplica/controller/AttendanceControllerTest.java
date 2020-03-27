@@ -14,12 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalTime;
 
-import static java.time.temporal.ChronoUnit.HOURS;
+import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.ADMIN;
 import static java.time.temporal.ChronoUnit.MINUTES;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,6 +41,9 @@ class AttendanceControllerTest {
     private EmployeeRepository employeeRepository;
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private AttendanceService attendanceService;
 
     private Employee employee;
@@ -50,12 +55,13 @@ class AttendanceControllerTest {
                 .withUsername("supr8sung")
                 .withFullname("Supreet Singh")
                 .withEmail("supreetsingh@xebi.com")
-                .withPassword("holahola")
+                .withPassword("12345")
                 .withMobile("9643496936")
+                .withRole(ADMIN)
                 .withCompany("Xebia")
                 .build();
 
-        employee = employeeRepository.save(userRequest.toUser());
+        employee = employeeRepository.save(userRequest.toUser(passwordEncoder));
     }
 
     @AfterEach
@@ -69,9 +75,9 @@ class AttendanceControllerTest {
     void user_should_be_able_to_checkin() throws Exception {
         AttendanceRequest attendanceRequest = new AttendanceRequest(employee.getUsername());
         String json = objectMapper.writeValueAsString(attendanceRequest);
-        this.mockMvc.perform(post("/zoho/checkin")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+        this.mockMvc.perform(post("/zoho/checkin").accept(MediaType.APPLICATION_JSON).content(json)
+                .with(user("supr8sung").password("12345").roles("USER"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("S"));
@@ -82,6 +88,7 @@ class AttendanceControllerTest {
         AttendanceRequest attendanceRequest = new AttendanceRequest(employee.getUsername());
         String json = objectMapper.writeValueAsString(attendanceRequest);
         this.mockMvc.perform(post("/zoho/checkout")
+                .with(user("supr8sung").password("12345").roles("USER"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andDo(print())
@@ -96,8 +103,9 @@ class AttendanceControllerTest {
         attendanceRequest.checkin(employee);
         attendanceService.doCheckin(attendanceRequest.checkin(employee));
 
-        attendanceService.doCheckout(employee.getId(), LocalTime.now().plus(8,MINUTES));
-        this.mockMvc.perform(get("/zoho/dailyhours/{username}", "supr8sung"))
+        attendanceService.doCheckout(employee.getId(), LocalTime.now().plus(8, MINUTES));
+        this.mockMvc.perform(get("/zoho/dailyhours/{username}", "supr8sung")
+                .with(user("supr8sung").password("12345").roles("USER")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").value("00:08"));

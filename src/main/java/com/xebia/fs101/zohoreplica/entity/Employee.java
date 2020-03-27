@@ -1,17 +1,21 @@
 package com.xebia.fs101.zohoreplica.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.xebia.fs101.zohoreplica.security.ZohoApplicationRole;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 @Entity
@@ -41,8 +45,53 @@ public class Employee {
     @Lob
     @JsonIgnore
     private byte[] photo;
+    @Enumerated(value = EnumType.STRING)
+    private ZohoApplicationRole role;
 
     public Employee() {
+    }
+
+    public Employee(UUID id, @NotBlank String username, @NotBlank String fullname,
+                    @NotBlank @Email String email, @NotBlank String mobile, @NotBlank String password,
+                    @NotBlank String company, Date createdAt, Date updatedAt, byte[] photo,
+                    ZohoApplicationRole role) {
+        this.id = id;
+        this.username = username;
+        this.fullname = fullname;
+        this.email = email;
+        this.mobile = mobile;
+        this.password = password;
+        this.company = company;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.photo = photo;
+        this.role = role;
+    }
+
+    private Employee(Builder builder) {
+        id = builder.id;
+        username = builder.username;
+        fullname = builder.fullname;
+        email = builder.email;
+        mobile = builder.mobile;
+        password = builder.password;
+        company = builder.company;
+        createdAt = builder.createdAt;
+        updatedAt = builder.updatedAt;
+        setPhoto(builder.photo);
+        role = builder.role;
+    }
+
+    public Employee(Employee employee) {
+        this.id = employee.getId();
+        this.username=employee.getUsername();
+        this.fullname=employee.getFullname();
+        this.password=employee.getPassword();
+        this.photo=employee.getPhoto();
+        this.role=employee.getRole();
+        this.email=employee.getEmail();
+        this.mobile=employee.getMobile();
+        this.company=employee.getCompany();
     }
 
     public UUID getId() {
@@ -81,30 +130,21 @@ public class Employee {
         return updatedAt;
     }
 
-    public byte[] getPhoto(){
+    public byte[] getPhoto() {
         return photo;
 
     }
+
+    public ZohoApplicationRole getRole() {
+        return role;
+    }
+
     public void setPhoto(byte[] photo) {
         this.photo = photo;
     }
 
-    private Employee(Builder builder) {
-        id = builder.id;
-        username = builder.username;
-        fullname = builder.fullname;
-        email = builder.email;
-        mobile = builder.mobile;
-        password = builder.password;
-        company = builder.company;
-        createdAt = builder.createdAt;
-        updatedAt = builder.updatedAt;
-        photo=builder.photo;
-    }
-
 
     public static final class Builder {
-        public byte[] photo;
         private UUID id;
         private @NotBlank String username;
         private @NotBlank String fullname;
@@ -114,6 +154,8 @@ public class Employee {
         private @NotBlank String company;
         private Date createdAt;
         private Date updatedAt;
+        private byte[] photo;
+        private ZohoApplicationRole role;
 
         public Builder() {
         }
@@ -162,8 +204,14 @@ public class Employee {
             updatedAt = val;
             return this;
         }
-        public Builder withPhoto(byte[] val){
-            photo=val;
+
+        public Builder withPhoto(byte[] val) {
+            photo = val;
+            return this;
+        }
+
+        public Builder withRole(ZohoApplicationRole val) {
+            role = val;
             return this;
         }
 
@@ -174,7 +222,7 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "Employee{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", fullname='" + fullname + '\'' +
@@ -184,6 +232,8 @@ public class Employee {
                 ", company='" + company + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", photo=" + Arrays.toString(photo) +
+                ", role=" + role +
                 '}';
     }
 }

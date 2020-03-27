@@ -11,14 +11,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-
+@Transactional
 class EmployeeControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
@@ -41,19 +44,21 @@ class EmployeeControllerTest {
     private EmployeeRepository employeeRepository;
     @Autowired
     private WebApplicationContext webApplicationContext;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         UserRequest userRequest = new UserRequest.Builder()
                 .withUsername("supr8sung")
                 .withFullname("Supreet Singh")
                 .withEmail("supreetsingh@xebia.com")
-                .withPassword("hola@bitch")
+                .withPassword("1234")
                 .withMobile("9643496936")
                 .withCompany("XEBIA")
                 .build();
-        employeeRepository.save(userRequest.toUser());
+        employeeRepository.save(userRequest.toUser(passwordEncoder));
     }
 
     @AfterEach
@@ -63,7 +68,7 @@ class EmployeeControllerTest {
 
     @Test
     public void user_should_be_able_to_upload_profile_picture() throws Exception {
-        ResultMatcher ok= MockMvcResultMatchers.status().isOk();
+        ResultMatcher ok = MockMvcResultMatchers.status().isOk();
         MockMultipartFile mockMultipartFile =
                 new MockMultipartFile(
                         "file",
@@ -71,8 +76,9 @@ class EmployeeControllerTest {
                         MediaType.IMAGE_JPEG_VALUE,
                         "<<pdf data>>".getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart("/zoho/profiles/upload/{username}","supr8sung")
-                .file(mockMultipartFile))
+        mockMvc.perform(multipart("/zoho/profiles/upload/{username}", "supr8sung")
+                .file(mockMultipartFile)
+                .with(user("supr8sung").password("1234").roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("profile picture uploaded"));
     }
@@ -100,14 +106,13 @@ class EmployeeControllerTest {
     }
 
     @Test
-    public void should_be_able_to_find_an_user_by_username() throws  Exception{
-
-        this.mockMvc.perform(get("/zoho/profiles/{username}","supr8sung"))
+    public void should_be_able_to_find_an_user_by_username() throws Exception {
+        this.mockMvc.perform(get("/zoho/profiles/{username}", "supr8sung")
+                .with(user("supr8sung").password("1234").roles("ADMIN")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.fullname").value("Supreet Singh"))
                 .andExpect(jsonPath("$.status").value("S"));
-
 
     }
 }

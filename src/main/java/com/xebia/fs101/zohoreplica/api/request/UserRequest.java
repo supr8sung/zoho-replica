@@ -1,9 +1,13 @@
 package com.xebia.fs101.zohoreplica.api.request;
 
 import com.xebia.fs101.zohoreplica.entity.Employee;
+import com.xebia.fs101.zohoreplica.security.ZohoApplicationRole;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+
+import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.USER;
 public class UserRequest {
 
 
@@ -20,6 +24,8 @@ public class UserRequest {
     private String password;
     @NotBlank
     private String company;
+    private ZohoApplicationRole role;
+
 
     public UserRequest() {
     }
@@ -48,6 +54,10 @@ public class UserRequest {
         return company;
     }
 
+    public ZohoApplicationRole getRole() {
+        return role;
+    }
+
     private UserRequest(Builder builder) {
         username = builder.username;
         fullname = builder.fullname;
@@ -55,9 +65,10 @@ public class UserRequest {
         email = builder.email;
         password = builder.password;
         company = builder.company;
+        role =builder.role;
     }
 
-    public Employee toUser() {
+    public Employee toUser(PasswordEncoder passwordEncoder) {
 
         return new Employee.Builder()
                 .withUsername(this.username)
@@ -65,12 +76,14 @@ public class UserRequest {
                 .withEmail(this.email)
                 .withMobile(this.mobile)
                 .withCompany(this.company.toUpperCase())
-                .withPassword(this.password)
+                .withPassword(passwordEncoder.encode(this.password))
+                .withRole(this.role==null? USER: role)
                 .build();
     }
 
 
     public static final class Builder {
+        public ZohoApplicationRole role;
         private String username;
         private String fullname;
         private String mobile;
@@ -108,6 +121,10 @@ public class UserRequest {
 
         public Builder withCompany(String val) {
             company = val;
+            return this;
+        }
+        public Builder withRole(ZohoApplicationRole val){
+            role=val;
             return this;
         }
 
