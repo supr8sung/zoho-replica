@@ -1,15 +1,15 @@
 package com.xebia.fs101.zohoreplica.security.core;
 
-import com.xebia.fs101.zohoreplica.entity.Employee;
+import com.xebia.fs101.zohoreplica.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-public class CustomUserDetails extends Employee implements UserDetails {
+public class CustomUserDetails extends User implements UserDetails {
 
-    public CustomUserDetails(Employee employee){
-        super(employee);
+    public CustomUserDetails(User user){
+        super(user);
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

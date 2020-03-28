@@ -1,7 +1,7 @@
 package com.xebia.fs101.zohoreplica.api.request;
 
 import com.xebia.fs101.zohoreplica.entity.Attendance;
-import com.xebia.fs101.zohoreplica.entity.Employee;
+import com.xebia.fs101.zohoreplica.entity.User;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -25,15 +25,15 @@ public class AttendanceRequest {
         this.username = username;
     }
 
-    public Attendance checkin(Employee employee){
-        return new Attendance.Builder().withEmployee(employee)
+    public Attendance checkin(User user){
+        return new Attendance.Builder().withUser(user)
                 .withDate(LocalDate.now())
                 .withCheckin(LocalTime.now())
                 .build();
 
     }
-    public Attendance checkout(Employee employee){
-        return new Attendance.Builder().withEmployee(employee)
+    public Attendance checkout(User user){
+        return new Attendance.Builder().withUser(user)
                 .withDate(LocalDate.now())
                 .withCheckout(LocalTime.now())
                 .build();

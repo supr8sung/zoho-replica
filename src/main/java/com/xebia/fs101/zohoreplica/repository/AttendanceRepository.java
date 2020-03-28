@@ -1,7 +1,7 @@
 package com.xebia.fs101.zohoreplica.repository;
 
 import com.xebia.fs101.zohoreplica.entity.Attendance;
-import com.xebia.fs101.zohoreplica.entity.Employee;
+import com.xebia.fs101.zohoreplica.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,14 +12,16 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
+
+import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.CHECKOUT;
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
 
-    public Attendance findByEmployee(Employee employee);
+    public Attendance findByUser(User user);
 
     @Transactional
     @Modifying
-    @Query("UPDATE  Attendance  set checkout=:time where employee_id=:employeeId and date=:date")
-    void checkout(@Param("employeeId") UUID employeeId, @Param("date") LocalDate date,
+    @Query(CHECKOUT)
+    void checkout(@Param("userId") UUID userId, @Param("date") LocalDate date,
                     @Param("time")LocalTime time);
 }

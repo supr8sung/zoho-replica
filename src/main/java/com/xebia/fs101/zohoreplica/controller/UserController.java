@@ -5,10 +5,10 @@ import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties
 import com.xebia.fs101.zohoreplica.api.request.ChangePasswordRequest;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.api.response.ZohoReplicaResponse;
-import com.xebia.fs101.zohoreplica.entity.Employee;
+import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.exception.EmptyFileException;
 import com.xebia.fs101.zohoreplica.security.AdminOnly;
-import com.xebia.fs101.zohoreplica.service.EmployeeService;
+import com.xebia.fs101.zohoreplica.service.UserService;
 import com.xebia.fs101.zohoreplica.service.MailService;
 import com.xebia.fs101.zohoreplica.utility.MailUtility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +33,11 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @EnableEncryptableProperties
 @RequestMapping(value = "/zoho")
-public class EmployeeController {
+public class UserController {
 
 
     @Autowired
-    private EmployeeService employeeService;
+    private UserService userService;
     @Autowired
     private MailService mailService;
 
@@ -45,18 +45,18 @@ public class EmployeeController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserRequest userRequest) {
 
-        Employee savedEmployee = employeeService.save(userRequest);
+        User savedUser = userService.save(userRequest);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "User saved successfully",
-                savedEmployee);
+                savedUser);
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
     @GetMapping("/profiles/{username}")
     @AdminOnly
     public ResponseEntity<?> viewUser(@PathVariable(value = "username") String username) {
-        Employee employee = employeeService.findByName(username);
-        ZohoReplicaResponse zohoReplicaResponse = employee != null ?
-                getResponse(TXN_SUCESS, "", employee) :
+        User user = userService.findByName(username);
+        ZohoReplicaResponse zohoReplicaResponse = user != null ?
+                getResponse(TXN_SUCESS, "", user) :
                 getResponse(TXN_BAD_REQUEST, "No user found", "");
         return new ResponseEntity<>(zohoReplicaResponse, OK);
 
@@ -64,10 +64,10 @@ public class EmployeeController {
 
     @GetMapping("/profiles/{username}/forgotpasword")
     public ResponseEntity<?> forgotPasswordMail(@PathVariable(value = "username") String username){
-        Employee employee = employeeService.findByName(username);
+        User user = userService.findByName(username);
         String otp=generateOtp();
-        String mailBody = MailUtility.generateOtpBody(otp, employee.getFullname());
-        mailService.sendMail(employee.getEmail(),mailBody);
+        String mailBody = MailUtility.generateOtpBody(otp, user.getFullname());
+        mailService.sendMail(user.getEmail(),mailBody);
         ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"Mail Sent Successfully",otp);
         return new ResponseEntity<>(zohoReplicaResponse,OK);
 
@@ -75,18 +75,19 @@ public class EmployeeController {
     @PostMapping("profiles/{username}/recoverpassword")
     public ResponseEntity<?> recoverPassword(@PathVariable(value = "username")String  username,
                                              @Valid@RequestBody ChangePasswordRequest request){
-        Employee employee = employeeService.findByName(username);
-        Employee savedEmployee = employeeService.changePassword(employee, request.getNewPassword());
+        User user = userService.findByName(username);
+        User savedUser = userService.changePassword(user, request.getNewPassword());
         ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"Password Changes Successfully",
-                savedEmployee);
+                savedUser);
         return new ResponseEntity<>(zohoReplicaResponse,OK);
     }
     @PostMapping("/profiles/{username}/changepassword")
     public ResponseEntity<?> changePassword(@PathVariable(value = "username") String username ,
                                             @Valid @RequestBody ChangePasswordRequest request){
-        Employee employee = employeeService.findByName(username,request.getOldPassword());
-        Employee savedEmployee = employeeService.changePassword(employee, request.getNewPassword());
-        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"Password changes successfully",savedEmployee);
+        User user = userService.findByName(username,request.getOldPassword());
+        User savedUser = userService.changePassword(user, request.getNewPassword());
+        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"Password changes successfully",
+                savedUser);
         return new ResponseEntity<>(zohoReplicaResponse,OK);
     }
 
@@ -97,13 +98,28 @@ public class EmployeeController {
         if (file.isEmpty())
             throw new EmptyFileException("Empty file can't be uploaded");
         byte[] photo = file.getOriginalFilename().getBytes();
-        Employee employee = employeeService.findByName(username);
-        employee.setPhoto(photo);
-        employeeService.save(employee);
+        User user = userService.findByName(username);
+        user.setPhoto(photo);
+        userService.save(user);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "profile picture uploaded",
                 null);
         return new ResponseEntity<>(zohoReplicaResponse, OK);
 
+    }
+
+    @PostMapping("/users/follow")
+    public ResponseEntity<?> follow(@RequestParam String target){
+        User targetUser = userService.findByName(target);
+        String  message = userService.follow(targetUser, targetUser);
+        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,message,"");
+        return new ResponseEntity<>(zohoReplicaResponse,OK);
+    }
+    @PostMapping("/users/unfollow")
+    public ResponseEntity<?> unfollow(@RequestParam String target){
+        User targetUser = userService.findByName(target);
+        String  message = userService.unfollow(targetUser, targetUser);
+        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,message,"");
+        return new ResponseEntity<>(zohoReplicaResponse,OK);
     }
 
     private ZohoReplicaResponse getResponse(String status, String message, Object data) {

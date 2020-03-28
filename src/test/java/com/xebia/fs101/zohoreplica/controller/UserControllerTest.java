@@ -2,7 +2,7 @@ package com.xebia.fs101.zohoreplica.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
-import com.xebia.fs101.zohoreplica.repository.EmployeeRepository;
+import com.xebia.fs101.zohoreplica.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,14 +34,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
-class EmployeeControllerTest {
+class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private UserRepository userRepository;
     @Autowired
     private WebApplicationContext webApplicationContext;
     @Autowired
@@ -58,12 +58,12 @@ class EmployeeControllerTest {
                 .withMobile("9643496936")
                 .withCompany("XEBIA")
                 .build();
-        employeeRepository.save(userRequest.toUser(passwordEncoder));
+        userRepository.save(userRequest.toUser(passwordEncoder));
     }
 
     @AfterEach
     void tearDown() {
-        employeeRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
