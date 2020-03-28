@@ -1,38 +1,23 @@
-import React, { Component } from "react";
+import React from 'react';
+import { Route, Switch } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Header  from './components/header';
+import  LoginComponent   from './components/login';
+import  DashBoard   from './components/dashboard';
+import  PageNotFound   from './components/PageNotFound';
 
-import MainPage from "./Components/MainPage/MainPage";
-
-import Home from "./Components/Home";
-import "./App.css";
-
-class App extends Component {
-  state = {
-    loggedIn: false,
-    showSignUpPage: false
-  };
-
-  signUpHandler = () => {
-    this.setState({ showSignUpPage: true });
-  };
-
-  showHomePageHanlder = () => {
-    this.setState({ loggedIn: true });
-  };
-  render() {
-    return (
-      <div className="App">
-        {!this.state.loggedIn ? (
-          <MainPage
-            showHomePage={this.showHomePageHanlder}
-            signUpHandler={this.signUpHandler}
-            showSignUpPage={this.state.showSignUpPage}
-          />
-        ) : (
-          <Home />
-        )}
-      </div>
+const App = () =>{
+    return(
+        <div>
+            <Header/>
+            <Switch>
+                <Route exact path="/" component={LoginComponent}/>
+                <Route exact path="/dashboard" component={DashBoard}/>
+                <Route component={PageNotFound}/>
+            </Switch>
+        </div>
     );
-  }
 }
+
 
 export default App;
