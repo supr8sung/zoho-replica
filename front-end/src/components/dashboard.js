@@ -4,7 +4,10 @@ class DashBoard extends React.Component{
 
     render(){
         return(
-            <h1>DashBoard</h1>
+            <div className="container-fluid mt-100">
+                <h1>DashBoard</h1>
+            </div>
+            
         );
     }
 } 

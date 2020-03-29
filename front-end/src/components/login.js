@@ -1,124 +1,80 @@
 import React from 'react';
 import APP from  '../../src/constants';
 import {fetch} from '../services/httpServices';
-import { validator } from '../services/validators';
+import validate from '../services/validators';
 import { cloneDeep } from 'lodash'; 
+import { useState } from "react";
+import  useForm  from '../services/custom-hooks';
+import { ToastContainer, toast } from 'react-toastify';
+import { Link } from "react-router-dom";
 
-const LoginComponent = () =>{
-    const [signUpErrors, setSignUpErrors] = React.useState({
-        username: '',
-        email: '',
-        password:''
-      });
-    const [signUpValues, setSignUpValues] = React.useState({
-        username: '',
-        email: '',
-        password:''
-    });
-    const [signUp,setSignUp] = React.useState(false);
 
-    const handleSignUp = (e) => {
+const LoginComponent = (props) =>{
+
+    const {
+        values,
+        errors,
+        handleChange,
+        handleSubmit,
+      } = useForm(loginAccount, validate);
+
+
+      function loginAccount(values){
         event.preventDefault();
-        setSignUp(!signUp);
-      };
-    const onChangeInputField = (value,modifiedField,event) =>{
-        let validationResult = validator.handleValidation(value,signUpErrors,modifiedField,event);
-        setSignUpErrors({...signUpErrors},validationResult);
-
-        const localObj = cloneDeep( signUpValues );
-        localObj[modifiedField] = value;
-        setSignUpValues(localObj);
+        fetch.post({
+            url: 'http://localhost:8080/login',
+            requestBody: {
+                "username": values.username,
+                "password": values.password
+              },
+            callbackHandler: saveDataSuccessHandler
+        });
     }
-
-   const validateForm = (errors) => {
-        let valid = true;
-        for (let formProps in signUpValues){
-           if(!signUpValues[formProps]){
-               valid = false;
-               errors[formProps] = 'Required';     
-           }
-           if(errors[formProps]){
-                valid = false;
-           }         
-        };
-        return valid;
-    }
-    const createAccount = () =>{
-        event.preventDefault();
-        if(validateForm(signUpErrors)){
-            fetch.post({
-                url: 'http://localhost:8080/zoho/signup',
-                requestBody: signUpValues,
-                callbackHandler: saveDataSuccessHandler
-            });
-        }
-        else{
-            setSignUpErrors({...signUpErrors});
+    function saveDataSuccessHandler(response){
+        
+        if(response.payload.status == 'S'){
+           // notify(response.payload.message);
+            props.history.push("/dashboard");
         }
     }
 
 
-    const saveDataSuccessHandler = (response) =>{
-        console.log(response);
-    }
-    
         return(
-
+            
             <div className="container-fluid mt-100">
-               {signUp ? 
-
-
-                    <form>
-                    <p>SIGNUP ZR</p>
+                <div className="redirect">
+                    <button className="btn btn-link"> <Link to="/SignUp" >Sign Up>>></Link></button>
+                </div>
+                
+                <ToastContainer />
+               {
+                   <div>
+                       <form onSubmit={handleSubmit} noValidate>
+                    <p>LOGIN TO ZR</p>
                     <div className="form-group">
                         <label>UserName:</label>
-                        <input type="text" className = {(signUpErrors && signUpErrors.username) ? 'input-error form-control' : 'form-control' } onChange={(e) => onChangeInputField(e.target.value, 'username', ['required','minlength'])} id="signUpUsername" />
-                    </div>
-                        <div className="errorBlock">
-                            <span className='error--danger'>{(signUpErrors && signUpErrors.username) ? signUpErrors.username : ''}</span>
-                        </div>
-                    <div className="form-group">
-                        <label>Email:</label>
-                        <input type="text" className = {(signUpErrors && signUpErrors.email) ? 'input-error form-control' : 'form-control' } onChange={(e) => onChangeInputField(e.target.value, 'email', ['required','email'])}  id="signUpEmail" />
+                        <input type="text" name="username" value={values.username || ''} className = {(errors && errors.username) ? 'input-error form-control' : 'form-control' } onChange={handleChange} id="signUpUsername" />
                     </div>
                     <div className="errorBlock">
-                        <span className='error--danger'>{(signUpErrors && signUpErrors.email) ? signUpErrors.email : ''}</span>
+                            <span className='error--danger'>{(errors && errors.username) ? errors.username : ''}</span>
                     </div>
                     <div className="form-group">
                         <label>Password:</label>
-                        <input type="password" className = {(signUpErrors && signUpErrors.password) ? 'input-error form-control' : 'form-control' } onChange={(e) => onChangeInputField(e.target.value, 'password', ['required','minlength'])} id="signUpPassword" />
+                        <input type="password" name="password" value={values.password || ''} className = {(errors && errors.password) ? 'input-error form-control' : 'form-control' } onChange={handleChange}  id="signUpPassword" />
                     </div>
                     <div className="errorBlock">
-                        <span className='error--danger'>{(signUpErrors && signUpErrors.password) ? signUpErrors.password : ''}</span>
-                    </div>
-                    <button className="btn btn-primary" onClick={() => createAccount()}>Create An Account</button>
-                    <button className="btn btn-link" onClick = {handleSignUp}>Login</button>
-                </form>
-                
-                :
-                <form>
-                    <p>LOGIN TO ZR</p>
-                    <div className="form-group">
-                        <label>Email:</label>
-                        <input type="text" className="form-control" id="loginEmail" />
-                    </div>
-                    <div className="form-group">
-                        <label for="pwd">Password:</label>
-                        <input type="password" className="form-control" id="loginPassword" />
+                        <span className='error--danger'>{(errors && errors.password) ? errors.password : ''}</span>
                     </div>
                     <div className="checkBoxLogin">
-                        <input type="checkbox" id="pwd" />
+                        <input name="remember" value={values.rememberMe || ''} type="checkbox" />
                         <label className="checkBoxLabel">Remember Me</label>
                     </div>
-                    <div className="checkBoxLogin">
-                        <input type="checkbox" id="pwd" />
-                        <label className="checkBoxLabel">Forgot your password?</label>
-                    </div>
-                    <button className="btn btn-primary">Login</button>
-                    <button className="btn btn-secondary">Cancel</button>
-                    <button className="btn btn-link" onClick = {handleSignUp}>Sign Up</button>
+                    <button className="btn btn-primary" type="submit">Login</button>
+                    <button className="btn btn-link"> <Link to="/SignUp" >Forgot Password?</Link></button>
                 </form>
-
+                
+                   </div>
+                
             } 
             </div>
                  

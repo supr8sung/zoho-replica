@@ -72,3 +72,12 @@ body {
 .btn-secondary{
   margin: 0px 5px;
 }
+
+
+.redirect{
+  text-align: right;
+}
+.redirect a{
+    text-decoration: underline;
+}
+  
