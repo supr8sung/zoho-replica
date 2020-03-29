@@ -1,7 +1,7 @@
 package com.xebia.fs101.zohoreplica.service;
 
 import com.xebia.fs101.zohoreplica.repository.AttendanceRepository;
-import com.xebia.fs101.zohoreplica.repository.EmployeeRepository;
+import com.xebia.fs101.zohoreplica.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 @Service
 public class GmailService implements MailService {
@@ -19,7 +18,7 @@ public class GmailService implements MailService {
     private ExecutorService executorService;
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private UserRepository userRepository;
     @Autowired
     private AttendanceRepository attendanceRepository;
     @Autowired

@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,9 +18,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 @Entity
-public class Employee {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -48,27 +51,17 @@ public class Employee {
     @Enumerated(value = EnumType.STRING)
     private ZohoApplicationRole role;
 
-    public Employee() {
+    private long followingCount;
+    private long followersCount;
+    @ElementCollection
+    private List<User> followers;
+    @ElementCollection
+    private List<User> following;
+
+    public User() {
     }
 
-    public Employee(UUID id, @NotBlank String username, @NotBlank String fullname,
-                    @NotBlank @Email String email, @NotBlank String mobile, @NotBlank String password,
-                    @NotBlank String company, Date createdAt, Date updatedAt, byte[] photo,
-                    ZohoApplicationRole role) {
-        this.id = id;
-        this.username = username;
-        this.fullname = fullname;
-        this.email = email;
-        this.mobile = mobile;
-        this.password = password;
-        this.company = company;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.photo = photo;
-        this.role = role;
-    }
-
-    private Employee(Builder builder) {
+    private User(Builder builder) {
         id = builder.id;
         username = builder.username;
         fullname = builder.fullname;
@@ -80,18 +73,26 @@ public class Employee {
         updatedAt = builder.updatedAt;
         setPhoto(builder.photo);
         role = builder.role;
+        followersCount=builder.followersCount;
+        followingCount=builder.followingCount;
+        following=builder.following;
+        followers=builder.followers;
     }
 
-    public Employee(Employee employee) {
-        this.id = employee.getId();
-        this.username=employee.getUsername();
-        this.fullname=employee.getFullname();
-        this.password=employee.getPassword();
-        this.photo=employee.getPhoto();
-        this.role=employee.getRole();
-        this.email=employee.getEmail();
-        this.mobile=employee.getMobile();
-        this.company=employee.getCompany();
+    public User(User user) {
+        this.id = user.getId();
+        this.username= user.getUsername();
+        this.fullname= user.getFullname();
+        this.password= user.getPassword();
+        this.photo= user.getPhoto();
+        this.role= user.getRole();
+        this.email= user.getEmail();
+        this.mobile= user.getMobile();
+        this.company= user.getCompany();
+        this.followersCount = user.getFollowersCount();
+        this.followingCount = user.getFollowingCount();
+        this.followers=user.getFollowers();
+        this.following=user.getFollowing();
     }
 
     public UUID getId() {
@@ -135,8 +136,32 @@ public class Employee {
 
     }
 
+    public long getFollowingCount() {
+        return followingCount;
+    }
+
+    public long getFollowersCount() {
+        return followersCount;
+    }
+
+    public List<User> getFollowers() {
+        return followers;
+    }
+
+    public List<User> getFollowing() {
+        return following;
+    }
+
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setFollowingCount(long followingCount) {
+        this.followingCount = followingCount;
+    }
+
+    public void setFollowersCount(long followersCount) {
+        this.followersCount = followersCount;
     }
 
     public ZohoApplicationRole getRole() {
@@ -147,6 +172,13 @@ public class Employee {
         this.photo = photo;
     }
 
+    public void setFollowers(List<User> followers) {
+        this.followers = followers;
+    }
+
+    public void setFollowing(List<User> following) {
+        this.following = following;
+    }
 
     public static final class Builder {
         private UUID id;
@@ -160,6 +192,10 @@ public class Employee {
         private Date updatedAt;
         private byte[] photo;
         private ZohoApplicationRole role;
+        private long followersCount;
+        private long followingCount;
+        private List<User> following;
+        private List<User> followers;
 
         public Builder() {
         }
@@ -218,15 +254,31 @@ public class Employee {
             role = val;
             return this;
         }
+        public Builder withFollowersCount(long val){
+            followersCount =val;
+            return this;
+        }
+        public Builder withFollowingCount(long val){
+            followingCount =val;
+            return this;
+        }
+        public Builder withFollowing(List<User> val){
+            following=val;
+            return this;
+        }
+        public Builder withFollowers(List<User> val){
+            followers=val;
+            return this;
+        }
 
-        public Employee build() {
-            return new Employee(this);
+        public User build() {
+            return new User(this);
         }
     }
 
     @Override
     public String toString() {
-        return "Employee{" +
+        return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", fullname='" + fullname + '\'' +
@@ -238,6 +290,40 @@ public class Employee {
                 ", updatedAt=" + updatedAt +
                 ", photo=" + Arrays.toString(photo) +
                 ", role=" + role +
+                ", followingCount=" + followingCount +
+                ", followersCount=" + followersCount +
+                ", followers=" + followers +
+                ", following=" + following +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return followingCount == user.followingCount &&
+                followersCount == user.followersCount &&
+                Objects.equals(id, user.id) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(fullname, user.fullname) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(mobile, user.mobile) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(company, user.company) &&
+                Objects.equals(createdAt, user.createdAt) &&
+                Objects.equals(updatedAt, user.updatedAt) &&
+                Arrays.equals(photo, user.photo) &&
+                role == user.role &&
+                Objects.equals(followers, user.followers) &&
+                Objects.equals(following, user.following);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(id, username, fullname, email, mobile, password, company, createdAt,
+                updatedAt, role, followingCount, followersCount, followers, following);
+        result = 31 * result + Arrays.hashCode(photo);
+        return result;
     }
 }

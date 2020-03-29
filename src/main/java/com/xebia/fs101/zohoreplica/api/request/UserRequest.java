@@ -1,11 +1,13 @@
 package com.xebia.fs101.zohoreplica.api.request;
 
-import com.xebia.fs101.zohoreplica.entity.Employee;
+import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.security.ZohoApplicationRole;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+
+import java.util.ArrayList;
 
 import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.EMPLOYEE;
 public class UserRequest {
@@ -68,9 +70,9 @@ public class UserRequest {
         role =builder.role;
     }
 
-    public Employee toUser(PasswordEncoder passwordEncoder) {
+    public User toUser(PasswordEncoder passwordEncoder) {
 
-        return new Employee.Builder()
+        return new User.Builder()
                 .withUsername(this.username)
                 .withFullname(this.fullname)
                 .withEmail(this.email)
@@ -78,6 +80,10 @@ public class UserRequest {
                 .withCompany(this.company.toUpperCase())
                 .withPassword(passwordEncoder.encode(this.password))
                 .withRole(this.role==null? EMPLOYEE: role)
+                .withFollowing(new ArrayList<User>())
+                .withFollowers(new ArrayList<>())
+                .withFollowingCount(0)
+                .withFollowersCount(0)
                 .build();
     }
 

@@ -20,7 +20,7 @@ public class Attendance {
     private LocalTime checkin;
     private LocalTime checkout;
     @ManyToOne
-    private Employee employee;
+    private User user;
 
     public Attendance(){
 
@@ -43,16 +43,16 @@ public class Attendance {
         return checkout;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public User getUser() {
+        return user;
     }
 
-    public Attendance(long id, LocalDate date, LocalTime checkin, LocalTime checkout, Employee employee) {
+    public Attendance(long id, LocalDate date, LocalTime checkin, LocalTime checkout, User user) {
         this.id = id;
         this.date = date;
         this.checkin = checkin;
         this.checkout = checkout;
-        this.employee = employee;
+        this.user = user;
     }
 
     private Attendance(Builder builder) {
@@ -60,7 +60,7 @@ public class Attendance {
         date = builder.date;
         checkin = builder.checkin;
         checkout = builder.checkout;
-        employee = builder.employee;
+        user = builder.user;
     }
 
 
@@ -69,7 +69,7 @@ public class Attendance {
         private LocalDate date;
         private LocalTime checkin;
         private LocalTime checkout;
-        private Employee employee;
+        private User user;
 
         public Builder() {
         }
@@ -94,8 +94,8 @@ public class Attendance {
             return this;
         }
 
-        public Builder withEmployee(Employee val) {
-            employee = val;
+        public Builder withUser(User val) {
+            user = val;
             return this;
         }
 
@@ -113,7 +113,7 @@ public class Attendance {
                 ", date=" + date +
                 ", checkin=" + checkin +
                 ", checkout=" + checkout +
-                ", user=" + employee +
+                ", user=" + user +
                 '}';
     }
 }
