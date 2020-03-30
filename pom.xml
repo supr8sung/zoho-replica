@@ -137,11 +137,9 @@
                 <version>${maven-war-plugin.version}</version>
                 <configuration>
                     <warSourceExcludes>
-                        front-end/node/**,
                         front-end/node_modules/**,
                         front-end/public/**,
                         front-end/src/**,
-                        front-end/react/*
                     </warSourceExcludes>
                 </configuration>
             </plugin>
@@ -150,23 +148,28 @@
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>${frontend-maven-plugin.version}</version>
-                <configuration>
-                    <nodeVersion>${node.version}</nodeVersion>
-                    <npmVersion>${npm.version}</npmVersion>
-                    <workingDirectory>front-end</workingDirectory>
-                </configuration>
+
                 <executions>
                     <execution>
                         <id>install node and npm</id>
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <nodeVersion>${node.version}</nodeVersion>
+                            <npmVersion>${npm.version}</npmVersion>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>npm install</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>npm run build</id>
@@ -178,6 +181,10 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <nodeVersion>${node.version}</nodeVersion>
+                    <workingDirectory>front-end</workingDirectory>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
