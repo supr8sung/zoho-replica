@@ -74,7 +74,7 @@ public class UserRequest {
 
         return new User.Builder()
                 .withUsername(this.username)
-                .withFullname(this.fullname)
+                .withFullname(this.fullname==null?"SUPREET SINGH": this.fullname)
                 .withEmail(this.email)
                 .withMobile(this.mobile)
                 .withCompany(this.company.toUpperCase())
