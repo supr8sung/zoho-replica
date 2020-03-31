@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
 //                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .authorizeRequests()
-                .antMatchers("/","index","/css/*","/js/*").permitAll()
+                .antMatchers("/","index","/resources/**","/signup","/css/*","/js/*").permitAll()
                 .antMatchers("/zoho/signup").permitAll()
                 .antMatchers("/zoho/cookie").permitAll()
                //.antMatchers("/zoho/profiles/{username}/changepassword").permitAll()

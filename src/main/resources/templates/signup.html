@@ -1,0 +1,96 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Amigoscode login</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #3e3e3e;
+            color: white;
+        }
+        h2{
+        color: floralwhite;
+        }
+    </style>
+    </head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+$(document).ready(function(){
+      $("#signup").submit(function(e) {
+
+    e.preventDefault(); 
+
+    var form = $(this);
+    var url = 'http://localhost:8080/zoho/signup';
+
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: form.serialize(),
+           success: function(data)
+           {
+               alert(data);
+           }
+         });
+
+
+});
+});
+
+
+
+
+    </script>
+    <body>
+        <div className="container-fluid mt-100">
+
+            <div className="redirect">
+                
+                    <button className="btn btn-link"  type="button"><a href="/login">Login</a></button>
+               
+
+            </div>
+            <div>
+                <form id="signup"  noValidate>
+                <p>SIGNUP ZR</p>
+                <div class="col-md-3">
+                    <label>UserName:</label>
+                    <input type="text" class="form-control" name="username" id="signUpUsername" required/>
+                </div>
+                <div class="col-md-3">
+                    <label>Phone:</label>
+                    <input type="phone" class="form-control" name="phone"  id="signUpPhone" />
+                </div>
+                <div class="col-md-3">
+                    <label>Email:</label>
+                    <input type="email" class="form-control" name="email"  id="signUpEmail" />
+                </div>
+                <div class="col-md-3">
+                    <label>Role:</label>
+                    <input type="text" class="form-control" name="role"  id="signUpRole" />
+                </div>
+
+                <div class="col-md-3">
+                    <label>Company:</label>
+                    <input type="text" class="form-control" name="company"  id="signUpCompany" />
+                </div>
+                <div class="col-md-3">
+                    <label>Password:</label>
+                    <input type="password" class="form-control" name="password"   id="signUpPassword" />
+                </div>
+                <button className="btn btn-primary" type="submit" id="createAccount" >Create An Account</button>
+               
+            </form>
+                 
+                
+            </div>
+        </div>
+    </body>
+
+</html>
+

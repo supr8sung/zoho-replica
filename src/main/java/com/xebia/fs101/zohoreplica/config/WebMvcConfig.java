@@ -19,8 +19,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         //registry.addViewController("/login")
       //  /Users/codeMars/Downloads/GIT/Repositories/zoho-replica/front-end/build/index.html
+        registry.addViewController("/").setViewName("login");
 registry.addViewController("/login").setViewName("login");
-//        registry.addViewController("/home").setViewName("home");
+        registry.addViewController("/signup").setViewName("signup");
     }
 
  //   @Override
