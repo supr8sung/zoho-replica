@@ -1,6 +1,7 @@
 package com.xebia.fs101.zohoreplica.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.xebia.fs101.zohoreplica.api.response.UserViewResponse;
 import com.xebia.fs101.zohoreplica.security.ZohoApplicationRole;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -14,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 @Entity
+@Table(name="users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -54,9 +57,9 @@ public class User {
     private long followingCount;
     private long followersCount;
     @ElementCollection
-    private List<User> followers;
+    private List<String> followers;
     @ElementCollection
-    private List<User> following;
+    private List<String> following;
 
     public User() {
     }
@@ -144,11 +147,11 @@ public class User {
         return followersCount;
     }
 
-    public List<User> getFollowers() {
+    public List<String> getFollowers() {
         return followers;
     }
 
-    public List<User> getFollowing() {
+    public List<String> getFollowing() {
         return following;
     }
 
@@ -172,11 +175,11 @@ public class User {
         this.photo = photo;
     }
 
-    public void setFollowers(List<User> followers) {
+    public void setFollowers(List<String> followers) {
         this.followers = followers;
     }
 
-    public void setFollowing(List<User> following) {
+    public void setFollowing(List<String> following) {
         this.following = following;
     }
 
@@ -194,8 +197,8 @@ public class User {
         private ZohoApplicationRole role;
         private long followersCount;
         private long followingCount;
-        private List<User> following;
-        private List<User> followers;
+        private List<String> following;
+        private List<String> followers;
 
         public Builder() {
         }
@@ -262,11 +265,11 @@ public class User {
             followingCount =val;
             return this;
         }
-        public Builder withFollowing(List<User> val){
+        public Builder withFollowing(List<String> val){
             following=val;
             return this;
         }
-        public Builder withFollowers(List<User> val){
+        public Builder withFollowers(List<String> val){
             followers=val;
             return this;
         }
@@ -325,5 +328,14 @@ public class User {
                 updatedAt, role, followingCount, followersCount, followers, following);
         result = 31 * result + Arrays.hashCode(photo);
         return result;
+    }
+
+    public UserViewResponse toUserViewResponse(){
+        return new UserViewResponse.Builder()
+                .withFullname(this.fullname)
+                .withCompany(this.company)
+                .withEmail(this.email)
+                .withMobile(this.mobile)
+                .build();
     }
 }

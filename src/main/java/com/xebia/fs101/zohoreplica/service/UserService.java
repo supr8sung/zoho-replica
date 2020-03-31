@@ -6,6 +6,7 @@ import com.xebia.fs101.zohoreplica.exception.UserNotFoundException;
 import com.xebia.fs101.zohoreplica.exception.WrongPasswordException;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,21 +33,20 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public User findByName(User user, String oldPassword) {
+        User oldUser = userRepository.findByUsername(user.getUsername());
+        if (oldUser == null)
+            throw new UsernameNotFoundException("User not found");
+        if (!passwordEncoder.matches(oldPassword, oldUser.getPassword()))
+            throw new WrongPasswordException("Password not matched");
+        return user;
+    }
+
     public User save(User user) {
 
         return userRepository.save(user);
     }
 
-
-    public User findByName(String username, String oldPassword) {
-        User user = userRepository.findByUsername(username);
-        if (user == null)
-            throw new UserNotFoundException("User not found");
-
-        if (!passwordEncoder.matches(oldPassword, user.getPassword()))
-            throw new WrongPasswordException("Password not matched");
-        return user;
-    }
 
     public User changePassword(User user, String newPassword) {
         user.setPassword(passwordEncoder.encode(newPassword));
@@ -55,9 +55,8 @@ public class UserService {
 
     public String follow(User requestUser, User targetUser) {
         if (!isFollower(requestUser, targetUser)) {
-
             increaseFollower(requestUser, targetUser);
-            increaseFollowing(requestUser,targetUser);
+            increaseFollowing(requestUser, targetUser);
             return "Followed success";
         }
 
@@ -65,47 +64,55 @@ public class UserService {
     }
 
     public String unfollow(User requestUser, User targetUser) {
-        if(!isFollower(requestUser,targetUser)){
-            decreaseFollower(requestUser,targetUser);
-            decreaseFollowing(requestUser,targetUser);
+        if (isFollower(requestUser, targetUser)) {
+            decreaseFollower(requestUser, targetUser);
+            decreaseFollowing(requestUser, targetUser);
             return "Unfollowed Succes";
         }
         return "You need to follow him first";
     }
+
     private void increaseFollower(User requestUser, User targetUser) {
-        List<User> followers = targetUser.getFollowers();
+        List<String> followers = targetUser.getFollowers();
         long followersCount = targetUser.getFollowersCount();
-        followers.add(requestUser);
-        targetUser.setFollowing(followers);
-        targetUser.setFollowersCount(followersCount++);
-    }
-    private void decreaseFollower(User requestUser, User targetUser) {
-        List<User> followers = targetUser.getFollowers();
-        long followersCount = targetUser.getFollowersCount();
-        followers.remove(requestUser);
-        targetUser.setFollowing(followers);
-        targetUser.setFollowersCount(followersCount--);
+        followers.add(requestUser.getUsername());
+        targetUser.setFollowers(followers);
+        targetUser.setFollowersCount(++followersCount);
+        userRepository.save(targetUser);
+
     }
 
-    private void decreaseFollowing(User requestUser, User targetUser){
-        List<User> following = requestUser.getFollowing();
+    private void increaseFollowing(User requestUser, User targetUser) {
+        List<String> following = requestUser.getFollowing();
         long followingCount = requestUser.getFollowingCount();
-        following.remove(targetUser);
+        following.add(targetUser.getUsername());
         requestUser.setFollowing(following);
-        requestUser.setFollowingCount(followingCount--);
+        requestUser.setFollowingCount(++followingCount);
+        userRepository.save(requestUser);
     }
-    private void increaseFollowing(User requestUser, User targetUser){
-        List<User> following = requestUser.getFollowing();
+
+    private void decreaseFollower(User requestUser, User targetUser) {
+        List<String> followers = targetUser.getFollowers();
+        long followersCount = targetUser.getFollowersCount();
+        followers.remove(requestUser.getUsername());
+        targetUser.setFollowing(followers);
+        targetUser.setFollowersCount(--followersCount);
+        userRepository.save(targetUser);
+
+    }
+
+    private void decreaseFollowing(User requestUser, User targetUser) {
+        List<String> following = requestUser.getFollowing();
         long followingCount = requestUser.getFollowingCount();
-        following.add(targetUser);
+        following.remove(targetUser.getUsername());
         requestUser.setFollowing(following);
-        requestUser.setFollowingCount(followingCount++);
+        requestUser.setFollowingCount(--followingCount);
+        userRepository.save(requestUser);
     }
 
     private boolean isFollower(User requestUser, User targetUser) {
         return targetUser.getFollowers()
                 .stream()
-                .map(User::getUsername)
                 .anyMatch(e -> e.equals(requestUser.getUsername()));
 
     }
