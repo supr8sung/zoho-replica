@@ -31,10 +31,20 @@ $(document).ready(function(){
     $.ajax({
            type: "POST",
            url: url,
-           data: form.serialize(),
+           data: JSON.stringify({
+	                "username": "supr8sung",
+	                "fullname": "Supreet Singh",
+	                "mobile": "9643496936",
+	                "email": "yoyobunny420@gmail.com",
+	                  "password":"1234",
+	                  "company": "XEBIA",
+	                  "role":"ADMIN"
+	              }),
+	       contentType: "application/json; charset=utf-8",
            success: function(data)
            {
-               alert(data);
+               alert('user created');
+               window.location.href = "http://localhost:8080/login";
            }
          });
 
