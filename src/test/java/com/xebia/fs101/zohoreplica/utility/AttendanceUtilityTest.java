@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.time.LocalTime;
 
 import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.calculateDailyHours;
+import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.lastCheckinTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 class AttendanceUtilityTest {
 
@@ -28,5 +29,12 @@ class AttendanceUtilityTest {
         String totalHours = calculateDailyHours(checkin, checkout);
         assertEquals(totalHours,"00:00","You should check in and check out to get total hours");
 
+    }
+
+    @Test
+    void should_give_last_checkin_time() {
+        LocalTime localTime = LocalTime.of(23, 5);
+        String checkinTime = lastCheckinTime(localTime);
+        assertEquals("23:05",checkinTime);
     }
 }

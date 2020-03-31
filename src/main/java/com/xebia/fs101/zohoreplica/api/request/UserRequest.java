@@ -8,6 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.EMPLOYEE;
 public class UserRequest {
@@ -80,8 +81,8 @@ public class UserRequest {
                 .withCompany(this.company.toUpperCase())
                 .withPassword(passwordEncoder.encode(this.password))
                 .withRole(this.role==null? EMPLOYEE: this.role)
-                .withFollowing(new ArrayList<>())
-                .withFollowers(new ArrayList<>())
+                .withFollowing(new HashSet<>())
+                .withFollowers(new HashSet<>())
                 .withFollowingCount(0)
                 .withFollowersCount(0)
                 .build();

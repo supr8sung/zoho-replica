@@ -17,11 +17,11 @@ import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.CHECKOUT;
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
 
-    public Attendance findByUser(User user);
+    Attendance findByUser(User user);
 
     @Transactional
     @Modifying
     @Query(CHECKOUT)
     void checkout(@Param("userId") UUID userId, @Param("date") LocalDate date,
-                    @Param("time")LocalTime time);
+                        @Param("time") LocalTime time);
 }

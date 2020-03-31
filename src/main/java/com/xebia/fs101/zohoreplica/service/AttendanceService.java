@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Optional;
 import java.util.UUID;
 @Service
 public class AttendanceService {
@@ -19,9 +20,11 @@ public class AttendanceService {
     @Autowired
     private UserRepository userRepository;
 
-    public void doCheckout(UUID employeeId, LocalTime checkoutTime) {
-        attendanceRepository.checkout(employeeId, LocalDate.now(), checkoutTime);
 
+
+
+    public void checkout(User user) {
+         attendanceRepository.checkout(user.getId(),LocalDate.now(),LocalTime.now());
     }
 
     public Attendance attendanceDetails(User user) {
@@ -29,7 +32,23 @@ public class AttendanceService {
         return attendanceRepository.findByUser(user);
     }
 
-    public void doCheckin(Attendance attendance) {
-         attendanceRepository.save(attendance);
+    public Attendance checkin(User user) {
+        Attendance attendance = checkinDetails(user);
+        return attendanceRepository.save(attendance);
+    }
+    public Attendance checkinDetails(User user){
+        return new Attendance.Builder().withUser(user)
+                .withDate(LocalDate.now())
+                .withCheckin(LocalTime.now())
+                .build();
+
+    }
+
+    public Attendance checkoutDetails(User user){
+        return new Attendance.Builder().withUser(user)
+                .withDate(LocalDate.now())
+                .withCheckout(LocalTime.now())
+                .build();
+
     }
 }

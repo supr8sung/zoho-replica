@@ -7,16 +7,8 @@ const DashBoard  = () =>{
     const CheckIn = (values) => {
         event.preventDefault();
         fetch.post({
-            url: 'http://localhost:8080/zoho/signup',
-            requestBody: {
-                "username": "supr8sung",
-                "fullname": "Supreet Singh",
-                "mobile": "9643496936",
-                "email": "yoyobunny420@gmail.com",
-                  "password":"1234",
-                  "company": "XEBIA",
-                  "role":"ADMIN"
-              },
+            url: 'http://localhost:8080/zoho/user/checkin',
+
             callbackHandler: saveDataSuccessHandler
         });
     }

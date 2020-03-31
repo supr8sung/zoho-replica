@@ -9,7 +9,7 @@ class Header extends React.Component{
                 <nav className="headerNavbar">
                     <div className="navbarTitle">
                         
-                        <img height="24" src={logo}/>
+                        <img height="24" alt="zoho" src={logo}/>
                     </div>
                     {/* <div className="navBarSearch">
                         <input type="text" className="form-control"

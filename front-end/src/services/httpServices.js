@@ -44,6 +44,26 @@ axios.interceptors.response.use(function(config) {
     }
 });
 
+const outputHandler = ({ ins, callbackHandler }) => {
+    ins.then((response) => {
+
+        callbackHandler({
+            status: 'success',
+            message: '',
+            payload: response.data
+        });
+
+    }).catch((error) => {
+        let errMessage = '';
+        callbackHandler({
+            status: 'failure',
+            message: errMessage,
+            payload: {}
+        });
+    });
+
+};
+
 export const fetch = {
     get({ url, requestParams = {}, callbackHandler}) {
         const ins = axios.get(`${APP.Constants.THIRD_PARTY_API_HOST}${url}`, {
@@ -79,24 +99,6 @@ export const fetch = {
     
 };
 
-const outputHandler = ({ ins, callbackHandler }) => {
-    ins.then((response) => {
 
-        callbackHandler({
-            status: 'success',
-            message: '',
-            payload: response.data
-        });
-
-    }).catch((error) => {
-        let errMessage = '';
-        callbackHandler({
-            status: 'failure',
-            message: errMessage,
-            payload: {}
-        });
-    });
-
-};
 
 // axios.cancel(requestId);

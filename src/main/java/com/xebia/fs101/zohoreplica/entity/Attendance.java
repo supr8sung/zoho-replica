@@ -35,16 +35,25 @@ public class Attendance {
         return date;
     }
 
-    public LocalTime getCheckinHours() {
+    public LocalTime getCheckinTime() {
         return checkin;
     }
 
-    public LocalTime getCheckoutHours() {
+    public LocalTime getCheckoutTime() {
         return checkout;
     }
 
     public User getUser() {
         return user;
+    }
+
+    public void setCheckout(LocalTime checkout) {
+        this.checkout = checkout;
+    }
+
+    public void setDate(LocalDate date) {
+
+        this.date = date;
     }
 
     public Attendance(long id, LocalDate date, LocalTime checkin, LocalTime checkout, User user) {

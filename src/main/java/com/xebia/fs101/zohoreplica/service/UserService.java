@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 @Service
 public class UserService {
@@ -65,15 +65,15 @@ public class UserService {
 
     public String unfollow(User requestUser, User targetUser) {
         if (isFollower(requestUser, targetUser)) {
-            decreaseFollower(requestUser, targetUser);
             decreaseFollowing(requestUser, targetUser);
+            decreaseFollower(requestUser, targetUser);
             return "Unfollowed Succes";
         }
         return "You need to follow him first";
     }
 
     private void increaseFollower(User requestUser, User targetUser) {
-        List<String> followers = targetUser.getFollowers();
+        Set<String> followers = targetUser.getFollowers();
         long followersCount = targetUser.getFollowersCount();
         followers.add(requestUser.getUsername());
         targetUser.setFollowers(followers);
@@ -83,7 +83,7 @@ public class UserService {
     }
 
     private void increaseFollowing(User requestUser, User targetUser) {
-        List<String> following = requestUser.getFollowing();
+        Set<String> following = requestUser.getFollowing();
         long followingCount = requestUser.getFollowingCount();
         following.add(targetUser.getUsername());
         requestUser.setFollowing(following);
@@ -92,17 +92,17 @@ public class UserService {
     }
 
     private void decreaseFollower(User requestUser, User targetUser) {
-        List<String> followers = targetUser.getFollowers();
+        Set<String> followers = targetUser.getFollowers();
         long followersCount = targetUser.getFollowersCount();
         followers.remove(requestUser.getUsername());
-        targetUser.setFollowing(followers);
+        targetUser.setFollowers(followers);
         targetUser.setFollowersCount(--followersCount);
         userRepository.save(targetUser);
 
     }
 
     private void decreaseFollowing(User requestUser, User targetUser) {
-        List<String> following = requestUser.getFollowing();
+        Set<String> following = requestUser.getFollowing();
         long followingCount = requestUser.getFollowingCount();
         following.remove(targetUser.getUsername());
         requestUser.setFollowing(following);

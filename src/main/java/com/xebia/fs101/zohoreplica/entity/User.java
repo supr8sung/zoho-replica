@@ -20,11 +20,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -57,9 +57,13 @@ public class User {
     private long followingCount;
     private long followersCount;
     @ElementCollection
-    private List<String> followers;
+//    @CollectionTable(name = "user_followers", joinColumns = @JoinColumn(name = "user_id"))
+//    @Column(name = "followers")
+    private Set<String> followers;
     @ElementCollection
-    private List<String> following;
+//    @CollectionTable(name = "user_following", joinColumns = @JoinColumn(name = "user_id"))
+//    @Column(name = "following")
+    private Set<String> following;
 
     public User() {
     }
@@ -76,26 +80,26 @@ public class User {
         updatedAt = builder.updatedAt;
         setPhoto(builder.photo);
         role = builder.role;
-        followersCount=builder.followersCount;
-        followingCount=builder.followingCount;
-        following=builder.following;
-        followers=builder.followers;
+        followersCount = builder.followersCount;
+        followingCount = builder.followingCount;
+        following = builder.following;
+        followers = builder.followers;
     }
 
     public User(User user) {
         this.id = user.getId();
-        this.username= user.getUsername();
-        this.fullname= user.getFullname();
-        this.password= user.getPassword();
-        this.photo= user.getPhoto();
-        this.role= user.getRole();
-        this.email= user.getEmail();
-        this.mobile= user.getMobile();
-        this.company= user.getCompany();
+        this.username = user.getUsername();
+        this.fullname = user.getFullname();
+        this.password = user.getPassword();
+        this.photo = user.getPhoto();
+        this.role = user.getRole();
+        this.email = user.getEmail();
+        this.mobile = user.getMobile();
+        this.company = user.getCompany();
         this.followersCount = user.getFollowersCount();
         this.followingCount = user.getFollowingCount();
-        this.followers=user.getFollowers();
-        this.following=user.getFollowing();
+        this.followers = user.getFollowers();
+        this.following = user.getFollowing();
     }
 
     public UUID getId() {
@@ -147,11 +151,11 @@ public class User {
         return followersCount;
     }
 
-    public List<String> getFollowers() {
+    public Set<String> getFollowers() {
         return followers;
     }
 
-    public List<String> getFollowing() {
+    public Set<String> getFollowing() {
         return following;
     }
 
@@ -175,11 +179,11 @@ public class User {
         this.photo = photo;
     }
 
-    public void setFollowers(List<String> followers) {
+    public void setFollowers(Set<String> followers) {
         this.followers = followers;
     }
 
-    public void setFollowing(List<String> following) {
+    public void setFollowing(Set<String> following) {
         this.following = following;
     }
 
@@ -197,8 +201,8 @@ public class User {
         private ZohoApplicationRole role;
         private long followersCount;
         private long followingCount;
-        private List<String> following;
-        private List<String> followers;
+        private Set<String> following;
+        private Set<String> followers;
 
         public Builder() {
         }
@@ -257,20 +261,24 @@ public class User {
             role = val;
             return this;
         }
-        public Builder withFollowersCount(long val){
-            followersCount =val;
+
+        public Builder withFollowersCount(long val) {
+            followersCount = val;
             return this;
         }
-        public Builder withFollowingCount(long val){
-            followingCount =val;
+
+        public Builder withFollowingCount(long val) {
+            followingCount = val;
             return this;
         }
-        public Builder withFollowing(List<String> val){
-            following=val;
+
+        public Builder withFollowing(Set<String> val) {
+            following = val;
             return this;
         }
-        public Builder withFollowers(List<String> val){
-            followers=val;
+
+        public Builder withFollowers(Set<String> val) {
+            followers = val;
             return this;
         }
 
@@ -330,12 +338,14 @@ public class User {
         return result;
     }
 
-    public UserViewResponse toUserViewResponse(){
+    public UserViewResponse toUserViewResponse() {
         return new UserViewResponse.Builder()
                 .withFullname(this.fullname)
                 .withCompany(this.company)
                 .withEmail(this.email)
                 .withMobile(this.mobile)
+                .withFollowersCount(this.followersCount)
+                .withFollowingCount(this.followingCount)
                 .build();
     }
 }

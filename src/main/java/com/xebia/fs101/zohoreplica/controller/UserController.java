@@ -14,6 +14,7 @@ import com.xebia.fs101.zohoreplica.utility.MailUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -47,13 +48,14 @@ public class UserController {
     private UserService userService;
     @Autowired
     private MailService mailService;
+
     @GetMapping("/")
     public String root() {
         return "index";
     }
 
-    @RequestMapping(value = "/signup",method = POST,consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    public ResponseEntity<?> signup( UserRequest userRequest) {
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@Valid @RequestBody UserRequest userRequest) {
 
         User savedUser = userService.save(userRequest);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "User saved successfully",
@@ -63,19 +65,20 @@ public class UserController {
 
     @GetMapping("/user/{username}")
     public ResponseEntity<?> view(@PathVariable(value = "username") String username) {
-        User user = userService.findByName(username);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "", user.toUserViewResponse());
+        User requestedUser = userService.findByName(username);
+        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "",
+                requestedUser.toUserViewResponse());
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
 
     @GetMapping("/user/{username}/info")
-    public ResponseEntity<?> followers(@PathVariable(value = "username") String username){
+    public ResponseEntity<?> info(@PathVariable(value = "username") String username) {
         User user = userService.findByName(username);
-        FollowResponse followResponse=new FollowResponse(user.getFollowersCount(),user.getFollowingCount());
-        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",followResponse);
-        return new ResponseEntity<>(zohoReplicaResponse,OK);
+        FollowResponse followResponse = new FollowResponse(user.getFollowersCount(),
+                user.getFollowingCount());
+        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "", followResponse);
+        return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
-
 
 
     @PutMapping("/user/edit")
@@ -91,6 +94,7 @@ public class UserController {
         if (file.isEmpty())
             throw new EmptyFileException("Empty file can't be uploaded");
         byte[] photo = file.getOriginalFilename().getBytes();
+
         User user = getLoggedInUser();
         user.setPhoto(photo);
         userService.save(user);
@@ -101,7 +105,8 @@ public class UserController {
     }
 
     @PostMapping("/user/follow")
-    public ResponseEntity<?> follow(@RequestParam String target) {
+    public ResponseEntity<?> follow( @RequestParam String target) {
+
         User requestUser = getLoggedInUser();
         User targetUser = userService.findByName(target);
         String message = userService.follow(requestUser, targetUser);
@@ -112,6 +117,7 @@ public class UserController {
 
     @PostMapping("/user/unfollow")
     public ResponseEntity<?> unfollow(@RequestParam String target) {
+
         User requestUser = getLoggedInUser();
         User targetUser = userService.findByName(target);
         String message = userService.unfollow(requestUser, targetUser);
@@ -129,8 +135,7 @@ public class UserController {
     }
 
     @GetMapping("/user/send-otp")
-    public ResponseEntity<?> forgotPassword() {
-        User user = getLoggedInUser();
+    public ResponseEntity<?> forgotPassword(@AuthenticationPrincipal User user) {
         String otp = generateOtp();
         String mailBody = MailUtility.generateOtpBody(otp, user.getFullname());
         mailService.sendMail(user.getEmail(), mailBody);
