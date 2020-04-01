@@ -1,6 +1,7 @@
 package com.xebia.fs101.zohoreplica.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xebia.fs101.zohoreplica.api.request.ChangePasswordRequest;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
@@ -26,6 +27,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -115,7 +118,8 @@ class UserControllerTest {
     @Test
     public void should_be_able_to_find_an_user_by_username() throws Exception {
         this.mockMvc.perform(get("/zoho/user/{username}", "supr8sung")
-                .with(user("supr8sung").password("1234").roles("EMPLOYEE")))
+                .accept(MediaType.APPLICATION_JSON)
+                .with(httpBasic("supr8sung", "1234")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.fullname").value("Supreet Singh"))
@@ -192,6 +196,29 @@ class UserControllerTest {
         assertEquals(0, requestesUser.getFollowingCount());
         User targetUser = userService.findByName("supr8sung");
         assertEquals(0, targetUser.getFollowersCount());
+
+    }
+
+    @Test
+    void logged_in_user_can_change_password_if_he_knows_current_password() throws Exception {
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest("1234", "54321");
+        String json = objectMapper.writeValueAsString(changePasswordRequest);
+        this.mockMvc.perform(post("/zoho/user/change-password")
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(httpBasic("supr8sung", "1234")))
+                .andDo(print())
+                .andExpect(status().isCreated());
+
+
+        this.mockMvc.perform(get("/zoho/user/{username}", "supr8sung")
+                .accept(MediaType.APPLICATION_JSON)
+                .with(httpBasic("supr8sung", "54321")))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+
 
     }
 }

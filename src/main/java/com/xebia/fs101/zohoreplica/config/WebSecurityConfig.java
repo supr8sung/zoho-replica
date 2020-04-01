@@ -34,7 +34,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/zoho","/reaources/**","/signup","/index","/css/*","/js/*").permitAll()
                 .antMatchers("/zoho/signup").permitAll()
-                .antMatchers("/user/update-password").hasAuthority("CHANGE_PASSWORD_PRIVILEGE")
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -50,7 +49,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .clearAuthentication(true)
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID")
-                    .logoutSuccessUrl("/login");
+                    .logoutSuccessUrl("/login")
+                    .and()
+                    .httpBasic();
     }
     //@formatter:on
 

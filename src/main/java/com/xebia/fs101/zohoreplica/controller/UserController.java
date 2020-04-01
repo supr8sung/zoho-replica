@@ -125,13 +125,13 @@ public class UserController {
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
-    @PostMapping("/user/update-password")
+    @PostMapping("/user/change-password")
     public ResponseEntity<?> updatePassword(@Valid @RequestBody ChangePasswordRequest request) {
         User user = userService.findByName(getLoggedInUser(), request.getOldPassword());
         User savedUser = userService.changePassword(user, request.getNewPassword());
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Password changes successfully",
-                savedUser);
-        return new ResponseEntity<>(zohoReplicaResponse, OK);
+                savedUser.getUsername());
+        return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
     @GetMapping("/user/send-otp")
