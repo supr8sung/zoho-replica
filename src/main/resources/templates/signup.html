@@ -32,13 +32,13 @@ $(document).ready(function(){
            type: "POST",
            url: url,
            data: JSON.stringify({
-	                "username": "supr8sung",
-	                "fullname": "Supreet Singh",
-	                "mobile": "9643496936",
-	                "email": "yoyobunny420@gmail.com",
-	                  "password":"1234",
-	                  "company": "XEBIA",
-	                  "role":"ADMIN"
+	                "username": $('#signUpUsername').val(),
+	                "fullname": $('#signUpFullName').val(),
+	                "mobile": $('#signUpPhone').val(),
+	                "email": $('#signUpEmail').val(),
+	                  "password":$('#signUpPassword').val(),
+	                  "company": $('#signUpCompany').val(),
+	                  "role":$('#signUpRole').val()
 	              }),
 	       contentType: "application/json; charset=utf-8",
            success: function(data)
@@ -73,25 +73,29 @@ $(document).ready(function(){
                 <input type="text" class="form-control" name="username" id="signUpUsername" required/>
             </div>
             <div class="col-md-3">
+                <label>FullName:</label>
+                <input type="text" class="form-control" name="fullname" id="signUpFullName" required/>
+            </div>
+            <div class="col-md-3">
                 <label>Phone:</label>
-                <input type="phone" class="form-control" name="phone"  id="signUpPhone" />
+                <input type="phone" class="form-control" name="phone"  id="signUpPhone" required/>
             </div>
             <div class="col-md-3">
                 <label>Email:</label>
-                <input type="email" class="form-control" name="email"  id="signUpEmail" />
+                <input type="email" class="form-control" name="email"  id="signUpEmail" required/>
             </div>
             <div class="col-md-3">
                 <label>Role:</label>
-                <input type="text" class="form-control" name="role"  id="signUpRole" />
+                <input type="text" class="form-control" name="role"  id="signUpRole" required/>
             </div>
 
             <div class="col-md-3">
                 <label>Company:</label>
-                <input type="text" class="form-control" name="company"  id="signUpCompany" />
+                <input type="text" class="form-control" name="company"  id="signUpCompany" required/>
             </div>
             <div class="col-md-3">
                 <label>Password:</label>
-                <input type="password" class="form-control" name="password"   id="signUpPassword" />
+                <input type="password" class="form-control" name="password"   id="signUpPassword" required/>
             </div>
             <button className="btn btn-primary" type="submit" id="createAccount" >Create An Account</button>
 

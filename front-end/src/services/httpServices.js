@@ -4,45 +4,45 @@ import APP from  '../constants';
 
 const requestId = shortid.generate();
 
-axios.interceptors.request.use(function(config) {
-    const token = window.localStorage.getItem('Token');
+// axios.interceptors.request.use(function(config) {
+//     const token = window.localStorage.getItem('Token');
 
-    if (token != null) {
-        config.headers.Authorization = `Bearer ${token}`;  
-    }
+//     if (token != null) {
+//         config.headers.Authorization = `Bearer ${token}`;  
+//     }
     
-    return config;
-}, function(err) {
+//     return config;
+// }, function(err) {
 
-    return Promise.reject(err);
+//     return Promise.reject(err);
 
-});
+// });
 
-axios.interceptors.response.use(function(config) {
-    if(config.headers['content-type'] === "application/download"){  
-        const url = URL.createObjectURL(new Blob([config.data],{type: 'application/vnd.ms-excel'}));
-        const link = document.createElement('a');
-        link.href = url;
-        let fileName = 'download';
-        if(config.config && config.config.url){
-           let arr = config.config.url.split('/');
-           fileName = arr[arr.length - 1]  + "_report.xlsx";
-        }
-        link.setAttribute('download', fileName);
-        document.body.appendChild(link);
-        link.click();
-   }
+// axios.interceptors.response.use(function(config) {
+//     if(config.headers['content-type'] === "application/download"){  
+//         const url = URL.createObjectURL(new Blob([config.data],{type: 'application/vnd.ms-excel'}));
+//         const link = document.createElement('a');
+//         link.href = url;
+//         let fileName = 'download';
+//         if(config.config && config.config.url){
+//            let arr = config.config.url.split('/');
+//            fileName = arr[arr.length - 1]  + "_report.xlsx";
+//         }
+//         link.setAttribute('download', fileName);
+//         document.body.appendChild(link);
+//         link.click();
+//    }
    
-    return config;
+//     return config;
 
-}, function(error) {
-    if (401 === error.response.status) {
-        window.localStorage.removeItem('Token');
-        window.location = '/';
-    } else {
-        return Promise.reject(error);
-    }
-});
+// }, function(error) {
+//     if (401 === error.response.status) {
+//         window.localStorage.removeItem('Token');
+//         window.location = '/';
+//     } else {
+//         return Promise.reject(error);
+//     }
+// });
 
 const outputHandler = ({ ins, callbackHandler }) => {
     ins.then((response) => {
@@ -66,7 +66,7 @@ const outputHandler = ({ ins, callbackHandler }) => {
 
 export const fetch = {
     get({ url, requestParams = {}, callbackHandler}) {
-        const ins = axios.get(`${APP.Constants.THIRD_PARTY_API_HOST}${url}`, {
+        const ins = axios.get(url, {
             params: requestParams,
             requestId
         });
@@ -85,6 +85,7 @@ export const fetch = {
         const headers = {
             'Content-Type': 'application/json'
         };
+        
         const ins = axios.post(url, {...requestBody, requestId },{headers});
         outputHandler({ ins, callbackHandler });
     },

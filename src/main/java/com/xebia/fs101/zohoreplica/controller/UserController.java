@@ -63,6 +63,15 @@ public class UserController {
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
+    @GetMapping("/loggedinuser")
+    public ResponseEntity<?> loggeduser() {
+        User user = getLoggedInUser();
+        //User requestedUser = userService.findByName(getLoggedInUser());
+        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "",
+                user.toUserViewResponse());
+        return new ResponseEntity<>(zohoReplicaResponse, OK);
+    }
+
     @GetMapping("/user/{username}")
     public ResponseEntity<?> view(@PathVariable(value = "username") String username) {
         User requestedUser = userService.findByName(username);
