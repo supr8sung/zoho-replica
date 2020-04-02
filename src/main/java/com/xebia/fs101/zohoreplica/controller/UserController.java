@@ -6,26 +6,25 @@ import com.xebia.fs101.zohoreplica.api.request.ChangePasswordRequest;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.api.response.FollowResponse;
 import com.xebia.fs101.zohoreplica.api.response.ZohoReplicaResponse;
+import com.xebia.fs101.zohoreplica.entity.Attendance;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.exception.EmptyFileException;
+import com.xebia.fs101.zohoreplica.service.AttendanceService;
 import com.xebia.fs101.zohoreplica.service.MailService;
 import com.xebia.fs101.zohoreplica.service.UserService;
 import com.xebia.fs101.zohoreplica.utility.MailUtility;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,7 +36,6 @@ import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_S
 import static com.xebia.fs101.zohoreplica.utility.OtpUtility.generateOtp;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RestController
 @EnableEncryptableProperties
 @RequestMapping(value = "/zoho")
@@ -48,6 +46,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private AttendanceService attendanceService;
 
     @GetMapping("/")
     public String root() {
@@ -66,9 +66,18 @@ public class UserController {
     @GetMapping("/loggedinuser")
     public ResponseEntity<?> loggeduser() {
         User user = getLoggedInUser();
-        //User requestedUser = userService.findByName(getLoggedInUser());
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "",
-                user.toUserViewResponse());
+        ZohoReplicaResponse zohoReplicaResponse=null;
+
+        Attendance attendance = attendanceService.attendanceDetails(user);
+        if(attendance!=null) {
+
+            zohoReplicaResponse=getResponse(TXN_SUCESS,
+                    "true",
+                    user.toLogeedInUserResponse(attendance.getCheckinTime()));
+        }
+        else {
+            zohoReplicaResponse=getResponse(TXN_SUCESS,"false",user.toLogeedInUserResponse(null));
+        }
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
 

@@ -1,6 +1,7 @@
 package com.xebia.fs101.zohoreplica.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
 import com.xebia.fs101.zohoreplica.api.response.UserViewResponse;
 import com.xebia.fs101.zohoreplica.security.ZohoApplicationRole;
 import org.hibernate.annotations.CreationTimestamp;
@@ -18,6 +19,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -346,6 +348,17 @@ public class User {
                 .withMobile(this.mobile)
                 .withFollowersCount(this.followersCount)
                 .withFollowingCount(this.followingCount)
+                .build();
+    }
+    public LoggedInUserResponse toLogeedInUserResponse(LocalTime lastcheckin) {
+        return new LoggedInUserResponse.Builder()
+                .withFullname(this.fullname)
+                .withCompany(this.company)
+                .withEmail(this.email)
+                .withMobile(this.mobile)
+                .withFollowersCount(this.followersCount)
+                .withFollowingCount(this.followingCount)
+                .withLastCheckin(lastcheckin)
                 .build();
     }
 }
