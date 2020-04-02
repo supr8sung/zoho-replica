@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Header  from './components/header';
 import  DashBoard   from './components/dashboard';
 import  PageNotFound   from './components/PageNotFound';
-import Profile from './components/profile';
+import Profile from './components/Profile';
 import loggedOut from './components/loggedout';
 import {fetch} from './services/httpServices';
 import { UserProvider } from './services/user-context';
