@@ -1,36 +1,68 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Amigoscode login</title>
+    <title>Zoho Signup</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
     <style>
-        body {
-            background-color: #3e3e3e;
-            color: white;
-        }
-        h2{
-        color: floralwhite;
+        .error{
+            color:Red;
         }
     </style>
 </head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 <script>
 $(document).ready(function(){
-      $("#signup").submit(function(e) {
 
-    e.preventDefault();
-
-    var form = $(this);
-    var url = 'http://localhost:8080/zoho/signup';
-
-    $.ajax({
+$("form[name='signup']").validate({
+         rules: {
+          username: "required",
+          fullname: "required",
+          email: {
+            required: true,
+            email: true
+          },
+          password: {
+            required: true,
+            minlength: 5
+          },
+          company: {
+            required: true
+          },
+          birthday:{
+            required:true
+          },
+          mobile:{
+            required:true,
+            number: true,
+            minlength:10,
+            maxlength:10
+          }
+        },
+    messages: {
+      username: "Please enter your username",
+      fullname: "Please enter your fullname",
+      password: {
+        required: "Please provide a password",
+        minlength: "Your password must be at least 5 characters long"
+      },
+      mobile:{
+            number: "Invalid Mobile Number",
+            minlength: "Mobile Number must be 10 digit",
+            maxlength: "Mobile Number must be 10 digit"
+          },
+      email: "Please enter a valid email address"
+    },submitHandler: function(form) {
+          $.ajax({
            type: "POST",
-           url: url,
+           url: 'http://localhost:8080/zoho/signup',
            data: JSON.stringify({
 	                "username": $('#signUpUsername').val(),
 	                "fullname": $('#signUpFullName').val(),
@@ -38,17 +70,18 @@ $(document).ready(function(){
 	                "email": $('#signUpEmail').val(),
 	                  "password":$('#signUpPassword').val(),
 	                  "company": $('#signUpCompany').val(),
-	                  "role":$('#signUpRole').val()
+	                  "birthdate":$('#signUpBirthDate').val()
 	              }),
 	       contentType: "application/json; charset=utf-8",
            success: function(data)
            {
-               alert('user created');
                window.location.href = "http://localhost:8080/login";
-           }
+           },
+           error: function (error) {
+                alert('error');
+            }
          });
-
-
+        }
 });
 });
 
@@ -57,53 +90,127 @@ $(document).ready(function(){
 
     </script>
 <body>
-<div className="container-fluid mt-100">
 
-    <div className="redirect">
-
-        <button className="btn btn-link"  type="button"><a href="/login">Login</a></button>
-
-
+<section class="hero is-primary">
+    <!-- Hero head: will stick at the top -->
+    <div class="hero-head">
+        <nav class="navbar">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a class="navbar-item">
+                        ZOHO
+                    </a>
+                    <span class="navbar-burger burger" data-target="navbarMenuHeroA">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+                </div>
+                <div id="navbarMenuHeroA" class="navbar-menu">
+                    <div class="navbar-end">
+                        <a href="/login" class="navbar-item ">
+                            Login
+                        </a>
+                        <a class="navbar-item is-active">
+                            Signup
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
     </div>
-    <div>
-        <form id="signup"  noValidate>
-            <p>SIGNUP ZR</p>
-            <div class="col-md-3">
-                <label>UserName:</label>
-                <input type="text" class="form-control" name="username" id="signUpUsername" required/>
-            </div>
-            <div class="col-md-3">
-                <label>FullName:</label>
-                <input type="text" class="form-control" name="fullname" id="signUpFullName" required/>
-            </div>
-            <div class="col-md-3">
-                <label>Phone:</label>
-                <input type="phone" class="form-control" name="phone"  id="signUpPhone" required/>
-            </div>
-            <div class="col-md-3">
-                <label>Email:</label>
-                <input type="email" class="form-control" name="email"  id="signUpEmail" required/>
-            </div>
-            <div class="col-md-3">
-                <label>Role:</label>
-                <input type="text" class="form-control" name="role"  id="signUpRole" required/>
-            </div>
 
-            <div class="col-md-3">
-                <label>Company:</label>
-                <input type="text" class="form-control" name="company"  id="signUpCompany" required/>
+    <!-- Hero content: will be in the middle -->
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-5-tablet is-5-desktop is-5-widescreen">
+                    <form class="box" id="signup"  name="signup"  noValidate>
+                        <div class="field">
+                            <label class="label">UserName</label>
+                            <div class="control has-icons-left">
+                                <input type="text" name="username"  placeholder="John8" class="input" id="signUpUsername" required>
+                                <span class="icon is-small is-left">
+                                        <i class="fa fa-lock"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label  class="label">FullName</label>
+                            <div class="control has-icons-left">
+                                <input type="text" name="fullname"  placeholder="John Smith" id="signUpFullName" class="input" required>
+                                <span class="icon is-small is-left">
+                                        <i class="fa fa-lock"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Company</label>
+                            <div class="control has-icons-left">
+                                <input type="text" name="company"  placeholder="Google" id="signUpCompany" class="input" required>
+                                <span class="icon is-small is-left">
+                                        <i class="fa fa-lock"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Birthday</label>
+                            <div class="control has-icons-left">
+                                <input type="date" name="birthday"  placeholder="Google" id="signUpBirthDate" class="input" required>
+                                <span class="icon is-small is-left">
+                                        <i class="fa fa-lock"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Email</label>
+                            <div class="control has-icons-left">
+                                <input type="email" name="email"  placeholder="e.g. bobsmith@gmail.com" id="signUpEmail" class="input" required>
+                                <span class="icon is-small is-left">
+                                     <i class="fa fa-envelope"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Mobile</label>
+                            <div class="control has-icons-left">
+                                <input type="tel" pattern="^\d{10}$" name="mobile"  placeholder="e.g. 999999999" id="signUpPhone" class="input" required>
+                                <span class="icon is-small is-left">
+                                    <i class="fa fa-envelope"></i>
+                                 </span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Password</label>
+                            <div class="control has-icons-left">
+                                <input type="password" name="password" placeholder="*******" id="signUpPassword" class="input" required>
+                                <span class="icon is-small is-left">
+                                  <i class="fa fa-lock"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <button type="submit" id="createAccount" class="button is-success">
+                                Sign Up
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="col-md-3">
-                <label>Password:</label>
-                <input type="password" class="form-control" name="password"   id="signUpPassword" required/>
-            </div>
-            <button className="btn btn-primary" type="submit" id="createAccount" >Create An Account</button>
-
-        </form>
-
-
+        </div>
     </div>
-</div>
+
+    <!-- Hero footer: will stick at the bottom -->
+    <div class="hero-foot">
+        <nav class="tabs">
+            <div class="container">
+                <ul>
+                    <li class="is-active"><a>&#169;Copyright Zoho</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</section>
 </body>
 
 </html>

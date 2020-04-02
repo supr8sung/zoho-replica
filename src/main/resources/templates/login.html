@@ -1,48 +1,190 @@
+
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Amigoscode login</title>
+    <title>Zoho Signup</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
     <style>
-        body {
-            background-color: #3e3e3e;
-            color: white;
-        }
-        h2{
-        color: floralwhite;
+        .error{
+            color:Red;
         }
     </style>
 </head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+<script>
+$(document).ready(function(){
+
+$("form[name='login']").validate({
+         rules: {
+          username: "required",
+          email: {
+            required: true,
+            email: true
+          },
+          password: {
+            required: true,
+            minlength: 5
+          }
+        },
+    messages: {
+      username: "Please enter your username",
+      password: {
+        required: "Please provide a password",
+        minlength: "Your password must be at least 5 characters long"
+      }
+    },submitHandler: function(form) {
+          form.submit();
+        }
+});
+});
+
+
+    </script>
 <body>
-<div class="container">
-    <div>
-        <button className="btn btn-link"  type="button"><a href="/signup">Signup</a></button>
+
+<section class="hero is-primary is-medium">
+    <!-- Hero head: will stick at the top -->
+    <div class="hero-head">
+        <nav class="navbar">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a class="navbar-item">
+                        ZOHO
+                    </a>
+                    <span class="navbar-burger burger" data-target="navbarMenuHeroA">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+                </div>
+                <div id="navbarMenuHeroA" class="navbar-menu">
+                    <div class="navbar-end">
+                        <a  class="navbar-item is-active">
+                            Login
+                        </a>
+                        <a href="/signup" class="navbar-item">
+                            Signup
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
     </div>
-    <form class="form-signin" method="post" action="/login">
-        <h2 class="form-signin-heading">Please login</h2>
-        <div>
-            <label for="username" class="sr-only">Username</label>
-            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required=""
-                   autofocus="">
-        </div>
-        <br>
-        <div>
-            <label for="password" class="sr-only">Password</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="Password"
-                   required="">
-        </div>
-        <div><label>Remember me?</label>
 
-            <input type="checkbox" id="remember-me" name="remember-me" class="form-control">
+    <!-- Hero content: will be in the middle -->
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-5-tablet is-5-desktop is-5-widescreen">
+                    <form class="box" id="login"  method="post" action="/login" name="login"  noValidate>
+                        <div class="field">
+                            <label class="label">UserName</label>
+                            <div class="control has-icons-left">
+                                <input type="text" name="username"  placeholder="John8" class="input" id="signUpUsername" required>
+                                <span class="icon is-small is-left">
+                                        <i class="fa fa-lock"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Password</label>
+                            <div class="control has-icons-left">
+                                <input type="password" name="password" placeholder="*******" id="signUpPassword" class="input" required>
+                                <span class="icon is-small is-left">
+                                  <i class="fa fa-lock"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="checkbox">
+                                <input type="checkbox">
+                                Remember me
+                            </label>
+                        </div>
+                        <div class="field">
+                            <button type="submit" id="createAccount" class="button is-success">
+                                Login
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+    </div>
 
-    </form>
-</div>
+    <!-- Hero footer: will stick at the bottom -->
+    <div class="hero-foot">
+        <nav class="tabs">
+            <div class="container">
+                <ul>
+                    <li class="is-active"><a>&#169;Copyright Zoho</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</section>
 </body>
+
 </html>
+
+
+
+
+
+
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="utf-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">-->
+<!--    <meta name="description" content="">-->
+<!--    <meta name="author" content="">-->
+<!--    <title>Amigoscode login</title>-->
+<!--    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"-->
+<!--          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">-->
+<!--    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">-->
+<!--    <style>-->
+<!--        body {-->
+<!--            background-color: #3e3e3e;-->
+<!--            color: white;-->
+<!--        }-->
+<!--        h2{-->
+<!--        color: floralwhite;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="container">-->
+<!--    <div>-->
+<!--        <button className="btn btn-link"  type="button"><a href="/signup">Signup</a></button>-->
+<!--    </div>-->
+<!--    <form class="form-signin" method="post" action="/login">-->
+<!--        <h2 class="form-signin-heading">Please login</h2>-->
+<!--        <div>-->
+<!--            <label for="username" class="sr-only">Username</label>-->
+<!--            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required=""-->
+<!--                   autofocus="">-->
+<!--        </div>-->
+<!--        <br>-->
+<!--        <div>-->
+<!--            <label for="password" class="sr-only">Password</label>-->
+<!--            <input type="password" id="password" name="password" class="form-control" placeholder="Password"-->
+<!--                   required="">-->
+<!--        </div>-->
+<!--        <div><label>Remember me?</label>-->
+
+<!--            <input type="checkbox" id="remember-me" name="remember-me" class="form-control">-->
+<!--        </div>-->
+<!--        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>-->
+
+<!--    </form>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
