@@ -1,7 +1,5 @@
 package com.xebia.fs101.zohoreplica.api.response;
 
-import com.sun.javafx.fxml.LoadListener;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 public class LoggedInUserResponse {
