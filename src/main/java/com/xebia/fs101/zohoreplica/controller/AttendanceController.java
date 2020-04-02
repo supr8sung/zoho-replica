@@ -59,20 +59,7 @@ public class AttendanceController {
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
-    @GetMapping("/user/last-checkin")
-    public ResponseEntity<?> lastCheckin() {
-        User user = getLoggedInUser();
-        ZohoReplicaResponse zohoReplicaResponse=null;
-        Attendance attendance = attendanceService.attendanceDetails(user);
-        if(attendance!=null)
-            zohoReplicaResponse=getResponse(TXN_SUCESS,"You have checked in already",attendance);
-        else
 
-
-             zohoReplicaResponse=getResponse(TXN_SUCESS,"You have not checked in","");
-        return new ResponseEntity<>(zohoReplicaResponse, OK);
-
-    }
 
     @GetMapping("/user/dailyhours")
     public ResponseEntity<?> dailyHours() {

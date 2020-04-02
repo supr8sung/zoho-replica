@@ -19,6 +19,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,40 +32,43 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @NotBlank
+
     @Column(unique = true)
     private String username;
-    @NotBlank
+
     private String fullname;
-    @NotBlank
-    @Email
+
     @Column(unique = true)
     private String email;
-    @NotBlank
+
     private String mobile;
-    @NotBlank
+
     private String password;
-    @NotBlank
+
     private String company;
+
+    private LocalDate birthday;
+
     @CreationTimestamp
     private Date createdAt;
+
     @UpdateTimestamp
     private Date updatedAt;
+
     @Lob
     @JsonIgnore
     private byte[] photo;
+
     @Enumerated(value = EnumType.STRING)
     private ZohoApplicationRole role;
 
     private long followingCount;
+
     private long followersCount;
+
     @ElementCollection
-//    @CollectionTable(name = "user_followers", joinColumns = @JoinColumn(name = "user_id"))
-//    @Column(name = "followers")
     private Set<String> followers;
     @ElementCollection
-//    @CollectionTable(name = "user_following", joinColumns = @JoinColumn(name = "user_id"))
-//    @Column(name = "following")
     private Set<String> following;
 
     public User() {
@@ -86,6 +90,7 @@ public class User {
         followingCount = builder.followingCount;
         following = builder.following;
         followers = builder.followers;
+        birthday = builder.birthday;
     }
 
     public User(User user) {
@@ -130,6 +135,10 @@ public class User {
 
     public String getCompany() {
         return company;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
     }
 
     public Date getCreatedAt() {
@@ -191,13 +200,14 @@ public class User {
 
     public static final class Builder {
         private UUID id;
-        private @NotBlank String username;
-        private @NotBlank String fullname;
-        private @NotBlank @Email String email;
-        private @NotBlank String mobile;
-        private @NotBlank String password;
-        private @NotBlank String company;
+        private String username;
+        private String fullname;
+        private String email;
+        private String mobile;
+        private String password;
+        private String company;
         private Date createdAt;
+        private LocalDate birthday;
         private Date updatedAt;
         private byte[] photo;
         private ZohoApplicationRole role;
@@ -259,6 +269,11 @@ public class User {
             return this;
         }
 
+        public Builder withBirthDay(LocalDate val) {
+            birthday=val;
+            return this;
+        }
+
         public Builder withRole(ZohoApplicationRole val) {
             role = val;
             return this;
@@ -299,6 +314,7 @@ public class User {
                 ", mobile='" + mobile + '\'' +
                 ", password='" + password + '\'' +
                 ", company='" + company + '\'' +
+                ", birthday=" + birthday +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", photo=" + Arrays.toString(photo) +
@@ -329,13 +345,14 @@ public class User {
                 Arrays.equals(photo, user.photo) &&
                 role == user.role &&
                 Objects.equals(followers, user.followers) &&
-                Objects.equals(following, user.following);
+                Objects.equals(following, user.following) &&
+                Objects.equals(birthday,user.birthday);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(id, username, fullname, email, mobile, password, company, createdAt,
-                updatedAt, role, followingCount, followersCount, followers, following);
+                updatedAt, role, followingCount, followersCount, followers, following,birthday);
         result = 31 * result + Arrays.hashCode(photo);
         return result;
     }
@@ -350,6 +367,7 @@ public class User {
                 .withFollowingCount(this.followingCount)
                 .build();
     }
+
     public LoggedInUserResponse toLogeedInUserResponse(LocalTime lastcheckin) {
         return new LoggedInUserResponse.Builder()
                 .withFullname(this.fullname)
@@ -359,6 +377,7 @@ public class User {
                 .withFollowersCount(this.followersCount)
                 .withFollowingCount(this.followingCount)
                 .withLastCheckin(lastcheckin)
+                .withBirthday(this.birthday)
                 .build();
     }
 }

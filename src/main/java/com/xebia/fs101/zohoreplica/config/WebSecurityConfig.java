@@ -1,5 +1,6 @@
 package com.xebia.fs101.zohoreplica.config;
 
+import com.xebia.fs101.zohoreplica.exception.CustomAuthenticationFailureHandler;
 import com.xebia.fs101.zohoreplica.service.CustomUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import java.util.concurrent.TimeUnit;
 @Configuration
@@ -38,6 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .formLogin()
+                .failureHandler(customAuthenticationFailureHandler())
                 .loginPage("/login").permitAll()
                 .defaultSuccessUrl("/",true)
                 .and()
@@ -61,6 +64,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected UserDetailsService userDetailsService() {
 
         return new CustomUserDetailService();
+    }
+
+    @Bean
+    public AuthenticationFailureHandler customAuthenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
     }
 
     @Bean

@@ -7,10 +7,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.EMPLOYEE;
+import static com.xebia.fs101.zohoreplica.utility.DateUtility.getLocalDate;
 public class UserRequest {
 
 
@@ -25,6 +25,8 @@ public class UserRequest {
     private String email;
     @NotBlank
     private String password;
+    @NotBlank
+    private String birthday;
     @NotBlank
     private String company;
     private ZohoApplicationRole role;
@@ -61,6 +63,10 @@ public class UserRequest {
         return role;
     }
 
+    public String getBirthday() {
+        return birthday;
+    }
+
     private UserRequest(Builder builder) {
         username = builder.username;
         fullname = builder.fullname;
@@ -69,9 +75,11 @@ public class UserRequest {
         password = builder.password;
         company = builder.company;
         role =builder.role;
+        birthday=builder.birthday;
     }
 
     public User toUser(PasswordEncoder passwordEncoder) {
+
 
         return new User.Builder()
                 .withUsername(this.username)
@@ -85,12 +93,14 @@ public class UserRequest {
                 .withFollowers(new HashSet<>())
                 .withFollowingCount(0)
                 .withFollowersCount(0)
+                .withBirthDay(getLocalDate(this.birthday))
                 .build();
     }
 
 
     public static final class Builder {
         public ZohoApplicationRole role;
+        private String birthday;
         private String username;
         private String fullname;
         private String mobile;
@@ -132,6 +142,10 @@ public class UserRequest {
         }
         public Builder withRole(ZohoApplicationRole val){
             role=val;
+            return this;
+        }
+        public Builder wihtBirthday(String val){
+            birthday=val;
             return this;
         }
 

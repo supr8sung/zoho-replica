@@ -23,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -67,6 +68,7 @@ class UserControllerTest {
                 .withPassword("1234")
                 .withMobile("9643496936")
                 .withCompany("XEBIA")
+                .wihtBirthday("1/11/2019")
                 .build();
         mainUser = userRepository.save(userRequest.toUser(passwordEncoder));
     }
@@ -85,6 +87,7 @@ class UserControllerTest {
                 .withPassword("hola@bitch")
                 .withMobile("9643496936")
                 .withCompany("XEBIA")
+                .wihtBirthday("1/11/2019")
                 .build();
         String json = objectMapper.writeValueAsString(userRequest);
         this.mockMvc.perform(post("/zoho/signup").accept(MediaType.APPLICATION_JSON)
@@ -92,7 +95,7 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.data").value("supr9sung"))
+                .andExpect(jsonPath("$.data").isNotEmpty())
                 .andExpect(jsonPath("$.status").value("S"));
 
     }
@@ -105,13 +108,15 @@ class UserControllerTest {
                 .withEmail("supreetsingh5@xebia.com")
                 .withPassword("hola@bitch")
                 .withCompany("XEBIA")
+                .wihtBirthday("1/11/2019")
                 .build();
         String json = objectMapper.writeValueAsString(userRequest);
         this.mockMvc.perform(post("/zoho/signup").accept(MediaType.APPLICATION_JSON)
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isEmpty());
 
     }
 
@@ -154,6 +159,7 @@ class UserControllerTest {
                 .withCompany("pari")
                 .withEmail("nisha@gmail.com")
                 .withMobile("7408738100")
+                .wihtBirthday("1/11/2019")
                 .build();
         userRepository.save(userRequest.toUser(passwordEncoder));
         this.mockMvc.perform(post("/zoho/user/follow").param("target", "supr8sung")
@@ -176,6 +182,7 @@ class UserControllerTest {
                 .withCompany("pari")
                 .withEmail("nisha@gmail.com")
                 .withMobile("7408738100")
+                .wihtBirthday("1/11/2019")
                 .build();
         User savedNisha = userRepository.save(userRequest.toUser(passwordEncoder));
         savedNisha.setFollowingCount(1);

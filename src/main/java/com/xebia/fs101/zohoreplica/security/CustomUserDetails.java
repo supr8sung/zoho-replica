@@ -1,4 +1,4 @@
-package com.xebia.fs101.zohoreplica.security.core;
+package com.xebia.fs101.zohoreplica.security;
 
 import com.xebia.fs101.zohoreplica.entity.User;
 import org.springframework.security.core.GrantedAuthority;

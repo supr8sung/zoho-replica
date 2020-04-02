@@ -31,6 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
 import static com.xebia.fs101.zohoreplica.utility.OtpUtility.generateOtp;
@@ -59,7 +61,7 @@ public class UserController {
 
         User savedUser = userService.save(userRequest);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "User saved successfully",
-                savedUser.getUsername());
+                savedUser.getId());
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
@@ -173,6 +175,13 @@ public class UserController {
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
 
+//    @GetMapping("/user/birthdays")
+//    public ResponseEntity<?> birthdays(){
+//        List<User> user=new ArrayList<>();
+//        userService.allBirthdays();
+////        ZohoReplicaResponse zohoReplicaResponse=
+//    }
+
     private ZohoReplicaResponse getResponse(String status, String message, Object data) {
         return new ZohoReplicaResponse.Builder()
                 .withData(data)
@@ -194,5 +203,6 @@ public class UserController {
             throw new UsernameNotFoundException("No logged in user found");
         return user;
     }
+
 
 }

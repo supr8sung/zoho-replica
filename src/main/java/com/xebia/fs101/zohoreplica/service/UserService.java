@@ -116,4 +116,8 @@ public class UserService {
                 .anyMatch(e -> e.equals(requestUser.getUsername()));
 
     }
+
+    public void allBirthdays() {
+        userRepository.findAll();
+    }
 }

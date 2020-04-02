@@ -65,6 +65,7 @@ class AttendanceControllerTest {
                 .withMobile("9643496936")
                 .withRole(ADMIN)
                 .withCompany("Xebia")
+                .wihtBirthday("1/11/2019")
                 .build();
 
         user = userRepository.save(userRequest.toUser(passwordEncoder));
@@ -101,15 +102,7 @@ class AttendanceControllerTest {
 
     }
 
-    @Test
-    void should_see_his_last_checkin_details() throws Exception {
-        Attendance attendance = attendanceService.checkin(user);
-        this.mockMvc.perform(get("/zoho/user/last-checkin")
-                .with(user("supr8sung").password("12345").roles("USER")))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").isNotEmpty());
-    }
+
 
     @Test
     void should_get_daily_working_hours() throws Exception {

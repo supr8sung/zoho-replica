@@ -1,5 +1,8 @@
 package com.xebia.fs101.zohoreplica.api.response;
 
+import com.sun.javafx.fxml.LoadListener;
+
+import java.time.LocalDate;
 import java.time.LocalTime;
 public class LoggedInUserResponse {
     private String fullname;
@@ -9,9 +12,11 @@ public class LoggedInUserResponse {
     private long followersCount;
     private long followingCount;
     private LocalTime lastCheckin;
+    private LocalDate birthday;
 
     public LoggedInUserResponse(String fullname, String email, String company, String mobile,
-                                long followersCount, long followingCount, LocalTime lastCheckin) {
+                                long followersCount, long followingCount, LocalTime lastCheckin,
+                                LocalDate birthday) {
         this.fullname = fullname;
         this.email = email;
         this.company = company;
@@ -19,6 +24,7 @@ public class LoggedInUserResponse {
         this.followersCount = followersCount;
         this.followingCount = followingCount;
         this.lastCheckin = lastCheckin;
+        this.birthday = birthday;
     }
 
     private LoggedInUserResponse(Builder builder) {
@@ -29,6 +35,7 @@ public class LoggedInUserResponse {
         followersCount = builder.followersCount;
         followingCount = builder.followingCount;
         lastCheckin = builder.lastCheckin;
+        birthday = builder.birthday;
     }
 
     public String getFullname() {
@@ -59,8 +66,12 @@ public class LoggedInUserResponse {
         return lastCheckin;
     }
 
+    public LocalDate getBirthday() {
+        return birthday;
+    }
 
     public static final class Builder {
+        private LocalDate birthday;
         private String fullname;
         private String email;
         private String company;
@@ -104,6 +115,10 @@ public class LoggedInUserResponse {
 
         public Builder withLastCheckin(LocalTime val) {
             lastCheckin = val;
+            return this;
+        }
+        public Builder withBirthday(LocalDate val){
+            birthday=val;
             return this;
         }
 
