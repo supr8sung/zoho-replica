@@ -1,34 +1,34 @@
 package com.xebia.fs101.zohoreplica.api.response;
 
 import java.time.LocalTime;
-public class UserViewResponse {
-
+public class LoggedInUserResponse {
     private String fullname;
     private String email;
     private String company;
     private String mobile;
     private long followersCount;
     private long followingCount;
+    private LocalTime lastCheckin;
 
-
-    public UserViewResponse(String fullname, String email, String company, String mobile,
-                            long followersCount, long followingCount) {
+    public LoggedInUserResponse(String fullname, String email, String company, String mobile,
+                                long followersCount, long followingCount, LocalTime lastCheckin) {
         this.fullname = fullname;
         this.email = email;
         this.company = company;
         this.mobile = mobile;
         this.followersCount = followersCount;
         this.followingCount = followingCount;
+        this.lastCheckin = lastCheckin;
     }
 
-    private UserViewResponse(Builder builder) {
+    private LoggedInUserResponse(Builder builder) {
         fullname = builder.fullname;
         email = builder.email;
         company = builder.company;
         mobile = builder.mobile;
         followersCount = builder.followersCount;
         followingCount = builder.followingCount;
-
+        lastCheckin = builder.lastCheckin;
     }
 
     public String getFullname() {
@@ -55,6 +55,10 @@ public class UserViewResponse {
         return followingCount;
     }
 
+    public LocalTime getLastCheckin() {
+        return lastCheckin;
+    }
+
 
     public static final class Builder {
         private String fullname;
@@ -63,7 +67,7 @@ public class UserViewResponse {
         private String mobile;
         private long followersCount;
         private long followingCount;
-
+        private LocalTime lastCheckin;
 
         public Builder() {
         }
@@ -98,9 +102,13 @@ public class UserViewResponse {
             return this;
         }
 
+        public Builder withLastCheckin(LocalTime val) {
+            lastCheckin = val;
+            return this;
+        }
 
-        public UserViewResponse build() {
-            return new UserViewResponse(this);
+        public LoggedInUserResponse build() {
+            return new LoggedInUserResponse(this);
         }
     }
 }

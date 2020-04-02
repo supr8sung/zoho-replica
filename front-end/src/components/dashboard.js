@@ -1,20 +1,24 @@
-import React, { useContext } from 'react';
+import React, { useContext,useState } from 'react';
 import {fetch} from '../services/httpServices';
 import UserContext from '../services/user-context';
 
-
 const DashBoard  = () =>{
     const user = useContext(UserContext);
-    const CheckIn = (values) => {
+    const [checkin,setCheckin] = useState(false)
+    const checkIncheckOut = (values) => {
         event.preventDefault();
+        setCheckin(!checkin)
         fetch.post({
-            url: '/zoho/user/checkin',
+
+            url: checkin?  '/zoho/user/checkout':'/zoho/user/checkin',
+
 
             callbackHandler: saveDataSuccessHandler
         });
     }
 
-    
+
+
 
     function saveDataSuccessHandler(response){
         console.log(response);
@@ -25,8 +29,8 @@ const DashBoard  = () =>{
             user ? 
                             
                             <div className="container-fluid mt-100">
-                            <button type="submit" className="btn btn-primary" onClick={CheckIn}>CheckIn</button>
-                            <button type="submit" className="btn btn-primary" onClick={CheckIn}>CheckOut</button>
+                            <button type="submit" className="btn btn-primary" onClick={()=>{checkIncheckOut(checkin)}}>{(checkin) ? "Checkout":"Checkin"}</button>
+
                         </div> : null
                         
             
