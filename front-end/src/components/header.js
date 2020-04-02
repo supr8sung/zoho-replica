@@ -8,9 +8,9 @@ import { UserConsumer } from '../services/user-context';
 
 class Header extends React.Component{
     
-    constructor(props){
-        super(props);
-    };
+    // constructor(props){
+    //     super(props);
+    // };
     componentDidMount() {
         const user = this.context;
     

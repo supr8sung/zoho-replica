@@ -15,6 +15,18 @@ const App = (props) =>{
 
     const [user,setUser] = useState();
    
+
+
+    const saveDataSuccessHandler = (response) =>{
+        if(response.payload && response.payload.data){
+            if(!localStorage.getItem('username')){
+                localStorage.setItem('username',{username: response.payload.data.fullname});
+            }
+    
+            setUser({username: response.payload.data.fullname,user:response.payload.data});
+        }
+        
+    }
     useEffect(()=>{
         fetch.get({
             url: '/zoho/loggedinuser',
@@ -29,16 +41,7 @@ const App = (props) =>{
     const redirectToLogin = () =>{
         window.location.href="http://localhost:8080/login";
     }
-    const saveDataSuccessHandler = (response) =>{
-        if(response.payload && response.payload.data){
-            if(!localStorage.getItem('username')){
-                localStorage.setItem('username',{username: response.payload.data.fullname});
-            }
     
-            setUser({username: response.payload.data.fullname,user:response.payload.data});
-        }
-        
-    }
     
     return(
         <div>{
@@ -46,7 +49,7 @@ const App = (props) =>{
             (user && user.username) ? 
             <div>
                 <UserProvider value={user.username}>
-                { props.location.pathname != '/loggedout' ?  <Header/> : null}
+                { props.location.pathname !== '/loggedout' ?  <Header/> : null}
                     <Switch>
                             <Route exact path="/" component={DashBoard}/>
                             <Route path="/profile" render={() => <Profile profileDetails={user} />}/>
