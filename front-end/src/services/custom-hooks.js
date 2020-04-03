@@ -4,6 +4,7 @@ import {fetch} from '../services/httpServices';
 
 const useTimer = (user) => {
   const loggedUser = JSON.parse(user);
+  const [loggedInUserCheckInTime,setloggedInUserCheckInTime] = useState(loggedUser.lastCheckin);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [timer,setTimer] = useState(0);
@@ -20,25 +21,27 @@ const useTimer = (user) => {
 
 
   useEffect(() =>{
-    if(!checkin){
+    if(loggedInUserCheckInTime){
       const interval = setInterval(() => {
           setTimer(timer => timer = new Date().getMinutes());
       }, 1000);
-      if(loggedUser.lastCheckin){
+      let hr = 0;
+      let min = 0;
+     // if(loggedInUserCheckInTime){
           setCheckin(true);
-          let runningTime = calculateHoursAndMinutes(loggedUser.lastCheckin);
-          setHours(Math.abs(runningTime.H)  < 10 ? '0' + Math.abs(runningTime.H) : Math.abs(runningTime.H));
-          setMinutes(Math.abs(runningTime.M)  < 10 ? '0' + Math.abs(runningTime.M) : Math.abs(runningTime.M));
-      } else {
-        setHours(0);
-        setMinutes(0);
-      }
+          let runningTime = calculateHoursAndMinutes(loggedInUserCheckInTime);
+          hr = Math.abs(runningTime.H)  < 10 ? '0' + Math.abs(runningTime.H) : Math.abs(runningTime.H);
+          min = Math.abs(runningTime.M)  < 10 ? '0' + Math.abs(runningTime.M) : Math.abs(runningTime.M);
+     // } 
+
+      setHours(hr);
+      setMinutes(min);
       return () => {
         clearInterval(interval);
       };
     }
      
-    },[timer]);
+    },[timer,loggedInUserCheckInTime]);
   
   function getCurrentTimeInSeconds(){
     const currentTime = new Date();
@@ -64,13 +67,17 @@ const useTimer = (user) => {
       const _chHours = splittedChTime[0];
       const _chMinutes = splittedChTime[1];
       const _chSeconds = splittedChTime[2];
-      const totalSeconds = (_chHours * 60 * 60) + (_chMinutes * 60) + parseInt(_chSeconds);
+      const totalSeconds = (_chHours * 60 * 60) + (_chMinutes * 60) + parseInt(_chSeconds,10);
       return calculateDiffAndReturnHours(totalSeconds);
     }
  }
 
 function saveDataSuccessHandler(response){
     setCheckin(!checkin)
+    if(!checkin){
+      setloggedInUserCheckInTime(response.payload.data);
+    }
+    
     if(checkin){
       setMinutes(0);
       setHours(0);

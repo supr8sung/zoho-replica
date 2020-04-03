@@ -1,4 +1,4 @@
-import React, { useContext,useState } from 'react';
+import React, { useContext } from 'react';
 import UserContext from '../services/user-context';
 import useTimer from '../services/custom-hooks';
 
