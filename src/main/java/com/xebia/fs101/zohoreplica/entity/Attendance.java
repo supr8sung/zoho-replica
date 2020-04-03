@@ -1,24 +1,29 @@
 package com.xebia.fs101.zohoreplica.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.LocalTime;
 @Entity
-@Table(name = "attendance")
+
+@Table(name = "attendance",indexes = {@Index(name = "attendance_index", columnList = "date")})
 public class Attendance {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @Column(name = "date")
     private LocalDate date;
     private LocalTime checkin;
     private LocalTime checkout;
+
     @ManyToOne
     private User user;
 
@@ -35,11 +40,11 @@ public class Attendance {
         return date;
     }
 
-    public LocalTime getCheckinTime() {
+    public LocalTime checkinTime() {
         return checkin;
     }
 
-    public LocalTime getCheckoutTime() {
+    public LocalTime checkoutTime() {
         return checkout;
     }
 

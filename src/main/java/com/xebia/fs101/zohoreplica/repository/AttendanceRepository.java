@@ -11,17 +11,22 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.UUID;
 
 import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.CHECKOUT;
+import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.CHECKOUT2;
 @Repository
+@Transactional
 public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
 
     Attendance findByUser(User user);
 
-    @Transactional
+
     @Modifying
-    @Query(CHECKOUT)
-    void checkout(@Param("userId") UUID userId, @Param("date") LocalDate date,
-                        @Param("time") LocalTime time);
+    @Query( nativeQuery = true,value = "SELECT * FROM ATTENDANCE  as a WHERE a.date: date AND a.user_id=: " +
+            "userId")
+    List<Attendance> findAttendanceDetails(@Param("date") LocalDate date, @Param("user_id") UUID userdId);
+
+
 }

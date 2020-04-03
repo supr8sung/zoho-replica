@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.List;
+import java.util.NoSuchElementException;
 @Service
 public class AttendanceService {
 
@@ -21,14 +21,19 @@ public class AttendanceService {
     private UserRepository userRepository;
 
 
+    public Attendance checkout(Long id) {
 
-
-    public void checkout(User user) {
-         attendanceRepository.checkout(user.getId(),LocalDate.now(),LocalTime.now());
+        Attendance attendance =
+                attendanceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User is not" +
+                        " " +
+                "chekcked in"));
+        attendance.setCheckout(LocalTime.now());
+        return attendanceRepository.save(attendance);
+       // attendanceRepository.checkout(id, LocalTime.now());
+//        attendanceRepository.checkout(user.getId(),LocalDate.now(),LocalTime.now());
     }
 
     public Attendance attendanceDetails(User user) {
-
         return attendanceRepository.findByUser(user);
     }
 
@@ -36,7 +41,8 @@ public class AttendanceService {
         Attendance attendance = checkinDetails(user);
         return attendanceRepository.save(attendance);
     }
-    public Attendance checkinDetails(User user){
+
+    public Attendance checkinDetails(User user) {
         return new Attendance.Builder().withUser(user)
                 .withDate(LocalDate.now())
                 .withCheckin(LocalTime.now())
@@ -44,11 +50,16 @@ public class AttendanceService {
 
     }
 
-    public Attendance checkoutDetails(User user){
+    public Attendance checkoutDetails(User user) {
         return new Attendance.Builder().withUser(user)
                 .withDate(LocalDate.now())
                 .withCheckout(LocalTime.now())
                 .build();
 
+    }
+
+
+    public List<Attendance> getAllCheckin(User user) {
+        return attendanceRepository.findAttendanceDetails(LocalDate.now(),user.getId());
     }
 }

@@ -15,6 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
@@ -27,7 +28,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {@Index(name = "user_index", columnList = "username")})
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -270,7 +272,7 @@ public class User {
         }
 
         public Builder withBirthDay(LocalDate val) {
-            birthday=val;
+            birthday = val;
             return this;
         }
 
@@ -346,13 +348,13 @@ public class User {
                 role == user.role &&
                 Objects.equals(followers, user.followers) &&
                 Objects.equals(following, user.following) &&
-                Objects.equals(birthday,user.birthday);
+                Objects.equals(birthday, user.birthday);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(id, username, fullname, email, mobile, password, company, createdAt,
-                updatedAt, role, followingCount, followersCount, followers, following,birthday);
+                updatedAt, role, followingCount, followersCount, followers, following, birthday);
         result = 31 * result + Arrays.hashCode(photo);
         return result;
     }

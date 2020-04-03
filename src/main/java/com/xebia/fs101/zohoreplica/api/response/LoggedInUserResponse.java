@@ -12,6 +12,7 @@ public class LoggedInUserResponse {
     private LocalTime lastCheckin;
     private LocalDate birthday;
 
+
     public LoggedInUserResponse(String fullname, String email, String company, String mobile,
                                 long followersCount, long followingCount, LocalTime lastCheckin,
                                 LocalDate birthday) {

@@ -1,7 +1,6 @@
 package com.xebia.fs101.zohoreplica.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xebia.fs101.zohoreplica.api.request.AttendanceRequest;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.entity.Attendance;
 import com.xebia.fs101.zohoreplica.entity.User;
@@ -14,13 +13,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.ADMIN;
@@ -93,7 +92,9 @@ class AttendanceControllerTest {
     @Test
     void user_should_be_able_to_checkout() throws Exception {
 
-        this.mockMvc.perform(post("/zoho/user/checkout")
+        Attendance attendance = attendanceService.checkin(user);
+
+        this.mockMvc.perform(post("/zoho/user/checkout/{id}",attendance.getId())
                 .with(user("supr8sung").password("12345").roles("USER"))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

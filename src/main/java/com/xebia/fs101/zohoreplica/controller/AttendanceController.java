@@ -6,6 +6,7 @@ import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.service.AttendanceService;
 import com.xebia.fs101.zohoreplica.service.MailService;
 import com.xebia.fs101.zohoreplica.service.UserService;
+import com.xebia.fs101.zohoreplica.utility.AttendanceUtility;
 import com.xebia.fs101.zohoreplica.utility.MailUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,21 +43,19 @@ public class AttendanceController {
 
         User user = getLoggedInUser();
         Attendance attendance = attendanceService.checkin(user);
-
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS,
-                "You checked in at " + attendance.getCheckinTime(),
-                attendance.getCheckinTime());
-
+                "You checked in at " + lastCheckinTime(attendance.checkinTime()),
+                attendance.getId());
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
-    @PostMapping("/user/checkout")
-    public ResponseEntity<?> checkout() {
+    @PostMapping("/user/checkout/{id}")
+    public ResponseEntity<?> checkout(@PathVariable(value = "id") Long id) {
 
-        User loggedInUser = getLoggedInUser();
-        attendanceService.checkout(loggedInUser);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "check out successful",
-                LocalTime.now());
+        Attendance attendance = attendanceService.checkout(id);
+        String totalHours = calculateDailyHours(attendance.checkinTime(), attendance.checkoutTime());
+        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Your total hours are ",
+                totalHours);
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
@@ -65,7 +65,7 @@ public class AttendanceController {
     public ResponseEntity<?> dailyHours() {
         User user = getLoggedInUser();
         Attendance attendance = attendanceService.attendanceDetails(user);
-        String totalHours = calculateDailyHours(attendance.getCheckinTime(), attendance.getCheckoutTime());
+        String totalHours = calculateDailyHours(attendance.checkinTime(), attendance.checkoutTime());
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Daily hours", totalHours);
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
@@ -77,7 +77,7 @@ public class AttendanceController {
         User user = getLoggedInUser();
         Attendance attendance = attendanceService.attendanceDetails(user);
         String mailBody = MailUtility.generateReportBody(user.getFullname(),
-                attendance.getCheckinTime(), attendance.getCheckoutTime());
+                attendance.checkinTime(), attendance.checkoutTime());
         mailService.sendMail(user.getEmail(), mailBody);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Mail Sent successfully", null);
         return new ResponseEntity<>(zohoReplicaResponse, OK);

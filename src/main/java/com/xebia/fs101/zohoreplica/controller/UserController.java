@@ -31,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
@@ -70,16 +69,18 @@ public class UserController {
         User user = getLoggedInUser();
         ZohoReplicaResponse zohoReplicaResponse=null;
 
-        Attendance attendance = attendanceService.attendanceDetails(user);
-        if(attendance!=null) {
-
-            zohoReplicaResponse=getResponse(TXN_SUCESS,
-                    "true",
-                    user.toLogeedInUserResponse(attendance.getCheckinTime()));
-        }
-        else {
-            zohoReplicaResponse=getResponse(TXN_SUCESS,"false",user.toLogeedInUserResponse(null));
-        }
+        List<Attendance> allCheckin = attendanceService.getAllCheckin(user);
+        ZohoReplicaResponse zohoReplicaResponse1=getResponse(TXN_SUCESS,"",allCheckin);
+      //  Attendance attendance = attendanceService.attendanceDetails(user);
+//        if(attendance!=null) {
+//
+//            zohoReplicaResponse=getResponse(TXN_SUCESS,
+//                    "true",
+//                    user.toLogeedInUserResponse(attendance.checkinTime()));
+//        }
+//        else {
+//            zohoReplicaResponse=getResponse(TXN_SUCESS,"false",user.toLogeedInUserResponse(null));
+//        }
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
 
