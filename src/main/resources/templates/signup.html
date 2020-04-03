@@ -13,14 +13,23 @@
         .error{
             color:Red;
         }
+        .alert{
+        color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    position: fixed;
+    width: 100%;
+    z-index: 99999;}
     </style>
 </head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function(){
 
+ $('#bt-alert').hide();
 $("form[name='signup']").validate({
          rules: {
           username: "required",
@@ -70,15 +79,20 @@ $("form[name='signup']").validate({
 	                "email": $('#signUpEmail').val(),
 	                  "password":$('#signUpPassword').val(),
 	                  "company": $('#signUpCompany').val(),
-	                  "birthdate":$('#signUpBirthDate').val()
+	                  "birthday":$('#signUpBirthDate').val()
 	              }),
 	       contentType: "application/json; charset=utf-8",
            success: function(data)
            {
-               window.location.href = "http://localhost:8080/login";
+               if(data.status == "S"){
+                    window.location.href = "http://localhost:8080/login";
+               }
+                else{
+                     $('#bt-alert').show();
+                }
            },
            error: function (error) {
-                alert('error');
+                $('#bt-alert').show();
             }
          });
         }
@@ -90,8 +104,11 @@ $("form[name='signup']").validate({
 
     </script>
 <body>
-
-<section class="hero is-primary">
+<div id="bt-alert" class="alert alert-warning">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <strong>Error!</strong> A problem has been occurred while submitting your data.
+</div>
+<section class="hero is-light">
     <!-- Hero head: will stick at the top -->
     <div class="hero-head">
         <nav class="navbar">
