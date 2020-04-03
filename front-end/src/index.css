@@ -80,4 +80,22 @@ body {
 .redirect a{
     text-decoration: underline;
 }
-  
+
+
+.checkin {
+  animation: MoveUpDown 1s linear infinite;
+  position: relative;
+  left: 0;
+  bottom: 0;
+}
+
+@keyframes MoveUpDown {
+  0%, 100% {
+    bottom: 0;
+   
+  }
+  50% {
+    bottom: 1px;
+    opacity: 0;
+  }
+}

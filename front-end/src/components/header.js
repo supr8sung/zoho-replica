@@ -48,7 +48,6 @@ class Header extends React.Component{
                           <div>
                 <Link to="/profile">Go To Profile</Link>
             </div>
-            {props}
             <div>
                 <button  onClick={() => {this.handleLogout()}}>Logout</button>
             </div>

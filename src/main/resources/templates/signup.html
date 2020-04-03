@@ -28,7 +28,9 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function(){
-
+$('.close').click(function(){
+    $('#bt-alert').hide();
+});
  $('#bt-alert').hide();
 $("form[name='signup']").validate({
          rules: {
@@ -79,7 +81,8 @@ $("form[name='signup']").validate({
 	                "email": $('#signUpEmail').val(),
 	                  "password":$('#signUpPassword').val(),
 	                  "company": $('#signUpCompany').val(),
-	                  "birthday":$('#signUpBirthDate').val()
+	                   "birthday":'03/04/2020'
+
 	              }),
 	       contentType: "application/json; charset=utf-8",
            success: function(data)
@@ -105,7 +108,7 @@ $("form[name='signup']").validate({
     </script>
 <body>
 <div id="bt-alert" class="alert alert-warning">
-    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <a href="#" class="close">&times;</a>
     <strong>Error!</strong> A problem has been occurred while submitting your data.
 </div>
 <section class="hero is-light">

@@ -12,26 +12,21 @@ import {useEffect} from 'react';
 
 
 const App = (props) =>{
-
     const [user,setUser] = useState();
-   
-
 
     const saveDataSuccessHandler = (response) =>{
         if(response.payload && response.payload.data){
             if(!localStorage.getItem('username')){
                 localStorage.setItem('username',{username: response.payload.data.fullname});
             }
-    
-            setUser({username: response.payload.data.fullname,user:response.payload.data});
+            setUser({userData:response.payload.data});
         }
-        
     }
+
+
     useEffect(()=>{
         fetch.get({
             url: '/zoho/loggedinuser',
-
-
             callbackHandler: saveDataSuccessHandler
         });
         return(() =>{
@@ -47,13 +42,14 @@ const App = (props) =>{
     return(
         <div>{
            
-            (user && user.username) ? 
+            (user && user.userData) ? 
             <div>
-                <UserProvider value={user.username}>
+                <UserProvider value={JSON.stringify(user.userData)}>
                 { props.location.pathname !== '/loggedout' ?  <Header/> : null}
                     <Switch>
                             <Route exact path="/" component={DashBoard}/>
-                            <Route path="/profile" render={() => <Profile profileDetails={user} />}/>
+                            <Route path="/profile" render={() => <Profile
+                             profileDetails={JSON.stringify(user.userData) } />}/>
                             <Route path="/loggedout" component={loggedOut}/>
                             <Route component={PageNotFound}/>
                     

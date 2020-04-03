@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Profile = (props) =>{
+    const proDetails = JSON.parse(props.profileDetails)
     return(
         <div>
            
@@ -10,32 +11,32 @@ const Profile = (props) =>{
             <h3>profile</h3>
             <div className="form-group">
                 <label>NAME:</label>
-                <span>{props.profileDetails.user.fullname}</span>
+                <span>{proDetails.fullname}</span>
             </div>
 
             <div className="form-group">
                 <label>EMAIL:</label>
-                <span>{props.profileDetails.user.email}</span>
+                <span>{proDetails.email}</span>
             </div>
 
             <div className="form-group">
                 <label>COMPANY:</label>
-                <span>{props.profileDetails.user.company}</span>
+                <span>{proDetails.company}</span>
             </div>
 
             <div className="form-group">
                 <label>MOBILE:</label>
-                <span>{props.profileDetails.user.mobile}</span>
+                <span>{proDetails.mobile}</span>
             </div>
 
             <div className="form-group">
                 <label>FOLLOWING:</label>
-                <span>{props.profileDetails.user.followersCount}</span>
+                <span>{proDetails.followersCount}</span>
             </div>
 
             <div className="form-group">
                 <label>FOLLOWERS:</label>
-                <span>{props.profileDetails.user.followingCount}</span>
+                <span>{proDetails.followingCount}</span>
             </div>
      
      </div>
