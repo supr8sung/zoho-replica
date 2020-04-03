@@ -67,7 +67,7 @@ const useTimer = (user) => {
       const _chHours = splittedChTime[0];
       const _chMinutes = splittedChTime[1];
       const _chSeconds = splittedChTime[2];
-      const totalSeconds = (_chHours * 60 * 60) + (_chMinutes * 60) + parseInt(_chSeconds);
+      const totalSeconds = (_chHours * 60 * 60) + (_chMinutes * 60) + parseInt(_chSeconds,10);
       return calculateDiffAndReturnHours(totalSeconds);
     }
  }
