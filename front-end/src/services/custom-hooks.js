@@ -25,7 +25,7 @@ const useTimer = (user) => {
   useEffect(() =>{
     if(loggedInUserCheckInTime && loggedInUserCheckInTime!=="00:00:00"){
       interval = setInterval(() => {
-          setTimer(timer => timer = timer+ 1);
+          setTimer(timer => timer++);
       }, 1000); 
       let hr = 0;
       let min = 0;
