@@ -31,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
 import static com.xebia.fs101.zohoreplica.utility.OtpUtility.generateOtp;
@@ -63,6 +64,12 @@ public class UserController {
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
+    @GetMapping("/valid")
+    public ResponseEntity<?> validateUsername(@RequestParam String username){
+        Boolean isUsernameValid = userService.validateUsername(username);
+        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",isUsernameValid);
+        return new ResponseEntity<>(zohoReplicaResponse,OK);
+    }
     @GetMapping("/loggedinuser")
     public ResponseEntity<?> loggeduser() {
         User user = getLoggedInUser();
@@ -161,6 +168,14 @@ public class UserController {
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Password Changes Successfully",
                 savedUser);
         return new ResponseEntity<>(zohoReplicaResponse, OK);
+    }
+
+    @GetMapping("/user/search")
+    public ResponseEntity<?> search(@RequestParam String name){
+        List<String> nameSuggetions = userService.searchByName(name.toUpperCase());
+        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",nameSuggetions);
+        return new ResponseEntity<>(zohoReplicaResponse,OK);
+
     }
 
 //    @GetMapping("/user/birthdays")

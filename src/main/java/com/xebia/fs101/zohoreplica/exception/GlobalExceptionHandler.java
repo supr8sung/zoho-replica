@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> userNotSaved(DataIntegrityViolationException ex) {
 
-        zohoReplicaResponse = getResponse(TXN_FAILED, ex.getRootCause().getMessage().split("\n")[1], "");
+        zohoReplicaResponse = getResponse(TXN_FAILED, ex.getRootCause().getMessage().split("\n")[0], "");
         return new ResponseEntity<>(zohoReplicaResponse, OK);
 
     }

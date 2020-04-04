@@ -73,21 +73,20 @@ public class UserRequest {
         email = builder.email;
         password = builder.password;
         company = builder.company;
-        role =builder.role;
-        birthday=builder.birthday;
+        role = builder.role;
+        birthday = builder.birthday;
     }
 
     public User toUser(PasswordEncoder passwordEncoder) {
 
-
         return new User.Builder()
                 .withUsername(this.username)
-                .withFullname(this.fullname==null?"SUPREET SINGH": this.fullname)
+                .withFullname(this.fullname = this.fullname.toUpperCase())
                 .withEmail(this.email)
                 .withMobile(this.mobile)
                 .withCompany(this.company.toUpperCase())
                 .withPassword(passwordEncoder.encode(this.password))
-                .withRole(this.role==null? EMPLOYEE: this.role)
+                .withRole(this.role == null ? EMPLOYEE : this.role)
                 .withFollowing(new HashSet<>())
                 .withFollowers(new HashSet<>())
                 .withFollowingCount(0)
@@ -139,12 +138,14 @@ public class UserRequest {
             company = val;
             return this;
         }
-        public Builder withRole(ZohoApplicationRole val){
-            role=val;
+
+        public Builder withRole(ZohoApplicationRole val) {
+            role = val;
             return this;
         }
-        public Builder wihtBirthday(String val){
-            birthday=val;
+
+        public Builder wihtBirthday(String val) {
+            birthday = val;
             return this;
         }
 

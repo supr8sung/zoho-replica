@@ -5,4 +5,6 @@ public interface QueryConstant {
             "date=:date";
 
     String CHECKOUT2 = "UPDATE Attendance set checkout: time where id= :id ";
+    String FIND_BY_NAME = "SELECT fullname FROM USERS where fullname like %:keyword%";
+
 }

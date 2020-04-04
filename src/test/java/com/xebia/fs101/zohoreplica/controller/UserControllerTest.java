@@ -125,7 +125,7 @@ class UserControllerTest {
                 .with(httpBasic("supr8sung", "1234")))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.fullname").value("Supreet Singh"))
+                .andExpect(jsonPath("$.data.fullname").value("SUPREET SINGH"))
                 .andExpect(jsonPath("$.status").value("S"))
                 .andExpect(jsonPath("$.data.followersCount").isNotEmpty());
 
@@ -216,14 +216,19 @@ class UserControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated());
 
-
         this.mockMvc.perform(get("/zoho/user/{username}", "supr8sung")
                 .accept(MediaType.APPLICATION_JSON)
                 .with(httpBasic("supr8sung", "54321")))
                 .andDo(print())
                 .andExpect(status().isOk());
 
+    }
 
-
+    @Test
+    void validate_a_username_if_it_is_already_taken_or_not() throws Exception {
+        this.mockMvc.perform(get("/zoho/valid").param("username", "supr8sung"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(false));
     }
 }

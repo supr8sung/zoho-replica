@@ -10,8 +10,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.USER_NAME_INVALID;
+import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.USER_NAME_VALID;
 @Service
 public class UserService {
     @Autowired
@@ -119,5 +123,19 @@ public class UserService {
 
     public void allBirthdays() {
         userRepository.findAll();
+    }
+
+    public Boolean validateUsername(String username) {
+        if(username==null|| username.equals(""))
+            return USER_NAME_INVALID;
+        User user = userRepository.findByUsername(username);
+        if(user==null)
+            return USER_NAME_VALID;
+        else
+            return USER_NAME_INVALID;
+    }
+
+    public List<String> searchByName(String name) {
+        return userRepository.search(name);
     }
 }
