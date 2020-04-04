@@ -24,7 +24,9 @@ public class AttendanceUtility {
 
         return (checkinTime.getHour() < 10 ? "0" + checkinTime.getHour() : checkinTime.getHour()) +
                 ":" +
-                (checkinTime.getMinute() < 10 ? "0" + checkinTime.getMinute() : checkinTime.getMinute());
+                (checkinTime.getMinute() < 10 ? "0" + checkinTime.getMinute() : checkinTime.getMinute()) +
+                ":" +
+                (checkinTime.getSecond() < 10 ? "0" + checkinTime.getSecond() : checkinTime.getSecond());
     }
 
 

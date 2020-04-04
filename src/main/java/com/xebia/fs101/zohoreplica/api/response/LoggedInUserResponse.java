@@ -30,6 +30,10 @@ public class LoggedInUserResponse {
         this.checkinId=checkinId;
     }
 
+    public Long getCheckinId() {
+        return checkinId;
+    }
+
     private LoggedInUserResponse(Builder builder) {
         fullname = builder.fullname;
         email = builder.email;

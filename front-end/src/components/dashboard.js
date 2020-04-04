@@ -11,7 +11,7 @@ const DashBoard  = () =>{
         <div className="container-fluid mt-100">
             <button type="submit" className="btn btn-primary" onClick={()=>{checkIncheckOut(checkin)}}>{(checkin) ? "Checkout":"Checkin"}</button>
             <button className="btn btn-primary">
-                <span className="checkin">{hours} :{minutes}</span>
+                <span className={checkin ? 'checkin': null}>{hours} :{minutes}</span>
             </button>
             
         </div> : null 

@@ -36,7 +36,7 @@ class AttendanceUtilityTest {
     void should_give_last_checkin_time() {
         LocalTime localTime = LocalTime.of(23, 5,6);
         String checkinTime = lastCheckinTimeHours(localTime);
-        assertEquals("23:05",checkinTime);
+        assertEquals("23:05:06",checkinTime);
     }
 
     @Test
