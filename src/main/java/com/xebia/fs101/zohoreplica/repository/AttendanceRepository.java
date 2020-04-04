@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,15 +19,17 @@ import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.CHECKOUT;
 import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.CHECKOUT2;
 @Repository
 @Transactional
-public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
+public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     Attendance findByUser(User user);
 
 
     @Modifying
-    @Query( nativeQuery = true,value = "SELECT * FROM ATTENDANCE  as a WHERE a.date: date AND a.user_id=: " +
-            "userId")
-    List<Attendance> findAttendanceDetails(@Param("date") LocalDate date, @Param("user_id") UUID userdId);
+    @Query(nativeQuery = true, value = "SELECT * FROM ATTENDANCE a  WHERE a.date= ?1 AND " +
+            "a.user_id= ?2")
+    List<Attendance> findAttendanceDetails(LocalDate date, UUID userId);
+
+
 
 
 }

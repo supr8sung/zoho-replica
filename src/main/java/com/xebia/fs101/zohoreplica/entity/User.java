@@ -370,7 +370,7 @@ public class User {
                 .build();
     }
 
-    public LoggedInUserResponse toLogeedInUserResponse(LocalTime lastcheckin) {
+    public LoggedInUserResponse toLogeedInUserResponse(LocalTime lastcheckin,String totalHours) {
         return new LoggedInUserResponse.Builder()
                 .withFullname(this.fullname)
                 .withCompany(this.company)
@@ -380,6 +380,7 @@ public class User {
                 .withFollowingCount(this.followingCount)
                 .withLastCheckin(lastcheckin)
                 .withBirthday(this.birthday)
+                .withTotalHours(totalHours)
                 .build();
     }
 }

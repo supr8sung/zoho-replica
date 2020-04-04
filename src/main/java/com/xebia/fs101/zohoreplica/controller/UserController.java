@@ -5,8 +5,8 @@ import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties
 import com.xebia.fs101.zohoreplica.api.request.ChangePasswordRequest;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.api.response.FollowResponse;
+import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
 import com.xebia.fs101.zohoreplica.api.response.ZohoReplicaResponse;
-import com.xebia.fs101.zohoreplica.entity.Attendance;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.exception.EmptyFileException;
 import com.xebia.fs101.zohoreplica.service.AttendanceService;
@@ -31,7 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
+import java.time.LocalTime;
+import java.util.Map;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
 import static com.xebia.fs101.zohoreplica.utility.OtpUtility.generateOtp;
@@ -67,20 +68,8 @@ public class UserController {
     @GetMapping("/loggedinuser")
     public ResponseEntity<?> loggeduser() {
         User user = getLoggedInUser();
-        ZohoReplicaResponse zohoReplicaResponse=null;
-
-        List<Attendance> allCheckin = attendanceService.getAllCheckin(user);
-        ZohoReplicaResponse zohoReplicaResponse1=getResponse(TXN_SUCESS,"",allCheckin);
-      //  Attendance attendance = attendanceService.attendanceDetails(user);
-//        if(attendance!=null) {
-//
-//            zohoReplicaResponse=getResponse(TXN_SUCESS,
-//                    "true",
-//                    user.toLogeedInUserResponse(attendance.checkinTime()));
-//        }
-//        else {
-//            zohoReplicaResponse=getResponse(TXN_SUCESS,"false",user.toLogeedInUserResponse(null));
-//        }
+        LoggedInUserResponse loggedInUserResponse = attendanceService.getAllCheckinDetails(user);
+        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",loggedInUserResponse);
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
 

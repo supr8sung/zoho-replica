@@ -1,5 +1,6 @@
 package com.xebia.fs101.zohoreplica.service;
 
+import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
 import com.xebia.fs101.zohoreplica.entity.Attendance;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.repository.AttendanceRepository;
@@ -9,8 +10,12 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+
+import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.*;
 @Service
 public class AttendanceService {
 
@@ -26,10 +31,10 @@ public class AttendanceService {
         Attendance attendance =
                 attendanceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User is not" +
                         " " +
-                "chekcked in"));
+                        "chekcked in"));
         attendance.setCheckout(LocalTime.now());
         return attendanceRepository.save(attendance);
-       // attendanceRepository.checkout(id, LocalTime.now());
+        // attendanceRepository.checkout(id, LocalTime.now());
 //        attendanceRepository.checkout(user.getId(),LocalDate.now(),LocalTime.now());
     }
 
@@ -59,7 +64,29 @@ public class AttendanceService {
     }
 
 
-    public List<Attendance> getAllCheckin(User user) {
-        return attendanceRepository.findAttendanceDetails(LocalDate.now(),user.getId());
+    public LoggedInUserResponse getAllCheckinDetails(User user) {
+
+        LocalTime lastcheckin = LocalTime.MIN;
+        List<Attendance> attendanceDetails = attendanceRepository.findAttendanceDetails(LocalDate.now(),
+                user.getId());
+
+        if (attendanceDetails.size() == 0) {
+            return user.toLogeedInUserResponse(lastcheckin,"00:00");
+        }
+        long hours = 0;
+        long minutes = 0;
+
+        for (Attendance attendance : attendanceDetails) {
+            lastcheckin = attendance.checkinTime().compareTo(lastcheckin) > 0 ? attendance.checkinTime() :
+                    lastcheckin;
+
+            hours += getHours(attendance.checkinTime(), attendance.checkoutTime());
+            minutes += getMinutes(attendance.checkinTime(), attendance.checkoutTime());
+        }
+        String totalHours= totalHours(hours,minutes);
+
+        return user.toLogeedInUserResponse(lastcheckin,totalHours);
+
+
     }
 }

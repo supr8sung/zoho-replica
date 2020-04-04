@@ -69,6 +69,7 @@ public class GlobalExceptionHandler {
 
     }
 
+
     public ZohoReplicaResponse getResponse(String status, String message, Object data) {
         return new ZohoReplicaResponse.Builder()
                 .withMessage(message)

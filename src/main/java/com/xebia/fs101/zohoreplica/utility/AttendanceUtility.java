@@ -21,10 +21,31 @@ public class AttendanceUtility {
 
     }
 
-    public static String lastCheckinTime(LocalTime checkinTime){
+    public static String lastCheckinTimeHours(LocalTime checkinTime) {
 
         return (checkinTime.getHour() < 10 ? "0" + checkinTime.getHour() : checkinTime.getHour()) +
                 ":" +
                 (checkinTime.getMinute() < 10 ? "0" + checkinTime.getMinute() : checkinTime.getMinute());
+    }
+
+
+    public static long getHours(LocalTime checkinTime, LocalTime checkoutTime) {
+        if (checkoutTime == null || checkinTime == null)
+            return 0;
+        return HOURS.between(checkinTime, checkoutTime);
+    }
+
+    public static long getMinutes(LocalTime checkinTime, LocalTime checkoutTime) {
+        if (checkoutTime == null || checkinTime == null)
+            return 0;
+        return MINUTES.between(checkinTime, checkoutTime);
+    }
+
+    public static String totalHours(long hours, long minutes) {
+
+        minutes = minutes > 60 ? minutes % 60 : minutes;
+        return (hours < 10 ? "0" + hours : hours)
+                + ":"
+                + (minutes < 10 ? "0" + minutes : minutes);
     }
 }

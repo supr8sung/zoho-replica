@@ -6,7 +6,6 @@ import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.service.AttendanceService;
 import com.xebia.fs101.zohoreplica.service.MailService;
 import com.xebia.fs101.zohoreplica.service.UserService;
-import com.xebia.fs101.zohoreplica.utility.AttendanceUtility;
 import com.xebia.fs101.zohoreplica.utility.MailUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalTime;
-
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
 import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.calculateDailyHours;
-import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.lastCheckinTime;
+import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.lastCheckinTimeHours;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 @RestController
@@ -44,7 +41,7 @@ public class AttendanceController {
         User user = getLoggedInUser();
         Attendance attendance = attendanceService.checkin(user);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS,
-                "You checked in at " + lastCheckinTime(attendance.checkinTime()),
+                "You checked in at " + lastCheckinTimeHours(attendance.checkinTime()),
                 attendance.getId());
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }

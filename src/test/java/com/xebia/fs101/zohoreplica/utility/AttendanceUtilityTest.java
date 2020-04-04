@@ -2,11 +2,12 @@ package com.xebia.fs101.zohoreplica.utility;
 
 import org.junit.jupiter.api.Test;
 
-import java.text.DecimalFormat;
 import java.time.LocalTime;
 
 import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.calculateDailyHours;
-import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.lastCheckinTime;
+import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.lastCheckinTimeHours;
+import static java.time.temporal.ChronoUnit.HOURS;
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 class AttendanceUtilityTest {
 
@@ -34,7 +35,25 @@ class AttendanceUtilityTest {
     @Test
     void should_give_last_checkin_time() {
         LocalTime localTime = LocalTime.of(23, 5,6);
-        String checkinTime = lastCheckinTime(localTime);
+        String checkinTime = lastCheckinTimeHours(localTime);
         assertEquals("23:05",checkinTime);
+    }
+
+    @Test
+    public void test(){
+        LocalTime t1 = LocalTime.of(4, 5);
+        LocalTime t2 = LocalTime.of(6, 8);
+        long hours = HOURS.between(t1, t2);
+        long minutes = MINUTES.between(t1, t2)%60;
+        System.out.println("minutes = " + minutes);
+        System.out.println("hours = " + hours);
+
+        LocalTime t3 = LocalTime.of(7, 55);
+        LocalTime t4 = LocalTime.of(9, 45);
+        hours+=HOURS.between(t3, t4);
+        System.out.println("hours = " + hours);
+        minutes+=MINUTES.between(t3,t4)%60;
+        System.out.println("minutes = " + minutes);
+
     }
 }
