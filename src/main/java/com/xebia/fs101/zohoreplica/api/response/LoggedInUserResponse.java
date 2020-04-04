@@ -12,11 +12,12 @@ public class LoggedInUserResponse {
     private LocalTime lastCheckin;
     private String totalHours;
     private LocalDate birthday;
+    private  Long checkinId;
 
 
     public LoggedInUserResponse(String fullname, String email, String company, String mobile,
                                 long followersCount, long followingCount, LocalTime lastCheckin,
-                                LocalDate birthday,String  totalHours) {
+                                LocalDate birthday,String  totalHours, Long checkinId) {
         this.fullname = fullname;
         this.email = email;
         this.company = company;
@@ -26,6 +27,7 @@ public class LoggedInUserResponse {
         this.lastCheckin = lastCheckin;
         this.birthday = birthday;
         this.totalHours=totalHours;
+        this.checkinId=checkinId;
     }
 
     private LoggedInUserResponse(Builder builder) {
@@ -38,6 +40,7 @@ public class LoggedInUserResponse {
         lastCheckin = builder.lastCheckin;
         birthday = builder.birthday;
         totalHours=builder.totalHours;
+        checkinId=builder.checkinId;
     }
 
     public String getFullname() {
@@ -78,6 +81,7 @@ public class LoggedInUserResponse {
 
     public static final class Builder {
         public String totalHours;
+        public Long checkinId;
         private LocalDate birthday;
         private String fullname;
         private String email;
@@ -132,6 +136,10 @@ public class LoggedInUserResponse {
             totalHours=val;
             return this;
 
+        }
+        public Builder withCheckinId(Long val){
+            checkinId=val;
+            return  this;
         }
 
         public LoggedInUserResponse build() {

@@ -1,6 +1,5 @@
 package com.xebia.fs101.zohoreplica.api.response;
 
-import java.time.LocalTime;
 public class UserViewResponse {
 
     private String fullname;

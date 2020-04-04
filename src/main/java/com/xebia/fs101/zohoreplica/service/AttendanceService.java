@@ -10,12 +10,13 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
-import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.*;
+import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.*;
+import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.getHours;
+import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.getMinutes;
+import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.totalHours;
 @Service
 public class AttendanceService {
 
@@ -71,12 +72,15 @@ public class AttendanceService {
                 user.getId());
 
         if (attendanceDetails.size() == 0) {
-            return user.toLogeedInUserResponse(lastcheckin,"00:00");
+            return user.toLogeedInUserResponse(lastcheckin,"00:00", NOT_CHECKED_IN);
         }
         long hours = 0;
         long minutes = 0;
+        Long checkinId=ALREADY_CHECKED_OUT;
 
         for (Attendance attendance : attendanceDetails) {
+            if(attendance.checkinTime()!=null && attendance.checkoutTime()==null)
+                checkinId=attendance.getId();
             lastcheckin = attendance.checkinTime().compareTo(lastcheckin) > 0 ? attendance.checkinTime() :
                     lastcheckin;
 
@@ -85,7 +89,7 @@ public class AttendanceService {
         }
         String totalHours= totalHours(hours,minutes);
 
-        return user.toLogeedInUserResponse(lastcheckin,totalHours);
+        return user.toLogeedInUserResponse(lastcheckin,totalHours,checkinId);
 
 
     }

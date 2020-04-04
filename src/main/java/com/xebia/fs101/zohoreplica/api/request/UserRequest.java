@@ -6,7 +6,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-
 import java.util.HashSet;
 
 import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.EMPLOYEE;

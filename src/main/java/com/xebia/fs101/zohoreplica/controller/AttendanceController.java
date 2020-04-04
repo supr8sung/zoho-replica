@@ -41,7 +41,7 @@ public class AttendanceController {
         User user = getLoggedInUser();
         Attendance attendance = attendanceService.checkin(user);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS,
-                "You checked in at " + lastCheckinTimeHours(attendance.checkinTime()),
+                lastCheckinTimeHours(attendance.checkinTime()),
                 attendance.getId());
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
