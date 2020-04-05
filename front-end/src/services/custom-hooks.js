@@ -21,6 +21,16 @@ const useTimer = (user) => {
     });
   }
 
+  useEffect(() =>{
+    fetch.get({
+      url: '/zoho/loggedinuser',
+      callbackHandler: getLoggedInUser
+    });
+  },[]);
+
+  function getLoggedInUser(response){
+    loggedUser = response.payload.data;
+  }
 
   useEffect(() =>{
     if(loggedInUserCheckInTime && loggedInUserCheckInTime!=="00:00:00"){
@@ -31,8 +41,8 @@ const useTimer = (user) => {
       let min = 0;
           setCheckin(true);
           let runningTime = calculateHoursAndMinutes(loggedInUserCheckInTime);
-          hr = Math.abs(runningTime.H)  < 10 ? '0' + Math.abs(runningTime.H) : Math.abs(runningTime.H);
-          min = Math.abs(runningTime.M)  < 10 ? '0' + Math.abs(runningTime.M) : Math.abs(runningTime.M);
+          hr = Math.abs(runningTime.H) ;
+          min = Math.abs(runningTime.M);
       setHours(hr);
       setMinutes(min);
       return () => {

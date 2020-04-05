@@ -20,7 +20,7 @@ const DashBoard  = () =>{
                         
                         <button type="submit" className={checkin ? "button is-danger is-rounded" : "button is-rounded"} onClick={()=>{checkIncheckOut(checkin)}}>{(checkin) ? "CHECK-OUT":"CHECK-IN"}</button>
                         <button className="button is-primary is-rounded" >
-                            <span className={checkin ? 'checkin': null}>{hours} :{minutes}</span>
+                            <span className={checkin ? 'checkin': null}>{hours < 10 ? '0' + hours : hours} :{minutes < 10 ? '0' + minutes : minutes}</span>
                         </button>
                     </div>
                     {/* <div className="column is-half-tablet is-half-desktop is-half-widescreen">
