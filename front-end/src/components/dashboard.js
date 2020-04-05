@@ -7,15 +7,41 @@ const DashBoard  = () =>{
     const {checkin,minutes,hours,checkIncheckOut} = useTimer(user);
 
     return(
-        JSON.parse(user) ?               
-        <div className="container-fluid mt-100">
-            <button type="submit" className="btn btn-primary" onClick={()=>{checkIncheckOut(checkin)}}>{(checkin) ? "Checkout":"Checkin"}</button>
-            <button className="btn btn-primary">
-                <span className={checkin ? 'checkin': null}>{hours} :{minutes}</span>
-            </button>
-            
-        </div> : null 
+        JSON.parse(user) ?    
+        
+        
+        <div className="hero-body">
+            <div className="container">
+                
+                    
+                    <div className="columns is-centered">
+                    <div className="box">
+                    <div className="column checkinout">
+                        
+                        <button type="submit" className={checkin ? "button is-danger is-rounded" : "button is-rounded"} onClick={()=>{checkIncheckOut(checkin)}}>{(checkin) ? "CHECK-OUT":"CHECK-IN"}</button>
+                        <button className="button is-primary is-rounded" >
+                            <span className={checkin ? 'checkin': null}>{hours} :{minutes}</span>
+                        </button>
+                    </div>
+                    {/* <div className="column is-half-tablet is-half-desktop is-half-widescreen">
+                        
+                    
+                    </div> */}
+                
+                    </div>
+                    
+                </div>
+            </div>
+        </div> : null
     );
 } 
 
+
+
+
+
+
 export default DashBoard
+
+
+

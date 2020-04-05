@@ -99,3 +99,48 @@ body {
     opacity: 0;
   }
 }
+
+.searchParent{
+  position: relative;
+}
+.searchEmployee{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.box{
+  width: 30%;
+}
+.checkinout button{
+  margin: 10px;
+}
+.home{
+  margin: 10px 4px;
+  color: black;
+}
+.userProfile .field{
+  display: flex;
+}
+.userProfile .field{
+  display: flex;
+  border-bottom: 1px solid #EFF2F7;
+
+}
+.userProfile .field :last-child{
+  border-bottom: none;
+}
+
+.userProfile .field label{
+  flex: 0.5;
+  font-weight: normal;
+}
+.userProfile .field div{
+  flex: 0.5;
+  font-weight: 600;;
+}
+.mr-10{
+  margin-right: 10px;
+}
+.navbar-item{
+  font-size: 18px;
+}

@@ -1,46 +1,60 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 const Profile = (props) =>{
     const proDetails = JSON.parse(props.profileDetails)
     return(
-        <div>
-           
-        <div className="container-fluid mt-100">
-        <button className="btn btn-dark"><Link to="/">Back to Home</Link></button>
-            <h3>profile</h3>
-            <div className="form-group">
-                <label>NAME:</label>
-                <span>{proDetails.fullname}</span>
+        <div className="hero-body">
+            <div className="container">
+                
+                    <div className="columns is-centered">
+                    <div className="box">
+                    <h4 className="title is-5"><i className="fas fa-info-circle mr-10"></i>Basic Info</h4>
+                    <div className="column userProfile">
+                        <div className="field">
+                            <label className="label">UserName</label>
+                            <div className="control has-icons-left">
+                                <span>{proDetails.fullname}</span>
+                            </div>
+                        </div>
+                        <div className="field">
+                            <label className="label">Email</label>
+                            <div className="control has-icons-left">
+                                <span>{proDetails.email}</span>
+                            </div>
+                        </div>
+                        <div className="field">
+                            <label className="label">Company</label>
+                            <div className="control has-icons-left">
+                                <span>{proDetails.company}</span>
+                            </div>
+                        </div>
+                        <div className="field">
+                            <label className="label">Mobile</label>
+                            <div className="control has-icons-left">
+                                <span>{proDetails.mobile}</span>
+                            </div>
+                        </div>
+                        <div className="field">
+                            <label className="label">Followers</label>
+                            <div className="control has-icons-left">
+                                <span>{proDetails.followersCount}</span>
+                            </div>
+                        </div>
+                        <div className="field">
+                            <label className="label">Following</label>
+                            <div className="control has-icons-left">
+                                <span>{proDetails.followingCount}</span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                
+                    </div>
+                    
+                </div>
             </div>
-
-            <div className="form-group">
-                <label>EMAIL:</label>
-                <span>{proDetails.email}</span>
-            </div>
-
-            <div className="form-group">
-                <label>COMPANY:</label>
-                <span>{proDetails.company}</span>
-            </div>
-
-            <div className="form-group">
-                <label>MOBILE:</label>
-                <span>{proDetails.mobile}</span>
-            </div>
-
-            <div className="form-group">
-                <label>FOLLOWING:</label>
-                <span>{proDetails.followersCount}</span>
-            </div>
-
-            <div className="form-group">
-                <label>FOLLOWERS:</label>
-                <span>{proDetails.followingCount}</span>
-            </div>
-     
-     </div>
         </div>
+        
         
         
     );
