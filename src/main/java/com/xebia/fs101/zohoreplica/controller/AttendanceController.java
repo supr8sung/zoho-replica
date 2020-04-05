@@ -41,7 +41,7 @@ public class AttendanceController {
         User user = getLoggedInUser();
         Attendance attendance = attendanceService.checkin(user);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS,
-                lastCheckinTimeHours(attendance.checkinTime()),
+                lastCheckinTimeHours(attendance.getCheckinTime()),
                 attendance.getId());
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
@@ -50,7 +50,7 @@ public class AttendanceController {
     public ResponseEntity<?> checkout(@PathVariable(value = "id") Long id) {
 
         Attendance attendance = attendanceService.checkout(id);
-        String totalHours = calculateDailyHours(attendance.checkinTime(), attendance.checkoutTime());
+        String totalHours = calculateDailyHours(attendance.getCheckinTime(), attendance.getCheckoutTime());
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Your total hours are ",
                 totalHours);
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
@@ -62,7 +62,7 @@ public class AttendanceController {
     public ResponseEntity<?> dailyHours() {
         User user = getLoggedInUser();
         Attendance attendance = attendanceService.attendanceDetails(user);
-        String totalHours = calculateDailyHours(attendance.checkinTime(), attendance.checkoutTime());
+        String totalHours = calculateDailyHours(attendance.getCheckinTime(), attendance.getCheckoutTime());
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Daily hours", totalHours);
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
@@ -74,7 +74,7 @@ public class AttendanceController {
         User user = getLoggedInUser();
         Attendance attendance = attendanceService.attendanceDetails(user);
         String mailBody = MailUtility.generateReportBody(user.getFullname(),
-                attendance.checkinTime(), attendance.checkoutTime());
+                attendance.getCheckinTime(), attendance.getCheckoutTime());
         mailService.sendMail(user.getEmail(), mailBody);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Mail Sent successfully", null);
         return new ResponseEntity<>(zohoReplicaResponse, OK);

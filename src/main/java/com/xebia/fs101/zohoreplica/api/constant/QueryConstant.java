@@ -1,10 +1,10 @@
 package com.xebia.fs101.zohoreplica.api.constant;
 
 public interface QueryConstant {
-    String CHECKOUT = "UPDATE  Attendance  set checkout=:time where user_id=:userId and " +
-            "date=:date";
+    String FIND_BY_KEYWORD_QUERY = "SELECT CAST(id as varchar) id,fullname FROM USERS where lower(fullname)" +
+            " like %:keyword% or lower(username) like %:keyword% ";
 
-    String CHECKOUT2 = "UPDATE Attendance set checkout: time where id= :id ";
-    String FIND_BY_NAME = "SELECT fullname FROM USERS where fullname like %:keyword%";
+    String ATTENDANCE_DETAILS_QUERY="SELECT * FROM ATTENDANCE a  WHERE a.date= ?1 AND " +
+            "a.user_id= ?2 order by a.checkin";
 
 }

@@ -40,11 +40,11 @@ public class Attendance {
         return date;
     }
 
-    public LocalTime checkinTime() {
+    public LocalTime getCheckinTime() {
         return checkin;
     }
 
-    public LocalTime checkoutTime() {
+    public LocalTime getCheckoutTime() {
         return checkout;
     }
 

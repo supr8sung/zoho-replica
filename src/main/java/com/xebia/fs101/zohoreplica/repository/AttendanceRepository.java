@@ -11,6 +11,8 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+
+import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.ATTENDANCE_DETAILS_QUERY;
 @Repository
 @Transactional
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
@@ -19,8 +21,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
 
     @Modifying
-    @Query(nativeQuery = true, value = "SELECT * FROM ATTENDANCE a  WHERE a.date= ?1 AND " +
-            "a.user_id= ?2")
+    @Query(nativeQuery = true, value = ATTENDANCE_DETAILS_QUERY)
     List<Attendance> findAttendanceDetails(LocalDate date, UUID userId);
 
 

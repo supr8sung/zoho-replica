@@ -5,6 +5,7 @@ import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
 import com.xebia.fs101.zohoreplica.api.response.UserViewResponse;
 import com.xebia.fs101.zohoreplica.security.ZohoApplicationRole;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
@@ -373,6 +374,7 @@ public class User {
     public LoggedInUserResponse toLogeedInUserResponse(LocalTime lastcheckin,String totalHours,
                                                        Long checkinId) {
         return new LoggedInUserResponse.Builder()
+                .withUserId(this.id)
                 .withFullname(this.fullname)
                 .withCompany(this.company)
                 .withEmail(this.email)

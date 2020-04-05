@@ -98,6 +98,22 @@ class UserControllerTest {
 
     }
 
+
+    @Test
+    void user_should_be_able_to_login_and_get_back_status_ok() throws Exception {
+        this.mockMvc.perform(get("/")
+                .with(httpBasic("supr8sung", "1234")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void user_should_not_login_if_wrong_username_or_password_given() throws Exception {
+        this.mockMvc.perform(get("/login")
+                .with(httpBasic("supre", "1234")))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
     @Test
     void should_not_save_a_user_if_any_required_filed_is_missing() throws Exception {
         UserRequest userRequest = new UserRequest.Builder()
@@ -125,7 +141,7 @@ class UserControllerTest {
                 .with(httpBasic("supr8sung", "1234")))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.fullname").value("SUPREET SINGH"))
+                .andExpect(jsonPath("$.data.fullname").value("Supreet Singh"))
                 .andExpect(jsonPath("$.status").value("S"))
                 .andExpect(jsonPath("$.data.followersCount").isNotEmpty());
 
@@ -231,4 +247,6 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").value(false));
     }
+
+
 }

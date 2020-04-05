@@ -6,6 +6,7 @@ import com.xebia.fs101.zohoreplica.api.request.ChangePasswordRequest;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.api.response.FollowResponse;
 import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
+import com.xebia.fs101.zohoreplica.api.response.UserSearchResponse;
 import com.xebia.fs101.zohoreplica.api.response.ZohoReplicaResponse;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.exception.EmptyFileException;
@@ -73,7 +74,7 @@ public class UserController {
     @GetMapping("/loggedinuser")
     public ResponseEntity<?> loggeduser() {
         User user = getLoggedInUser();
-        LoggedInUserResponse loggedInUserResponse = attendanceService.getAllCheckinDetails(user);
+        LoggedInUserResponse loggedInUserResponse = attendanceService.getAllLoginDetails(user);
         ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",loggedInUserResponse);
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
@@ -170,10 +171,10 @@ public class UserController {
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
 
-    @GetMapping("/user/search")
-    public ResponseEntity<?> search(@RequestParam String name){
-        List<String> nameSuggetions = userService.searchByName(name.toUpperCase());
-        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",nameSuggetions);
+    @GetMapping("/user/search/{keyword}")
+    public ResponseEntity<?> search(@PathVariable(value = "keyword") String keyword){
+        List<UserSearchResponse> userSearchResponseList = userService.searchByName(keyword);
+        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",userSearchResponseList);
         return new ResponseEntity<>(zohoReplicaResponse,OK);
 
     }

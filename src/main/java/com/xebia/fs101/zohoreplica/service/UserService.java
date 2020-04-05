@@ -1,6 +1,7 @@
 package com.xebia.fs101.zohoreplica.service;
 
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
+import com.xebia.fs101.zohoreplica.api.response.UserSearchResponse;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.exception.UserNotFoundException;
 import com.xebia.fs101.zohoreplica.exception.WrongPasswordException;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -135,7 +137,14 @@ public class UserService {
             return USER_NAME_INVALID;
     }
 
-    public List<String> searchByName(String name) {
-        return userRepository.search(name);
+    public List<UserSearchResponse> searchByName(String keyword) {
+        List<Object[]> matchedData = userRepository.search(keyword.toLowerCase());
+        List<UserSearchResponse> userSearchResponseList=new ArrayList<>();
+        for(Object[] data:matchedData){
+            userSearchResponseList.add(new UserSearchResponse(UUID.fromString(String.valueOf(data[0])),
+                    String.valueOf(data[1])));
+
+        }
+        return userSearchResponseList;
     }
 }

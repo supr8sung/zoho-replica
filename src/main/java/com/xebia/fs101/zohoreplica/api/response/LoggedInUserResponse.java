@@ -2,7 +2,9 @@ package com.xebia.fs101.zohoreplica.api.response;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.UUID;
 public class LoggedInUserResponse {
+    private UUID userId;
     private String fullname;
     private String email;
     private String company;
@@ -12,12 +14,12 @@ public class LoggedInUserResponse {
     private LocalTime lastCheckin;
     private String totalHours;
     private LocalDate birthday;
-    private  Long checkinId;
+    private Long checkinId;
 
 
     public LoggedInUserResponse(String fullname, String email, String company, String mobile,
                                 long followersCount, long followingCount, LocalTime lastCheckin,
-                                LocalDate birthday,String  totalHours, Long checkinId) {
+                                LocalDate birthday, String totalHours, Long checkinId, UUID userId) {
         this.fullname = fullname;
         this.email = email;
         this.company = company;
@@ -26,8 +28,9 @@ public class LoggedInUserResponse {
         this.followingCount = followingCount;
         this.lastCheckin = lastCheckin;
         this.birthday = birthday;
-        this.totalHours=totalHours;
-        this.checkinId=checkinId;
+        this.totalHours = totalHours;
+        this.checkinId = checkinId;
+        this.userId = userId;
     }
 
     public Long getCheckinId() {
@@ -43,8 +46,9 @@ public class LoggedInUserResponse {
         followingCount = builder.followingCount;
         lastCheckin = builder.lastCheckin;
         birthday = builder.birthday;
-        totalHours=builder.totalHours;
-        checkinId=builder.checkinId;
+        totalHours = builder.totalHours;
+        checkinId = builder.checkinId;
+        userId = builder.userId;
     }
 
     public String getFullname() {
@@ -86,6 +90,7 @@ public class LoggedInUserResponse {
     public static final class Builder {
         public String totalHours;
         public Long checkinId;
+        public UUID userId;
         private LocalDate birthday;
         private String fullname;
         private String email;
@@ -132,18 +137,27 @@ public class LoggedInUserResponse {
             lastCheckin = val;
             return this;
         }
-        public Builder withBirthday(LocalDate val){
-            birthday=val;
+
+        public Builder withBirthday(LocalDate val) {
+            birthday = val;
             return this;
         }
-        public Builder withTotalHours(String val){
-            totalHours=val;
+
+        public Builder withTotalHours(String val) {
+            totalHours = val;
             return this;
 
         }
-        public Builder withCheckinId(Long val){
-            checkinId=val;
-            return  this;
+
+        public Builder withCheckinId(Long val) {
+            checkinId = val;
+            return this;
+
+        }
+
+        public Builder withUserId(UUID val) {
+            userId = val;
+            return this;
         }
 
         public LoggedInUserResponse build() {
