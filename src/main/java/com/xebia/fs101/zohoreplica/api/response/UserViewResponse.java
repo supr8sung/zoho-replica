@@ -11,19 +11,21 @@ public class UserViewResponse {
     private long followingCount;
     private Set<String> followers;
     private Set<String> following;
+    private byte[] photo;
 
 
     public UserViewResponse(String fullname, String email, String company, String mobile,
                             long followersCount, long followingCount, Set<String> followers,
-                            Set<String > following) {
+                            Set<String> following, byte[] photo) {
         this.fullname = fullname;
         this.email = email;
         this.company = company;
         this.mobile = mobile;
         this.followersCount = followersCount;
         this.followingCount = followingCount;
-        this.followers =followers;
-        this.following=following;
+        this.followers = followers;
+        this.following = following;
+        this.photo = photo;
     }
 
     private UserViewResponse(Builder builder) {
@@ -35,6 +37,7 @@ public class UserViewResponse {
         followingCount = builder.followingCount;
         followers=builder.followers;
         following=builder.following;
+        photo=builder.photo;
 
     }
 
@@ -62,16 +65,28 @@ public class UserViewResponse {
         return followingCount;
     }
 
+    public Set<String> getFollowers() {
+        return followers;
+    }
+
+    public Set<String> getFollowing() {
+        return following;
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
 
     public static final class Builder {
-        public Set<String> followers;
-        public Set<String> following;
+        private Set<String> followers;
+        private Set<String> following;
         private String fullname;
         private String email;
         private String company;
         private String mobile;
         private long followersCount;
         private long followingCount;
+        private  byte[] photo;
 
 
         public Builder() {
@@ -114,7 +129,11 @@ public class UserViewResponse {
             followers =val;
             return this;
         }
+        public Builder withPhoto(byte[] val){
+            photo=val;
+            return  this;
 
+        }
 
         public UserViewResponse build() {
             return new UserViewResponse(this);

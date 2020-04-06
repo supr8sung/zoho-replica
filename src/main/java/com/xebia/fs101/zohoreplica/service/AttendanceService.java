@@ -1,11 +1,11 @@
 package com.xebia.fs101.zohoreplica.service;
 
+import com.xebia.fs101.zohoreplica.model.Birthday;
 import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
 import com.xebia.fs101.zohoreplica.entity.Attendance;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.repository.AttendanceRepository;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +27,9 @@ public class AttendanceService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserService userService;
+
 
     public Attendance checkout(Long id) {
 
@@ -36,8 +39,7 @@ public class AttendanceService {
                         "chekcked in"));
         attendance.setCheckout(LocalTime.now());
         return attendanceRepository.save(attendance);
-        // attendanceRepository.checkout(id, LocalTime.now());
-//        attendanceRepository.checkout(user.getId(),LocalDate.now(),LocalTime.now());
+
     }
 
     public Attendance attendanceDetails(User user) {
@@ -71,11 +73,12 @@ public class AttendanceService {
         LocalTime lastcheckin = LocalTime.MIN;
         String totalHours = "00:00";
         Long checkinId = NOT_CHECKED_IN;
+        List<Birthday> allBirthdays = userService.allBirthdays();
         List<Attendance> attendanceDetails = attendanceRepository.findAttendanceDetails(LocalDate.now(),
                 user.getId());
 
         if (attendanceDetails.size() == 0) {
-            return user.toLogeedInUserResponse(lastcheckin, totalHours, checkinId);
+            return user.toLoggedInUserResponse(lastcheckin, totalHours, checkinId, allBirthdays);
         }
         long hours = 0;
         long minutes = 0;
@@ -100,7 +103,7 @@ public class AttendanceService {
         }
         totalHours = totalHours(hours, minutes);
 
-        return user.toLogeedInUserResponse(lastcheckin, totalHours, checkinId);
+        return user.toLoggedInUserResponse(lastcheckin, totalHours, checkinId, allBirthdays);
 
     }
 }

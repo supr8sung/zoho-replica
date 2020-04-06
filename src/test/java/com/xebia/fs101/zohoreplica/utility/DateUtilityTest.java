@@ -14,4 +14,15 @@ class DateUtilityTest {
         assertEquals(LocalDate.of(1209,11,02),date);
 
     }
+
+    @Test
+    void should_calculate_age_for_a_user() {
+        int age = DateUtility.calculateAge(LocalDate.of(1996, 07, 18));
+        assertEquals(23,age);
+
+
+
+    }
+
+
 }

@@ -32,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -189,9 +190,9 @@ public class UserController {
 
 //    @GetMapping("/user/birthdays")
 //    public ResponseEntity<?> birthdays(){
-//        List<User> user=new ArrayList<>();
-//        userService.allBirthdays();
-////        ZohoReplicaResponse zohoReplicaResponse=
+//        List<UserSearchResponse> allBirthdays = userService.allBirthdays();
+//        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",allBirthdays);
+//        return new ResponseEntity<>(zohoReplicaResponse,OK);
 //    }
 
     private ZohoReplicaResponse getResponse(String status, String message, Object data) {

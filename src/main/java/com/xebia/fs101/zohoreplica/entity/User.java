@@ -1,11 +1,11 @@
 package com.xebia.fs101.zohoreplica.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.xebia.fs101.zohoreplica.model.Birthday;
 import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
 import com.xebia.fs101.zohoreplica.api.response.UserViewResponse;
 import com.xebia.fs101.zohoreplica.security.ZohoApplicationRole;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
@@ -25,9 +25,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+
+import static com.xebia.fs101.zohoreplica.utility.DateUtility.calculateAge;
 @Entity
 @Table(name = "users", indexes = {@Index(name = "user_index", columnList = "username")})
 
@@ -360,6 +363,14 @@ public class User {
         return result;
     }
 
+    public Birthday getBirthdayDetails(){
+        return new Birthday.Builder()
+                .withId(this.id)
+                .withFullname(this.fullname)
+                .withPhoto(this.photo)
+                .withAge(calculateAge(this.birthday))
+                .build();
+    }
     public UserViewResponse toUserViewResponse() {
         return new UserViewResponse.Builder()
                 .withFullname(this.fullname)
@@ -370,11 +381,13 @@ public class User {
                 .withFollowingCount(this.followingCount)
                 .withFollowers(this.followers)
                 .withFollowing(this.following)
+                .withPhoto(this.photo)
                 .build();
     }
 
-    public LoggedInUserResponse toLogeedInUserResponse(LocalTime lastcheckin,String totalHours,
-                                                       Long checkinId) {
+    public LoggedInUserResponse toLoggedInUserResponse(LocalTime lastcheckin, String totalHours,
+                                                       Long checkinId,
+                                                       List<Birthday> allBirthdays) {
         return new LoggedInUserResponse.Builder()
                 .withUserId(this.id)
                 .withFullname(this.fullname)
@@ -388,6 +401,7 @@ public class User {
                 .withTotalHours(totalHours)
                 .withCheckinId(checkinId)
                 .withPhoto(this.photo)
+                .withAllBirthdays(allBirthdays)
                 .build();
     }
 }

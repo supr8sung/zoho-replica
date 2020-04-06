@@ -1,20 +1,24 @@
 package com.xebia.fs101.zohoreplica.service;
 
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
+import com.xebia.fs101.zohoreplica.model.Birthday;
 import com.xebia.fs101.zohoreplica.api.response.UserSearchResponse;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.exception.UserNotFoundException;
 import com.xebia.fs101.zohoreplica.exception.WrongPasswordException;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.USER_NAME_INVALID;
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.USER_NAME_VALID;
@@ -123,15 +127,24 @@ public class UserService {
 
     }
 
-    public void allBirthdays() {
-        userRepository.findAll();
+    //@Scheduled(cron = "")
+    public List<Birthday> allBirthdays() {
+        LocalDate localDate = LocalDate.now();
+        int month = localDate.getMonthValue();
+        int dayOfMonth = localDate.getDayOfMonth();
+
+        return userRepository.allBirthday(month, dayOfMonth)
+                .stream()
+                .map(User::getBirthdayDetails)
+                .collect(Collectors.toList());
+
     }
 
     public Boolean validateUsername(String username) {
-        if(username==null|| username.equals(""))
+        if (username == null || username.equals(""))
             return USER_NAME_INVALID;
         User user = userRepository.findByUsername(username);
-        if(user==null)
+        if (user == null)
             return USER_NAME_VALID;
         else
             return USER_NAME_INVALID;
@@ -139,10 +152,10 @@ public class UserService {
 
     public List<UserSearchResponse> searchByName(String keyword) {
         List<Object[]> matchedData = userRepository.search(keyword.toLowerCase());
-        List<UserSearchResponse> userSearchResponseList=new ArrayList<>();
-        for(Object[] data:matchedData){
+        List<UserSearchResponse> userSearchResponseList = new ArrayList<>();
+        for (Object[] data : matchedData) {
             userSearchResponseList.add(new UserSearchResponse(UUID.fromString(String.valueOf(data[0])),
-                    String.valueOf(data[1])));
+                    String.valueOf(data[1]),new byte[]{}));
 
         }
         return userSearchResponseList;

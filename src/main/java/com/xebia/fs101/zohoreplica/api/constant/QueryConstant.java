@@ -6,5 +6,7 @@ public interface QueryConstant {
 
     String ATTENDANCE_DETAILS_QUERY="SELECT * FROM ATTENDANCE a  WHERE a.date= ?1 AND " +
             "a.user_id= ?2 order by a.checkin";
+    String  FIND_BIRTHDAY_QUERY="select * from users where extract(month from birthday)= ?1 " +
+            "AND extract(day from birthday)= ?2";
 
 }

@@ -1,7 +1,10 @@
 package com.xebia.fs101.zohoreplica.api.response;
 
+import com.xebia.fs101.zohoreplica.model.Birthday;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.UUID;
 public class LoggedInUserResponse {
     private UUID userId;
@@ -16,11 +19,12 @@ public class LoggedInUserResponse {
     private LocalDate birthday;
     private Long checkinId;
     private byte[] photo;
+    private List<Birthday> allBirthdays;
 
     public LoggedInUserResponse(String fullname, String email, String company, String mobile,
                                 long followersCount, long followingCount, LocalTime lastCheckin,
                                 LocalDate birthday, String totalHours, Long checkinId, UUID userId,
-                                byte[] photo) {
+                                byte[] photo, List<Birthday> allBirthdays) {
         this.fullname = fullname;
         this.email = email;
         this.company = company;
@@ -32,7 +36,8 @@ public class LoggedInUserResponse {
         this.totalHours = totalHours;
         this.checkinId = checkinId;
         this.userId = userId;
-        this.photo=photo;
+        this.photo = photo;
+        this.allBirthdays = allBirthdays;
     }
 
     public Long getCheckinId() {
@@ -51,7 +56,8 @@ public class LoggedInUserResponse {
         totalHours = builder.totalHours;
         checkinId = builder.checkinId;
         userId = builder.userId;
-        photo=builder.photo;
+        photo = builder.photo;
+        allBirthdays = builder.allBirthdays;
     }
 
 
@@ -99,11 +105,16 @@ public class LoggedInUserResponse {
         return userId;
     }
 
+    public List<Birthday> getAllBirthdays() {
+        return allBirthdays;
+
+    }
+
     public static final class Builder {
-        public String totalHours;
-        public Long checkinId;
-        public UUID userId;
-        public byte[] photo;
+        private String totalHours;
+        private Long checkinId;
+        private UUID userId;
+        private byte[] photo;
         private LocalDate birthday;
         private String fullname;
         private String email;
@@ -112,6 +123,7 @@ public class LoggedInUserResponse {
         private long followersCount;
         private long followingCount;
         private LocalTime lastCheckin;
+        private List<Birthday> allBirthdays;
 
         public Builder() {
         }
@@ -172,11 +184,16 @@ public class LoggedInUserResponse {
             userId = val;
             return this;
         }
-        public Builder withPhoto(byte[] val){
-            photo=val;
+
+        public Builder withPhoto(byte[] val) {
+            photo = val;
             return this;
         }
 
+        public Builder withAllBirthdays(List<Birthday> val){
+            allBirthdays=val;
+            return this;
+        }
         public LoggedInUserResponse build() {
             return new LoggedInUserResponse(this);
         }

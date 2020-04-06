@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.UUID;
 
+import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.FIND_BIRTHDAY_QUERY;
 import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.FIND_BY_KEYWORD_QUERY;
 public interface UserRepository extends JpaRepository<User,UUID> {
     User findByUsername(String username);
@@ -16,6 +17,9 @@ public interface UserRepository extends JpaRepository<User,UUID> {
 
     @Query(value = FIND_BY_KEYWORD_QUERY,nativeQuery = true)
     public List<Object[]> search(@Param("keyword") String keyword);
+
+    @Query(value = FIND_BIRTHDAY_QUERY,nativeQuery = true)
+    public List<User> allBirthday(int month, int day);
 
 
 }
