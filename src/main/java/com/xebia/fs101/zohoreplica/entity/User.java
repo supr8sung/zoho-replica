@@ -368,6 +368,8 @@ public class User {
                 .withMobile(this.mobile)
                 .withFollowersCount(this.followersCount)
                 .withFollowingCount(this.followingCount)
+                .withFollowers(this.followers)
+                .withFollowing(this.following)
                 .build();
     }
 
@@ -385,6 +387,7 @@ public class User {
                 .withBirthday(this.birthday)
                 .withTotalHours(totalHours)
                 .withCheckinId(checkinId)
+                .withPhoto(this.photo)
                 .build();
     }
 }

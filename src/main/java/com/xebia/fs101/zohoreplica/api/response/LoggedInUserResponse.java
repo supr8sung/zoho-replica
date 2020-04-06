@@ -15,11 +15,12 @@ public class LoggedInUserResponse {
     private String totalHours;
     private LocalDate birthday;
     private Long checkinId;
-
+    private byte[] photo;
 
     public LoggedInUserResponse(String fullname, String email, String company, String mobile,
                                 long followersCount, long followingCount, LocalTime lastCheckin,
-                                LocalDate birthday, String totalHours, Long checkinId, UUID userId) {
+                                LocalDate birthday, String totalHours, Long checkinId, UUID userId,
+                                byte[] photo) {
         this.fullname = fullname;
         this.email = email;
         this.company = company;
@@ -31,6 +32,7 @@ public class LoggedInUserResponse {
         this.totalHours = totalHours;
         this.checkinId = checkinId;
         this.userId = userId;
+        this.photo=photo;
     }
 
     public Long getCheckinId() {
@@ -49,7 +51,9 @@ public class LoggedInUserResponse {
         totalHours = builder.totalHours;
         checkinId = builder.checkinId;
         userId = builder.userId;
+        photo=builder.photo;
     }
+
 
     public String getFullname() {
         return fullname;
@@ -87,10 +91,19 @@ public class LoggedInUserResponse {
         return totalHours;
     }
 
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
     public static final class Builder {
         public String totalHours;
         public Long checkinId;
         public UUID userId;
+        public byte[] photo;
         private LocalDate birthday;
         private String fullname;
         private String email;
@@ -157,6 +170,10 @@ public class LoggedInUserResponse {
 
         public Builder withUserId(UUID val) {
             userId = val;
+            return this;
+        }
+        public Builder withPhoto(byte[] val){
+            photo=val;
             return this;
         }
 

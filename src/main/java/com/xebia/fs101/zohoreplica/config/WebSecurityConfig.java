@@ -37,6 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/zoho","/reaources/**","/signup","/index","/css/*","/js/*").permitAll()
                 .antMatchers("/zoho/signup").permitAll()
                 .antMatchers("/zoho/valid/**").permitAll()
+                .antMatchers("/zoho/user/search/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

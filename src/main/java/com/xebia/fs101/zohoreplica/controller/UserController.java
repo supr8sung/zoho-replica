@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
 import static com.xebia.fs101.zohoreplica.utility.OtpUtility.generateOtp;
@@ -86,6 +87,13 @@ public class UserController {
                 requestedUser.toUserViewResponse());
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
+    @GetMapping("/user/view/{id}")
+    public ResponseEntity<?> viewUser(@PathVariable(value = "id") UUID id){
+        User user = userService.findById(id);
+        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",user.toUserViewResponse());
+        return new ResponseEntity<>(zohoReplicaResponse,OK);
+    }
+
 
     @GetMapping("/user/{username}/info")
     public ResponseEntity<?> info(@PathVariable(value = "username") String username) {

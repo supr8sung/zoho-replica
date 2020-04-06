@@ -29,7 +29,7 @@ class Header extends React.Component{
     
 
     searchUsers = (e) =>{
-        if(e.target.value && e.target.value.length > 1){
+        if(e.target.value && e.target.value.length > 2){
             fetch.get({
                 url: '/zoho/user/search/' + e.target.value,
                 callbackHandler: this.searchSuccessHandler
@@ -94,7 +94,7 @@ class Header extends React.Component{
                             <i className="fa fa-search searchEmployee" aria-hidden="true"></i>
                               {
                                 this.showAutoCompleteOptions ?  <ul className="autoSearch">{this.filteredOptions.map((item) =>
-                                    <li key={item.userid}><span className="userId">{item.userid }&nbsp;-&nbsp;</span>{item.username}</li>
+                                    <li key={item.id}>{item.fullname}</li>
                                  )}</ul> : null
                               }  
                         </div>
