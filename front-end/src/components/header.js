@@ -28,22 +28,28 @@ class Header extends React.Component{
     }
     
 
-    searchUsers(e){
+    searchUsers = (e) =>{
         if(e.target.value && e.target.value.length > 1){
+            fetch.get({
+                url: '/zoho/user/search/' + e.target.value,
+                callbackHandler: this.searchSuccessHandler
+            });   
+        }   
+    }
+
+    searchSuccessHandler = (response) => {
+        if(response.payload.data){
             this.showAutoCompleteOptions = true;
-            let searchValue = e.target.value;
-            this.filteredOptions = this.users.filter(
-                (option) => option.username.toLowerCase().indexOf(searchValue.toLowerCase()) > -1
-            ); 
-            
-            
+            this.filteredOptions = response.payload.data;
+            this.setState([...this.filteredOptions]);
         } else{
             this.showAutoCompleteOptions = false;
             this.filteredOptions = [];
 
         }
-        this.setState([...this.filteredOptions]);
+        
     }
+
     handleLogout (){
         fetch.get({
             url: '/logout',
@@ -55,9 +61,8 @@ class Header extends React.Component{
         });
     }
     saveDataSuccessHandler = (response,route) =>{
-            route.push('/loggedout');
+            window.location.href="http://localhost:8080/login";
             localStorage.removeItem('username');
-            console.log(response);
     }
 
     render(){
