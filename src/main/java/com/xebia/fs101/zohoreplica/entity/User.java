@@ -386,8 +386,7 @@ public class User {
     }
 
     public LoggedInUserResponse toLoggedInUserResponse(LocalTime lastcheckin, String totalHours,
-                                                       Long checkinId,
-                                                       List<Birthday> allBirthdays) {
+                                                       Long checkinId) {
         return new LoggedInUserResponse.Builder()
                 .withUserId(this.id)
                 .withFullname(this.fullname)
@@ -401,7 +400,6 @@ public class User {
                 .withTotalHours(totalHours)
                 .withCheckinId(checkinId)
                 .withPhoto(this.photo)
-                .withAllBirthdays(allBirthdays)
                 .build();
     }
 }

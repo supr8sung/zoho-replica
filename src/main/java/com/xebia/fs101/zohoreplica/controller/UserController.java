@@ -10,6 +10,7 @@ import com.xebia.fs101.zohoreplica.api.response.UserSearchResponse;
 import com.xebia.fs101.zohoreplica.api.response.ZohoReplicaResponse;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.exception.EmptyFileException;
+import com.xebia.fs101.zohoreplica.model.Birthday;
 import com.xebia.fs101.zohoreplica.service.AttendanceService;
 import com.xebia.fs101.zohoreplica.service.MailService;
 import com.xebia.fs101.zohoreplica.service.UserService;
@@ -73,13 +74,7 @@ public class UserController {
         ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",isUsernameValid);
         return new ResponseEntity<>(zohoReplicaResponse,OK);
     }
-    @GetMapping("/loggedinuser")
-    public ResponseEntity<?> loggeduser() {
-        User user = getLoggedInUser();
-        LoggedInUserResponse loggedInUserResponse = attendanceService.getAllLoginDetails(user);
-        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",loggedInUserResponse);
-        return new ResponseEntity<>(zohoReplicaResponse, OK);
-    }
+
 
     @GetMapping("/user/{username}")
     public ResponseEntity<?> view(@PathVariable(value = "username") String username) {
@@ -188,12 +183,12 @@ public class UserController {
 
     }
 
-//    @GetMapping("/user/birthdays")
-//    public ResponseEntity<?> birthdays(){
-//        List<UserSearchResponse> allBirthdays = userService.allBirthdays();
-//        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",allBirthdays);
-//        return new ResponseEntity<>(zohoReplicaResponse,OK);
-//    }
+    @GetMapping("/user/birthdays")
+    public ResponseEntity<?> birthdays(){
+        List<Birthday> allBirthdays = userService.allBirthdays();
+        ZohoReplicaResponse zohoReplicaResponse=getResponse(TXN_SUCESS,"",allBirthdays);
+        return new ResponseEntity<>(zohoReplicaResponse,OK);
+    }
 
     private ZohoReplicaResponse getResponse(String status, String message, Object data) {
         return new ZohoReplicaResponse.Builder()

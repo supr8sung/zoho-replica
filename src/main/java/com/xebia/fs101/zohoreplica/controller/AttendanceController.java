@@ -1,8 +1,11 @@
 package com.xebia.fs101.zohoreplica.controller;
 
+import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
 import com.xebia.fs101.zohoreplica.api.response.ZohoReplicaResponse;
 import com.xebia.fs101.zohoreplica.entity.Attendance;
 import com.xebia.fs101.zohoreplica.entity.User;
+import com.xebia.fs101.zohoreplica.security.AdminOnly;
+import com.xebia.fs101.zohoreplica.security.EmployerOnly;
 import com.xebia.fs101.zohoreplica.service.AttendanceService;
 import com.xebia.fs101.zohoreplica.service.MailService;
 import com.xebia.fs101.zohoreplica.service.UserService;
@@ -23,10 +26,10 @@ import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.calculateDai
 import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.lastCheckinTimeHours;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
+
 @RestController
 @RequestMapping(value = "/zoho")
 public class AttendanceController {
-
     @Autowired
     private AttendanceService attendanceService;
     @Autowired
@@ -34,15 +37,15 @@ public class AttendanceController {
     @Autowired
     private MailService mailService;
 
-
     @PostMapping("/user/checkin")
     public ResponseEntity<?> checkin() {
 
         User user = getLoggedInUser();
         Attendance attendance = attendanceService.checkin(user);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS,
-                lastCheckinTimeHours(attendance.getCheckinTime()),
-                attendance.getId());
+                                                              lastCheckinTimeHours(
+                                                                      attendance.getCheckinTime()),
+                                                              attendance.getId());
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
@@ -50,37 +53,54 @@ public class AttendanceController {
     public ResponseEntity<?> checkout(@PathVariable(value = "id") Long id) {
 
         Attendance attendance = attendanceService.checkout(id);
-        String totalHours = calculateDailyHours(attendance.getCheckinTime(), attendance.getCheckoutTime());
+        String totalHours = calculateDailyHours(attendance.getCheckinTime(),
+                                                attendance.getCheckoutTime());
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Your total hours are ",
-                totalHours);
+                                                              totalHours);
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
-
-
     @GetMapping("/user/dailyhours")
     public ResponseEntity<?> dailyHours() {
+
         User user = getLoggedInUser();
         Attendance attendance = attendanceService.attendanceDetails(user);
-        String totalHours = calculateDailyHours(attendance.getCheckinTime(), attendance.getCheckoutTime());
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Daily hours", totalHours);
+        String totalHours = calculateDailyHours(attendance.getCheckinTime(),
+                                                attendance.getCheckoutTime());
+        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Daily hours",
+                                                              totalHours);
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
-
 
     //this should be visible only after successful checkin and checkout
     @GetMapping("/user/dailyhours-report")
     public ResponseEntity<?> sendMail() {
+
         User user = getLoggedInUser();
         Attendance attendance = attendanceService.attendanceDetails(user);
         String mailBody = MailUtility.generateReportBody(user.getFullname(),
-                attendance.getCheckinTime(), attendance.getCheckoutTime());
+                                                         attendance.getCheckinTime(),
+                                                         attendance.getCheckoutTime());
         mailService.sendMail(user.getEmail(), mailBody);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Mail Sent successfully", null);
+        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Mail Sent successfully",
+                                                              null);
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
 
+    @GetMapping("/loggedinuser")
+    public ResponseEntity<?> loggeduser() {
+
+        User user = getLoggedInUser();
+        LoggedInUserResponse loggedInUserResponse = attendanceService.getAllLoginDetails(user);
+        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "", loggedInUserResponse);
+        return new ResponseEntity<>(zohoReplicaResponse, OK);
+    }
+
+
+
+
     private ZohoReplicaResponse getResponse(String status, String message, Object data) {
+
         return new ZohoReplicaResponse.Builder()
                 .withData(data)
                 .withStatus(status)
@@ -88,7 +108,9 @@ public class AttendanceController {
                 .build();
     }
 
+
     private User getLoggedInUser() {
+
         String username = "";
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
@@ -101,5 +123,4 @@ public class AttendanceController {
             throw new UsernameNotFoundException("No logged in user found");
         return user;
     }
-
 }

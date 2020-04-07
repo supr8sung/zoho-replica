@@ -7,12 +7,14 @@ import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.exception.UserNotFoundException;
 import com.xebia.fs101.zohoreplica.exception.WrongPasswordException;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
+import com.xebia.fs101.zohoreplica.utility.FileUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -127,16 +129,31 @@ public class UserService {
 
     }
 
-    //@Scheduled(cron = "")
-    public List<Birthday> allBirthdays() {
+    public List<Birthday> allBirthdays(){
+        List<Birthday>  allBirthDays=new ArrayList<>();
+
+        try {
+             allBirthDays = FileUtility.getAllBirthDays();
+            return allBirthDays;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return allBirthDays;
+    }
+   // @Scheduled(cron = "")
+    public void calculateBirthdays() {
         LocalDate localDate = LocalDate.now();
         int month = localDate.getMonthValue();
         int dayOfMonth = localDate.getDayOfMonth();
-
-        return userRepository.allBirthday(month, dayOfMonth)
+        List<Birthday> allBirthdays = userRepository.allBirthday(month, dayOfMonth)
                 .stream()
                 .map(User::getBirthdayDetails)
                 .collect(Collectors.toList());
+        try {
+            FileUtility.saveBirthdayDetails(allBirthdays);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 

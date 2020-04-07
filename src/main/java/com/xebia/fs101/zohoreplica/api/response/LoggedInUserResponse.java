@@ -19,12 +19,12 @@ public class LoggedInUserResponse {
     private LocalDate birthday;
     private Long checkinId;
     private byte[] photo;
-    private List<Birthday> allBirthdays;
+
 
     public LoggedInUserResponse(String fullname, String email, String company, String mobile,
                                 long followersCount, long followingCount, LocalTime lastCheckin,
                                 LocalDate birthday, String totalHours, Long checkinId, UUID userId,
-                                byte[] photo, List<Birthday> allBirthdays) {
+                                byte[] photo) {
         this.fullname = fullname;
         this.email = email;
         this.company = company;
@@ -37,7 +37,7 @@ public class LoggedInUserResponse {
         this.checkinId = checkinId;
         this.userId = userId;
         this.photo = photo;
-        this.allBirthdays = allBirthdays;
+
     }
 
     public Long getCheckinId() {
@@ -57,7 +57,6 @@ public class LoggedInUserResponse {
         checkinId = builder.checkinId;
         userId = builder.userId;
         photo = builder.photo;
-        allBirthdays = builder.allBirthdays;
     }
 
 
@@ -105,10 +104,7 @@ public class LoggedInUserResponse {
         return userId;
     }
 
-    public List<Birthday> getAllBirthdays() {
-        return allBirthdays;
 
-    }
 
     public static final class Builder {
         private String totalHours;
@@ -123,7 +119,6 @@ public class LoggedInUserResponse {
         private long followersCount;
         private long followingCount;
         private LocalTime lastCheckin;
-        private List<Birthday> allBirthdays;
 
         public Builder() {
         }
@@ -187,11 +182,6 @@ public class LoggedInUserResponse {
 
         public Builder withPhoto(byte[] val) {
             photo = val;
-            return this;
-        }
-
-        public Builder withAllBirthdays(List<Birthday> val){
-            allBirthdays=val;
             return this;
         }
         public LoggedInUserResponse build() {

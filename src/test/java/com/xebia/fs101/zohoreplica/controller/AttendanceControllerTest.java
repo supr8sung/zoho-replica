@@ -22,6 +22,7 @@ import javax.transaction.Transactional;
 import java.time.LocalTime;
 
 import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.ADMIN;
+import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.EMPLOYEE;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -61,7 +62,7 @@ class AttendanceControllerTest {
                 .withEmail("supreetsingh@xebi.com")
                 .withPassword("12345")
                 .withMobile("9643496936")
-                .withRole(ADMIN)
+                .withRole(EMPLOYEE)
                 .withCompany("Xebia")
                 .wihtBirthday("1/11/2019")
                 .build();
@@ -118,5 +119,6 @@ class AttendanceControllerTest {
                 .andExpect(jsonPath("$.data").value("00:08"));
 
     }
+
 
 }
