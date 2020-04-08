@@ -9,4 +9,6 @@ public interface QueryConstant {
     String  FIND_BIRTHDAY_QUERY="select * from users where extract(month from birthday)= ?1 " +
             "AND extract(day from birthday)= ?2";
 
+    String DELETE_EXPIRED_TOKENS="delete from user_token where created_at + interval '1 minutes' <= now()";
+
 }
