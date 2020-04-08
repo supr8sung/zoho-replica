@@ -157,9 +157,27 @@ body {
 .autoSearch li{
     padding: 10px;
     font-weight: 600;
+    cursor: pointer;
+}
+.autoSearch li:hover{
+  cursor: pointer;
+  background-color: #EFF2F7;
 }
 .userId{
   color: #666666;
   font-weight: 100;
   font-family: monospace;
+}
+.follow{
+  font-size: 14px;
+  margin-right: 10px;
+}
+.spinner{
+  text-align: center;
+}
+.resetPass{
+  margin: 10px 0px;
+}
+.err-msg{
+  color: red;
 }

@@ -41,8 +41,7 @@ $("form[name='signup']").validate({
             email: true
           },
           password: {
-            required: true,
-            minlength: 5
+            required: true
           },
           company: {
             required: true
@@ -61,8 +60,7 @@ $("form[name='signup']").validate({
       username: "Please enter your username",
       fullname: "Please enter your fullname",
       password: {
-        required: "Please provide a password",
-        minlength: "Your password must be at least 5 characters long"
+        required: "Please provide a password"
       },
       mobile:{
             number: "Invalid Mobile Number",
@@ -71,6 +69,7 @@ $("form[name='signup']").validate({
           },
       email: "Please enter a valid email address"
     },submitHandler: function(form) {
+         var bday = $('#signUpBirthDate').val();
           $.ajax({
            type: "POST",
            url: 'http://localhost:8080/zoho/signup',
@@ -81,20 +80,22 @@ $("form[name='signup']").validate({
 	                "email": $('#signUpEmail').val(),
 	                  "password":$('#signUpPassword').val(),
 	                  "company": $('#signUpCompany').val(),
-	                   "birthday":'03/04/2020'
+	                   "birthday":bday.split('-')[2] + '/' + bday.split('-')[1] + '/' + bday.split('-')[0]
 
 	              }),
 	       contentType: "application/json; charset=utf-8",
            success: function(data)
            {
                if(data.status == "S"){
-                    window.location.href = "http://localhost:8080/login";
+                    window.location.href = "/login";
                }
                 else{
+                     $('.error-msg').text(data.message);
                      $('#bt-alert').show();
                 }
            },
            error: function (error) {
+                 $('.error-msg').text('Something went wrong');
                 $('#bt-alert').show();
             }
          });
@@ -109,7 +110,7 @@ $("form[name='signup']").validate({
 <body>
 <div id="bt-alert" class="alert alert-warning">
     <a href="#" class="close">&times;</a>
-    <strong>Error!</strong> UserName Already Exists. Please Log In.
+    <strong>Error!</strong><span class="error-msg">UserName Already Exists. Please Log In.</span>
 </div>
 <section class="hero is-light">
     <!-- Hero head: will stick at the top -->

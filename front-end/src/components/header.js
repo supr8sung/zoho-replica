@@ -1,9 +1,9 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import {fetch} from '../services/httpServices';
-import { withRouter } from "react-router-dom";
 import { UserConsumer } from '../services/user-context';
 
+import { withRouter } from 'react-router'
 
 class Header extends React.Component{
     // componentDidMount() {
@@ -11,18 +11,7 @@ class Header extends React.Component{
     //   }
     constructor(props){
         super(props);
-        this.users = [
-            {userid: 2,username:'kishore'},
-            {userid: 3,username:'supreet'},
-            {userid: 4,username: 'sai Kishore'},
-            {userid: 5,username: 'messi'},
-            {userid: 6,username: 'Xabi'},
-            {userid: 7,username: 'Mbappe'},
-            {userid: 8,username: 'Ronaldo'},
-            {userid: 9,username: 'Company'},
-            {userid: 10,username: 'Neymar'},
-            {userid: 11,username: 'suprit'},
-        ];
+        this.myRef = React.createRef();
         this.filteredOptions = [];
         this.showAutoCompleteOptions = false;
     }
@@ -34,7 +23,11 @@ class Header extends React.Component{
                 url: '/zoho/user/search/' + e.target.value,
                 callbackHandler: this.searchSuccessHandler
             });   
-        }   
+        }   else{
+            this.showAutoCompleteOptions = false;
+            this.filteredOptions = [];
+            this.setState([...this.filteredOptions]);
+        }
     }
 
     searchSuccessHandler = (response) => {
@@ -50,6 +43,31 @@ class Header extends React.Component{
         
     }
 
+    viewSearchProfile = (id,loggedUser) => {
+        const loggedInuser = JSON.parse(loggedUser);
+        if(loggedInuser.userId === id){
+            this.props.history.push({pathname:'/profile',profileDetails: loggedUser});
+            this.showAutoCompleteOptions = false;
+            this.myRef.current.value = '';
+        } else{
+            fetch.get({
+                url: '/zoho/user/view/' + id,
+                callbackHandler: (response) =>{
+                    this.searchProfileSuccessHandler(response,this.props.history,loggedUser)
+                } 
+            })
+        }
+        
+    }
+
+    searchProfileSuccessHandler = (response,route,loggedUser) => {
+        this.showAutoCompleteOptions = false;
+        let user = response.payload.data;
+        this.myRef.current.value = '';
+        route.push({pathname:'/viewprofile/'+ user.fullname,userdetails: user});
+        
+    }
+
     handleLogout (){
         fetch.get({
             url: '/logout',
@@ -61,7 +79,7 @@ class Header extends React.Component{
         });
     }
     saveDataSuccessHandler = (response,route) =>{
-            window.location.href="http://localhost:8080/login";
+            window.location.href="/login";
             localStorage.removeItem('username');
     }
 
@@ -76,9 +94,9 @@ class Header extends React.Component{
           <nav className="navbar">
               <div className="container">
                   <div className="navbar-brand">
-                      <a className="navbar-item">
+                      <Link to="/" className="navbar-item">
                           ZOHO
-                      </a>
+                      </Link>
                       <span className="navbar-burger burger" data-target="navbarMenuHeroA">
               <span></span>
               <span></span>
@@ -90,11 +108,11 @@ class Header extends React.Component{
                     
                   <div id="navbarMenuHeroA" className="navbar-menu">
                   <div className="navbar-end searchParent">
-                            <input className="input" type="text" onChange={(e) => {this.searchUsers(e)}} placeholder="Search Employee" />
+                            <input className="input" ref={this.myRef} type="text" onChange={(e) => {this.searchUsers(e)}} placeholder="Search Employee" />
                             <i className="fa fa-search searchEmployee" aria-hidden="true"></i>
                               {
                                 this.showAutoCompleteOptions ?  <ul className="autoSearch">{this.filteredOptions.map((item) =>
-                                    <li key={item.id}>{item.fullname}</li>
+                                    <li onClick={() => {this.viewSearchProfile(item.id,props)}} key={item.id}>{item.fullname}</li>
                                  )}</ul> : null
                               }  
                         </div>

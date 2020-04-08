@@ -28,6 +28,9 @@
 <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 <script>
 $(document).ready(function(){
+$('.close').click(function(){
+    $('#bt-alert').hide();
+});
 $('#bt-alert').hide();
 $("form[name='login']").validate({
          rules: {
@@ -48,7 +51,24 @@ $("form[name='login']").validate({
         minlength: "Your password must be at least 5 characters long"
       }
     },submitHandler: function(form) {
-          form.submit();
+          $.ajax({
+           type: "POST",
+           url: '/login',
+           data: $("form[name='login']").serialize(),
+           success: function(data)
+           {
+                window.location.href= "/";
+           },
+           error: function (error) {
+                 if(error.status == 401){
+                       $('.error-msg').text(JSON.parse(error.responseText).exception);
+                 } else{
+                        $('.error-msg').text('something went wrong');
+                 }
+                 $('#bt-alert').show();
+
+            }
+         });
         }
 });
 });
@@ -58,7 +78,7 @@ $("form[name='login']").validate({
 <body>
 <div id="bt-alert" class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <strong>Error!</strong> A problem has been occurred while submitting your data.
+    <strong>Error!</strong><span class="error-msg">Something went wrong</span>
 </div>
 <section class="hero is-light is-medium">
     <!-- Hero head: will stick at the top -->
@@ -94,7 +114,7 @@ $("form[name='login']").validate({
         <div class="container">
             <div class="columns is-centered">
                 <div class="column is-5-tablet is-5-desktop is-5-widescreen">
-                    <form class="box" id="login"  method="post" action="/login" name="login"  noValidate>
+                    <form class="box" id="login"  name="login"  noValidate>
                         <div class="field">
                             <label class="label">UserName</label>
                             <div class="control has-icons-left">
@@ -120,7 +140,7 @@ $("form[name='login']").validate({
                             </label>
                         </div>
                         <div class="field">
-                            <button type="submit" id="createAccount" class="button is-success">
+                            <button  id="createAccount" class="button is-success">
                                 Login
                             </button>
                         </div>
