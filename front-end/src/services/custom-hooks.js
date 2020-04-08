@@ -2,21 +2,26 @@ import { useState, useEffect } from 'react';
 
 import {fetch} from '../services/httpServices';
 
-const useTimer = (user) => {
+const useTimer = () => {
   let interval = 0;
-  let loggedUser = JSON.parse(user);
-  const [loggedInUserCheckInTime,setloggedInUserCheckInTime] = useState(loggedUser.lastCheckin);
+  const [loggedInUserCheckInTime,setloggedInUserCheckInTime] = useState("00:00:00");
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [timer,setTimer] = useState(0);
   const [checkin,setCheckin] = useState(false);
-  const [attendanceId,setAttendanceId] = useState(loggedUser.checkinId);
-  const [prevTotalHours,setPrevTotalHours] = useState(loggedUser.totalHours);
+  const [attendanceId,setAttendanceId] = useState(null);
+  const [prevTotalHours,setPrevTotalHours] = useState("00:00");
+  
   const checkIncheckOut = () => {
     event.preventDefault();
-    
+    let ccInOutUrl = '';
+    if(checkin && attendanceId){
+      ccInOutUrl = '/zoho/user/checkout/'+attendanceId;
+    } else if(!checkin){
+      ccInOutUrl  = '/zoho/user/checkin';
+    }
     fetch.post({
-        url: checkin?  '/zoho/user/checkout/'+attendanceId:'/zoho/user/checkin',
+        url: ccInOutUrl,
         callbackHandler: saveDataSuccessHandler
     });
   }
@@ -29,7 +34,11 @@ const useTimer = (user) => {
   },[]);
 
   function getLoggedInUser(response){
-    loggedUser = response.payload.data;
+    setloggedInUserCheckInTime(response.payload.data.lastCheckin);
+    setAttendanceId(response.payload.data.checkinId);
+    setPrevTotalHours(convertTotalHours(response.payload.data.totalHours).prev);
+    setMinutes(convertTotalHours(response.payload.data.totalHours).curr.M);
+    setHours(convertTotalHours(response.payload.data.totalHours).curr.H);
   }
 
   useEffect(() =>{
@@ -99,7 +108,6 @@ function saveDataSuccessHandler(response){
       setMinutes(convertTotalHours(response.payload.data).curr.M);
       setHours(convertTotalHours(response.payload.data).curr.H);
     }
-    console.log(response);
   }
 
   function convertTotalHours(currentTotalHours){
