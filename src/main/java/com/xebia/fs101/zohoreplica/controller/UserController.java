@@ -3,9 +3,9 @@ package com.xebia.fs101.zohoreplica.controller;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import com.xebia.fs101.zohoreplica.api.request.ChangePasswordRequest;
+import com.xebia.fs101.zohoreplica.api.request.ForgotPasswordRequest;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.api.response.FollowResponse;
-import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
 import com.xebia.fs101.zohoreplica.api.response.UserSearchResponse;
 import com.xebia.fs101.zohoreplica.api.response.ZohoReplicaResponse;
 import com.xebia.fs101.zohoreplica.entity.User;
@@ -14,10 +14,10 @@ import com.xebia.fs101.zohoreplica.model.Birthday;
 import com.xebia.fs101.zohoreplica.service.AttendanceService;
 import com.xebia.fs101.zohoreplica.service.MailService;
 import com.xebia.fs101.zohoreplica.service.UserService;
+import com.xebia.fs101.zohoreplica.service.UserTokenService;
 import com.xebia.fs101.zohoreplica.utility.MailUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,7 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,6 +53,9 @@ public class UserController {
     private MailService mailService;
     @Autowired
     private AttendanceService attendanceService;
+
+    @Autowired
+    private UserTokenService userTokenService;
 
     @GetMapping("/")
     public String root() {
@@ -125,10 +128,10 @@ public class UserController {
     }
 
     @PostMapping("/user/follow")
-    public ResponseEntity<?> follow( @RequestParam String target) {
+    public ResponseEntity<?> follow( @RequestParam Object target) {
 
         User requestUser = getLoggedInUser();
-        User targetUser = userService.findByName(target);
+        User targetUser = userService.findByName(target.toString());
         String message = userService.follow(requestUser, targetUser);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, message, "");
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
@@ -136,10 +139,10 @@ public class UserController {
 
 
     @PostMapping("/user/unfollow")
-    public ResponseEntity<?> unfollow(@RequestParam String target) {
+    public ResponseEntity<?> unfollow(@RequestParam Object target) {
 
         User requestUser = getLoggedInUser();
-        User targetUser = userService.findByName(target);
+        User targetUser = userService.findByName(target.toString());
         String message = userService.unfollow(requestUser, targetUser);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, message, "");
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
@@ -155,23 +158,28 @@ public class UserController {
     }
 
     @GetMapping("/user/send-otp")
-    public ResponseEntity<?> forgotPassword(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> forgotPassword() {
+
+        User user = getLoggedInUser();
         String otp = generateOtp();
         String mailBody = MailUtility.generateOtpBody(otp, user.getFullname());
         mailService.sendMail(user.getEmail(), mailBody);
+        long tokenId = userTokenService.save(user.getUsername(), otp);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "OTP sent to your registered mail" +
-                " id", otp);
+                " id", tokenId);
         return new ResponseEntity<>(zohoReplicaResponse, OK);
 
     }
 
+
     @PostMapping("/user/recover-password")
-    public ResponseEntity<?> recoverPassword(@PathVariable(value = "username") String username,
-                                             @Valid @RequestBody ChangePasswordRequest request) {
-        User user = userService.findByName(username);
-        User savedUser = userService.changePassword(user, request.getNewPassword());
+    public ResponseEntity<?> recoverPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        User user = getLoggedInUser();
+        if(!userTokenService.validateOtp(user.getUsername(),request))
+            throw  new IllegalArgumentException("Invalid OTP");
+        userService.changePassword(user, request.getNewPassword());
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Password Changes Successfully",
-                savedUser);
+                "");
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
 
