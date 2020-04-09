@@ -45,13 +45,13 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    public User findByName(User user, String oldPassword) {
-        User oldUser = userRepository.findByUsername(user.getUsername());
+    public User findByName(String  username, String oldPassword) {
+        User oldUser = userRepository.findByUsername(username);
         if (oldUser == null)
-            throw new UsernameNotFoundException("User not found");
+            throw new UserNotFoundException("User not found");
         if (!passwordEncoder.matches(oldPassword, oldUser.getPassword()))
             throw new WrongPasswordException("Password not matched");
-        return user;
+        return oldUser;
     }
 
     public User save(User user) {

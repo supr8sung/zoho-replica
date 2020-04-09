@@ -33,7 +33,6 @@ public class MailUtility {
         body.append("Use this password for validation. If you have not requested this please rasie " +
                 "concern\n\n");
 
-
         body.append(">>>>>>>> End Of Message <<<<<<<<<<\n\n\n");
         return body.toString();
     }

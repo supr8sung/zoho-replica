@@ -15,7 +15,7 @@ public class JobScheduler {
     @Autowired
     private UserTokenRepository userTokenRepository;
 
-    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     private void deleteExpiredTokens(){
 
         System.out.println("Running job");
