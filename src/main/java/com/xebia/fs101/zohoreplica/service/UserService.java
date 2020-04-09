@@ -1,6 +1,7 @@
 package com.xebia.fs101.zohoreplica.service;
 
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
+import com.xebia.fs101.zohoreplica.exception.FileNotUploadException;
 import com.xebia.fs101.zohoreplica.model.Birthday;
 import com.xebia.fs101.zohoreplica.api.response.UserSearchResponse;
 import com.xebia.fs101.zohoreplica.entity.User;
@@ -9,15 +10,15 @@ import com.xebia.fs101.zohoreplica.exception.WrongPasswordException;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
 import com.xebia.fs101.zohoreplica.utility.FileUtility;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -176,5 +177,22 @@ public class UserService {
 
         }
         return userSearchResponseList;
+    }
+
+    public User uploadPhoto(User user, MultipartFile file) throws IOException {
+        if (file.isEmpty())
+            throw new FileNotUploadException("Empty file can't be uploaded");
+
+        byte[] photo = Objects.requireNonNull(file.getBytes());
+
+        user.setPhoto(photo);
+        return userRepository.save(user);
+
+    }
+
+    public User deletePhoto(User user) {
+
+        user.setPhoto(null);
+        return userRepository.save(user);
     }
 }

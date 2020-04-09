@@ -164,10 +164,10 @@ class UserControllerTest {
                         "test.jpeg",
                         MediaType.IMAGE_JPEG_VALUE,
                         "<<pdf data>>".getBytes(StandardCharsets.UTF_8));
-        mockMvc.perform(multipart("/zoho/user/upload", "supr8sung")
+        mockMvc.perform(multipart("/zoho/user/photo/upload", "supr8sung")
                                 .file(mockMultipartFile)
                                 .with(user("supr8sung").password("1234").roles("EMPLOYEE")))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.message").value("profile picture uploaded"));
     }
 

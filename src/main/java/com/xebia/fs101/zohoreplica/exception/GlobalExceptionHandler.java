@@ -7,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MultipartException;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_BAD_REQUEST;
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_FAILED;
@@ -30,8 +31,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
 
-    @ExceptionHandler(EmptyFileException.class)
-    public ResponseEntity<?> emptyFile(EmptyFileException ex) {
+    @ExceptionHandler(FileNotUploadException.class)
+    public ResponseEntity<?> emptyFile(FileNotUploadException ex) {
 
         zohoReplicaResponse = getResponse(TXN_BAD_REQUEST, ex.getMessage(), "");
         return new ResponseEntity<>(zohoReplicaResponse, OK);
@@ -59,6 +60,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> invalidData(IllegalArgumentException ex) {
 
         zohoReplicaResponse = getResponse(TXN_BAD_REQUEST, ex.getMessage(), "");
+        return new ResponseEntity<>(zohoReplicaResponse, OK);
+    }
+
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<?> fileSizeExceed() {
+
+        zohoReplicaResponse = getResponse(TXN_BAD_REQUEST, "Please upload a file less than 2MB",
+                                          "");
         return new ResponseEntity<>(zohoReplicaResponse, OK);
     }
 
