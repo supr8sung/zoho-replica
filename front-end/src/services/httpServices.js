@@ -80,7 +80,16 @@ export const fetch = {
     //     });
     //     outputHandler({ ins, callbackHandler });
     // },
-    
+    postUpload({ url, requestBody = {}, callbackHandler }) {
+        let file = new FormData();
+        file.append("file", requestBody);
+        const headers = {
+            'Content-Type': 'multipart/form-data; charset=utf-8; boundary=file' 
+        };
+        
+        const ins = axios.post(url, file,{headers});
+        outputHandler({ ins, callbackHandler });
+    },
     post({ url, requestBody = {}, callbackHandler }) {
         const headers = {
             'Content-Type': 'application/json'

@@ -181,3 +181,50 @@ body {
 .err-msg{
   color: red;
 }
+.profilePic{
+  font-size:200px;
+}
+
+.displayPic{
+  border-radius: 200px;
+    height: 300px;
+    width: 300px;
+    text-align: center;
+    margin: 0px 30px;
+    position: relative;
+}
+
+.DP{
+  display: none;
+}
+.uploadPic{
+  margin-top: 15px;
+  cursor: pointer;
+}
+#profileImage{
+  border-radius: 160px;
+  height: 300px;
+  width: 300px;
+  border: 2px solid #4443438a;
+ 
+}
+
+/* #profileImage:hover{
+  opacity: 0.6;
+  cursor: pointer;
+} */
+.profileActions{
+    width: 100px;
+    height: 80px;
+    font-weight: 300;
+  margin-left: 100px;
+}
+.profileActions:hover{
+  font-weight: 600;
+}
+
+
+.actions{
+  margin: 0px 10px;
+  font-size: 25px;
+}

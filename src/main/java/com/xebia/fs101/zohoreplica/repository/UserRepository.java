@@ -5,12 +5,15 @@ import com.xebia.fs101.zohoreplica.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.FIND_BIRTHDAY_QUERY;
 import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.FIND_BY_KEYWORD_QUERY;
+
+@Transactional
 public interface UserRepository extends JpaRepository<User,UUID> {
     User findByUsername(String username);
 

@@ -1,10 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {fetch} from '../services/httpServices';
 
 const Profile = (props) =>{
    const myRef = useRef(null);
    const oPass = useRef(null);
    const nPass = useRef(null);
+   const profileDisplay = useRef(null);
+   const [dpAvailable,setDpAvailable ] = useState(false);
     const proDetails = JSON.parse(props.profileDetails);
     const [isoldpasserror,setIsoldpasserror] = useState(false);
     const [isnewpasserror,setIsnewpasserror] = useState(false);
@@ -19,12 +21,37 @@ const Profile = (props) =>{
         myRef.current.classList.add('is-active');
     }
 
+    useEffect(() =>{
+
+        if(proDetails.photo){
+            setDpAvailable(true);
+        }
+        if(profileDisplay.current){
+            profileDisplay.current.src = 'data:image/jpg;base64,' + proDetails.photo;
+        }
+        
+    },[dpAvailable,profileDisplay])
+
     const closeModal = () =>{
         myRef.current.classList.remove('is-active');
     }
-
+    const uploadPicSuccessHandler = (response) =>{
+        if(response.payload.status === 'S'){
+            setDpAvailable(true);
+            profileDisplay.current.src = 'data:image/jpg;base64,' + response.payload.data;
+        }
+        
+    }
     
-
+    const uploadPic = (e) =>{
+        e.preventDefault();
+        if(e.currentTarget.files && e.currentTarget.files[0])
+        fetch.postUpload({
+            url: 'zoho/user/upload',
+            requestBody: e.currentTarget.files[0],
+            callbackHandler: uploadPicSuccessHandler
+        });
+    }
     const onChangePassword = (e, password) =>{
         if(e.target.value){
             if(password === 'O'){
@@ -40,8 +67,11 @@ const Profile = (props) =>{
     }
 
 
-    const logoutResponseHandler = () =>{
-        window.location.href="/login";
+    const logoutResponseHandler = (response) =>{
+        if(response.payload.status === 'S'){
+            window.location.href="/login";
+        }
+       
     }
     const saveDataSuccessHandler = (response) =>{
         console.log(response);
@@ -77,7 +107,7 @@ const Profile = (props) =>{
     return(
         <div className="hero-body">
             <div className="container">
-            <div ref={myRef} class="modal">
+            <div ref={myRef} className="modal">
             <div className="modal-background"></div>
             <div className="modal-card">
                 <header className="modal-card-head">
@@ -100,7 +130,26 @@ const Profile = (props) =>{
                 </footer>
             </div>
             </div>
-                    <div className="columns is-centered">
+                <div className="columns">
+                        <div className="displayPic">
+                                
+                               { 
+                                  dpAvailable ? <div id="proImg">
+                                <img ref={profileDisplay} id="profileImage" src="" alt="profile"/>
+                                </div>  :  
+                                <div><i className="fas fa-user-circle profilePic"></i></div>
+                               }
+                              
+                            
+                            <div className="profileActions" id="aImg">
+                            <label htmlFor="profilePic" className="uploadPic"><i className="fas fa-edit actions"></i></label>
+                            <input type="file" id="profilePic" onChange={(e) => {uploadPic(e)}}  className="DP"/>
+                            <i className="fas fa-trash-alt uploadPic actions"></i>
+                                {/* <button className="button uploadPic">Upload Profile Picture</button> */}
+                            </div> 
+                            
+                           
+                        </div>
                     <div className="box">
                     <h4 className="title is-5"><i className="fas fa-info-circle mr-10"></i>Basic Info</h4>
                     <div className="column userProfile">

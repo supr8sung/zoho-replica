@@ -16,6 +16,7 @@ import com.xebia.fs101.zohoreplica.service.MailService;
 import com.xebia.fs101.zohoreplica.service.UserService;
 import com.xebia.fs101.zohoreplica.service.UserTokenService;
 import com.xebia.fs101.zohoreplica.utility.MailUtility;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -116,13 +117,13 @@ public class UserController {
     public ResponseEntity<?> uploadPhoto(@RequestParam("file") MultipartFile file) throws IOException {
         if (file.isEmpty())
             throw new EmptyFileException("Empty file can't be uploaded");
-        byte[] photo = file.getOriginalFilename().getBytes();
-
+        byte[] photo = file.getBytes();
         User user = getLoggedInUser();
         user.setPhoto(photo);
-        userService.save(user);
+        User savedUser = userService.save(user);
+
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "profile picture uploaded",
-                null);
+                savedUser.getPhoto());
         return new ResponseEntity<>(zohoReplicaResponse, OK);
 
     }
