@@ -35,6 +35,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
@@ -116,11 +117,11 @@ public class UserController {
     public ResponseEntity<?> uploadPhoto(@RequestParam("file") MultipartFile file) throws IOException {
         if (file.isEmpty())
             throw new EmptyFileException("Empty file can't be uploaded");
-        byte[] photo = file.getOriginalFilename().getBytes();
+        byte[] photo = Objects.requireNonNull(file.getOriginalFilename()).getBytes();
 
         User user = getLoggedInUser();
         user.setPhoto(photo);
-        userService.save(user);
+        User save = userService.save(user);
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "profile picture uploaded",
                 null);
         return new ResponseEntity<>(zohoReplicaResponse, OK);
@@ -150,7 +151,7 @@ public class UserController {
 
     @PostMapping("/user/change-password")
     public ResponseEntity<?> updatePassword(@Valid @RequestBody ChangePasswordRequest request) {
-        User user = userService.findByName(getLoggedInUser(), request.getOldPassword());
+        User user = userService.findByName(getLoggedInUser().getUsername(), request.getOldPassword());
         User savedUser = userService.changePassword(user, request.getNewPassword());
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Password changes successfully",
                 savedUser.getUsername());
@@ -180,7 +181,7 @@ public class UserController {
         userService.changePassword(user, request.getNewPassword());
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "Password Changes Successfully",
                 "");
-        return new ResponseEntity<>(zohoReplicaResponse, OK);
+        return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
     @GetMapping("/user/search/{keyword}")

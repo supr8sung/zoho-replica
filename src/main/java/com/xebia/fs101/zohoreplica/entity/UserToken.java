@@ -22,7 +22,11 @@ public class UserToken {
     @CreationTimestamp
     private Date createdAt;
 
-    public UserToken( String username, String token ) {
+    public UserToken() {
+
+    }
+
+    public UserToken(String username, String token ) {
 
         this.username = username;
         this.token = token;
