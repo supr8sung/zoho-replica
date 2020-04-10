@@ -195,7 +195,12 @@ public class UserController {
     @GetMapping("/user/search/{keyword}")
     public ResponseEntity<?> search(@PathVariable(value = "keyword") String keyword) {
 
-        List<UserSearchResponse> userSearchResponseList = userService.searchByName(keyword);
+        List<UserSearchResponse> userSearchResponseList = null;
+        try {
+            userSearchResponseList = userService.searchByName(keyword);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "",
                                                               userSearchResponseList);
         return new ResponseEntity<>(zohoReplicaResponse, OK);

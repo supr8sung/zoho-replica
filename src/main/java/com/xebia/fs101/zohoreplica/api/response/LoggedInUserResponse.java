@@ -118,6 +118,16 @@ public class LoggedInUserResponse {
         return userId;
     }
 
+    public Set<String> getFollowing() {
+
+        return following;
+    }
+
+    public Set<String> getFollowers() {
+
+        return followers;
+    }
+
     public static final class Builder {
         private Set<String> following;
         private Set<String> followers;
