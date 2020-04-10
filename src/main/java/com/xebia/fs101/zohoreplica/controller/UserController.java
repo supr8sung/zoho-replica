@@ -133,8 +133,8 @@ public class UserController {
         return new ResponseEntity<>(zohoReplicaResponse,OK);
     }
 
-    @PostMapping("/user/follow")
-    public ResponseEntity<?> follow(@RequestParam Object target) {
+    @PostMapping("/user/follow/{target}")
+    public ResponseEntity<?> follow(@PathVariable(value = "target") Object target) {
 
         User requestUser = getLoggedInUser();
         User targetUser = userService.findByName(target.toString());
@@ -143,8 +143,8 @@ public class UserController {
         return new ResponseEntity<>(zohoReplicaResponse, CREATED);
     }
 
-    @PostMapping("/user/unfollow")
-    public ResponseEntity<?> unfollow(@RequestParam Object target) {
+    @PostMapping("/user/unfollow/{target}")
+    public ResponseEntity<?> unfollow(@PathVariable(value = "target") Object target) {
 
         User requestUser = getLoggedInUser();
         User targetUser = userService.findByName(target.toString());

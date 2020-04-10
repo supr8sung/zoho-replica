@@ -184,7 +184,7 @@ class UserControllerTest {
                 .wihtBirthday("1/11/2019")
                 .build();
         userRepository.save(userRequest.toUser(passwordEncoder));
-        this.mockMvc.perform(post("/zoho/user/follow").param("target", "supr8sung")
+        this.mockMvc.perform(post("/zoho/user/follow/{target}", "supr8sung")
                                      .with(user("nisha").password("lier").roles("EMPLOYEE")))
                 .andDo(print())
                 .andExpect(status().isCreated());
@@ -217,7 +217,7 @@ class UserControllerTest {
         followerList.add("nisha");
         mainUser.setFollowers(followerList);
         userRepository.save(mainUser);
-        this.mockMvc.perform(post("/zoho/user/unfollow").param("target", "supr8sung")
+        this.mockMvc.perform(post("/zoho/user/unfollow/{target}", "supr8sung")
                                      .with(user("nisha").password("lier").roles("EMPLOYEE")))
                 .andDo(print())
                 .andExpect(status().isCreated());

@@ -400,6 +400,9 @@ public class User {
                 .withTotalHours(totalHours)
                 .withCheckinId(checkinId)
                 .withPhoto(this.photo)
+                .withFollowers(this.followers)
+                .withFollowing(this.following)
+
                 .build();
     }
 }
