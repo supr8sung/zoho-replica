@@ -19,11 +19,13 @@ class Header extends React.Component{
 
     searchUsers = (e) =>{
         if(e.target.value && e.target.value.length > 2){
+            this.myRef.current.classList.add('searchUsers');
             fetch.get({
                 url: '/zoho/user/search/' + e.target.value,
                 callbackHandler: this.searchSuccessHandler
             });   
         }   else{
+            this.myRef.current.classList.remove('searchUsers');
             this.showAutoCompleteOptions = false;
             this.filteredOptions = [];
             this.setState([...this.filteredOptions]);
@@ -112,7 +114,13 @@ class Header extends React.Component{
                             <i className="fa fa-search searchEmployee" aria-hidden="true"></i>
                               {
                                 this.showAutoCompleteOptions ?  <ul className="autoSearch">{this.filteredOptions.map((item) =>
-                                    <li onClick={() => {this.viewSearchProfile(item.id,props)}} key={item.id}>{item.fullname}</li>
+                                    <li onClick={() => {this.viewSearchProfile(item.id,props)}} key={item.id}>
+                                       { item.photo ? <div id="searchInline">
+                                 <img id="searchProfileImage" src={"data:image/jpg;base64," + item.photo} alt="profile" />
+                                 </div>  :  
+                                 <div className="searchInline"><i className="fas fa-user-circle searchProfilePic"></i></div>
+                                }
+                                       <span className="userlist">{item.fullname}</span> </li>
                                  )}</ul> : null
                               }  
                         </div>
