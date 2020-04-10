@@ -1,14 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { withRouter } from 'react-router';
 
 import {fetch} from '../services/httpServices';
 
 const viewprofile = (props) =>{
-
-
-
-
-
     let proDetails = {};
     if(!props.location.userdetails){
         props.history.push("/");
@@ -16,14 +11,23 @@ const viewprofile = (props) =>{
         proDetails = props.location.userdetails;
     }
 
+    let [followers,setFollowers] = useState(proDetails.followersCount);
+    let [following] = useState(proDetails.followingCount);
+
+
+    
+
     const saveDataSuccessHandler = (response)=>{
-        console.log(response);
+            if(response.payload.status === 'S'){
+                followers++;
+                setFollowers(followers);
+            }
+            
     }
 
     const handleFollow = () =>{
-        fetch.post({
-            url: '/zoho/user/follow',
-            requestBody: proDetails.fullname,
+        fetch.get({
+            url: '/zoho/user/follow/' + proDetails.fullname,
             callbackHandler: saveDataSuccessHandler
         });
     }
@@ -65,13 +69,13 @@ const viewprofile = (props) =>{
                     <div className="field">
                         <label className="label">Followers</label>
                         <div className="control has-icons-left">
-                            <span>{proDetails.followersCount}</span>
+                            <span>{followers}</span>
                         </div>
                     </div>
                     <div className="field">
                         <label className="label">Following</label>
                         <div className="control has-icons-left">
-                            <span>{proDetails.followingCount}</span>
+                            <span>{following}</span>
                         </div>
                     </div>
                     

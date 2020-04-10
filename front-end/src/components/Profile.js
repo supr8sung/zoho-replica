@@ -6,8 +6,9 @@ const Profile = (props) =>{
    const oPass = useRef(null);
    const nPass = useRef(null);
    const profileDisplay = useRef(null);
-   const [dpAvailable,setDpAvailable ] = useState(false);
+   
     const proDetails = JSON.parse(props.profileDetails);
+    const [dpAvailable,setDpAvailable ] = useState((proDetails.photo) ? true : false);
     const [isoldpasserror,setIsoldpasserror] = useState(false);
     const [isnewpasserror,setIsnewpasserror] = useState(false);
     let oldPass ,newPass;
@@ -22,15 +23,11 @@ const Profile = (props) =>{
     }
 
     useEffect(() =>{
-
-        if(proDetails.photo){
-            setDpAvailable(true);
-        }
         if(profileDisplay.current){
             profileDisplay.current.src = 'data:image/jpg;base64,' + proDetails.photo;
         }
         
-    },[dpAvailable,profileDisplay])
+    },[profileDisplay])
 
     const closeModal = () =>{
         myRef.current.classList.remove('is-active');
@@ -42,12 +39,26 @@ const Profile = (props) =>{
         }
         
     }
+
+    const deleteSuccessHandler = (response) =>{
+        if(response.payload.status === 'S'){
+            setDpAvailable(false);
+        }
+    }
+    const deletePic = (e) =>{
+        fetch.post({
+            url:'zoho/user/photo/delete',
+            callbackHandler: deleteSuccessHandler
+        })
+    }
+
+
     
     const uploadPic = (e) =>{
         e.preventDefault();
         if(e.currentTarget.files && e.currentTarget.files[0])
         fetch.postUpload({
-            url: 'zoho/user/upload',
+            url: 'zoho/user/photo/upload',
             requestBody: e.currentTarget.files[0],
             callbackHandler: uploadPicSuccessHandler
         });
@@ -144,7 +155,7 @@ const Profile = (props) =>{
                             <div className="profileActions" id="aImg">
                             <label htmlFor="profilePic" className="uploadPic"><i className="fas fa-edit actions"></i></label>
                             <input type="file" id="profilePic" onChange={(e) => {uploadPic(e)}}  className="DP"/>
-                            <i className="fas fa-trash-alt uploadPic actions"></i>
+                            <i className="fas fa-trash-alt uploadPic actions" onClick={(e) => {deletePic(e)}} ></i>
                                 {/* <button className="button uploadPic">Upload Profile Picture</button> */}
                             </div> 
                             
