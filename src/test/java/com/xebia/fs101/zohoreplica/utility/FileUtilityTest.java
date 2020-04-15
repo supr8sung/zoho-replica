@@ -17,7 +17,7 @@ class FileUtilityTest {
     void should_save_birthday_details_to_file() {
 
         Birthday birthday = new Birthday.Builder()
-                .withId(UUID.randomUUID())
+                .withId(new Long(1234))
                 .withAge(24)
                 .withPhoto(new byte[]{})
                 .withFullname("Supreet Singh")
@@ -35,7 +35,7 @@ class FileUtilityTest {
     void get_birthday_details_from_a_file() throws IOException {
 
         Birthday birthday = new Birthday.Builder()
-                .withId(UUID.randomUUID())
+                .withId(new Long(145464))
                 .withAge(24)
                 .withPhoto(new byte[]{})
                 .withFullname("Supreet Singh")

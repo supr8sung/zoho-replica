@@ -6,6 +6,7 @@ import com.xebia.fs101.zohoreplica.api.request.ForgotPasswordRequest;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.entity.UserToken;
+import com.xebia.fs101.zohoreplica.model.Clients;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
 import com.xebia.fs101.zohoreplica.repository.UserTokenRepository;
 import com.xebia.fs101.zohoreplica.service.UserService;
@@ -29,9 +30,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.xebia.fs101.zohoreplica.model.Clients.XEBIA;
+import static com.xebia.fs101.zohoreplica.model.UserCity.PUNE;
+import static com.xebia.fs101.zohoreplica.model.UserDesignation.CONSULTANT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -69,10 +74,10 @@ class UserControllerTest {
                 .withEmail("supreetsingh@xebia.com")
                 .withPassword("1234")
                 .withMobile("9643496936")
-                .withCompany("XEBIA")
+
                 .wihtBirthday("1/11/2019")
                 .build();
-        mainUser = userRepository.save(userRequest.toUser(passwordEncoder));
+        mainUser = userRepository.save(userRequest.toUser(passwordEncoder, XEBIA));
     }
 
     @AfterEach
@@ -83,7 +88,7 @@ class UserControllerTest {
     }
 
     @Test
-    void should_be_able_to_save_a_user() throws Exception {
+    void admin_only_should_be_able_to_save_a_user() throws Exception {
 
         UserRequest userRequest = new UserRequest.Builder()
                 .withUsername("supr9sung")
@@ -91,17 +96,28 @@ class UserControllerTest {
                 .withEmail("supreetsingh5@xebia.com")
                 .withPassword("hola@bitch")
                 .withMobile("9643496936")
-                .withCompany("XEBIA")
+                .withCity(PUNE)
+                .withDesignation(CONSULTANT)
                 .wihtBirthday("1/11/2019")
                 .build();
         String json = objectMapper.writeValueAsString(userRequest);
-        this.mockMvc.perform(post("/zoho/signup").accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/zoho/user/add").accept(MediaType.APPLICATION_JSON)
+                                     .with(httpBasic("admin", "12345"))
                                      .content(json)
                                      .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data").isNotEmpty())
                 .andExpect(jsonPath("$.status").value("S"));
+    }
+
+    @Test
+    void admin_only_should_be_able_to_delete_a_user() throws Exception {
+
+        this.mockMvc.perform(delete("/zoho/user/delete/{id}", mainUser.getId())
+                                     .with(httpBasic("admin", "12345")))
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -129,7 +145,6 @@ class UserControllerTest {
                 .withFullname("Supreet Singh")
                 .withEmail("supreetsingh5@xebia.com")
                 .withPassword("hola@bitch")
-                .withCompany("XEBIA")
                 .wihtBirthday("1/11/2019")
                 .build();
         String json = objectMapper.writeValueAsString(userRequest);
@@ -178,12 +193,11 @@ class UserControllerTest {
                 .withUsername("nisha")
                 .withFullname("Nisha Kaur")
                 .withPassword("lier")
-                .withCompany("pari")
                 .withEmail("nisha@gmail.com")
                 .withMobile("7408738100")
                 .wihtBirthday("1/11/2019")
                 .build();
-        userRepository.save(userRequest.toUser(passwordEncoder));
+        userRepository.save(userRequest.toUser(passwordEncoder, XEBIA));
         this.mockMvc.perform(post("/zoho/user/follow/{target}", "supr8sung")
                                      .with(user("nisha").password("lier").roles("EMPLOYEE")))
                 .andDo(print())
@@ -201,12 +215,11 @@ class UserControllerTest {
                 .withUsername("nisha")
                 .withFullname("Nisha Kaur")
                 .withPassword("lier")
-                .withCompany("pari")
                 .withEmail("nisha@gmail.com")
                 .withMobile("7408738100")
                 .wihtBirthday("1/11/2019")
                 .build();
-        User savedNisha = userRepository.save(userRequest.toUser(passwordEncoder));
+        User savedNisha = userRepository.save(userRequest.toUser(passwordEncoder,XEBIA));
         savedNisha.setFollowingCount(1);
         Set<String> followingList = new HashSet<>();
         followingList.add("supr8sung");

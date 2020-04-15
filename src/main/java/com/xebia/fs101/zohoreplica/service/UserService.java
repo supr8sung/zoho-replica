@@ -7,6 +7,8 @@ import com.xebia.fs101.zohoreplica.exception.FileNotUploadException;
 import com.xebia.fs101.zohoreplica.exception.UserNotFoundException;
 import com.xebia.fs101.zohoreplica.exception.WrongPasswordException;
 import com.xebia.fs101.zohoreplica.model.Birthday;
+import com.xebia.fs101.zohoreplica.model.Clients;
+import com.xebia.fs101.zohoreplica.model.UserSearch;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
 import com.xebia.fs101.zohoreplica.utility.FileUtility;
 import com.xebia.fs101.zohoreplica.utility.PhotoUtility;
@@ -34,12 +36,13 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User save(UserRequest userRequest) {
+    public User add(UserRequest userRequest, String username) {
 
-        return userRepository.save(userRequest.toUser(passwordEncoder));
+        Clients company = userRepository.findByUsername(username).getCompany();
+        return userRepository.save(userRequest.toUser(passwordEncoder, company));
     }
 
-    public User findById(UUID id) {
+    public User findById(Long id) {
 
         return userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("User id is not " +
@@ -157,7 +160,7 @@ public class UserService {
         LocalDate localDate = LocalDate.now();
         int month = localDate.getMonthValue();
         int dayOfMonth = localDate.getDayOfMonth();
-        List<Birthday> allBirthdays = userRepository.allBirthday(month, dayOfMonth)
+        List<Birthday> allBirthdays = userRepository.allBirthdaysOn(month, dayOfMonth)
                 .stream()
                 .map(User::getBirthdayDetails)
                 .collect(Collectors.toList());
@@ -186,7 +189,8 @@ public class UserService {
         for (Object[] data : matchedData) {
             userSearchResponseList.add(
                     new UserSearchResponse(UUID.fromString(String.valueOf(data[0])),
-                                           String.valueOf(data[1]), PhotoUtility.getBytes(data[2])));
+                                           String.valueOf(data[1]),
+                                           PhotoUtility.getBytes(data[2])));
         }
         return userSearchResponseList;
     }
@@ -200,9 +204,39 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User deletePhoto(User user) {
+    public void deletePhoto(User user) {
 
         user.setPhoto(null);
+        userRepository.save(user);
+    }
+
+    public void deleteUser(Long id) {
+
+        userRepository.deleteById(id);
+    }
+
+    public void setUserHierarchy() {
+        //userRepository.
+    }
+
+    public List<UserSearch> allReportings(Long id) {
+
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("No user found with given id"));
+        List<User> allReportings = userRepository.findAllReportings(user.getCity().toString(),
+                                                                    user.getDesignation());
+        return allReportings.stream().map(
+                e -> new UserSearch(e.getId(), e.getFullname(), e.getPhoto())).collect(
+                Collectors.toList());
+    }
+
+    public User addReportingManager(Long managerId, String username) {
+
+        User user = userRepository.findByUsername(username);
+        User manager = userRepository.findById(managerId).orElseThrow(
+                () -> new UserNotFoundException("No manager found with requested id"));
+        user.setReportingTo(manager);
         return userRepository.save(user);
+
     }
 }

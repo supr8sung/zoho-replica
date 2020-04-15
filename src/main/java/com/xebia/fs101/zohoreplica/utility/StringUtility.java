@@ -1,10 +1,16 @@
 package com.xebia.fs101.zohoreplica.utility;
 
+import com.xebia.fs101.zohoreplica.model.UserDesignation;
+import com.xebia.fs101.zohoreplica.security.ZohoApplicationRole;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import static com.xebia.fs101.zohoreplica.model.UserDesignation.CONSULTANT;
+import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.EMPLOYEE;
+import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.MANAGER;
 import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.calculateDailyHours;
-public class MailUtility {
+public class StringUtility {
 
     public static String generateReportBody(String fullname, LocalTime inTime, LocalTime outTime){
 
@@ -35,5 +41,13 @@ public class MailUtility {
 
         body.append(">>>>>>>> End Of Message <<<<<<<<<<\n\n\n");
         return body.toString();
+    }
+
+
+    public static ZohoApplicationRole getRole(UserDesignation designation){
+        if(designation== CONSULTANT)
+            return EMPLOYEE;
+        else
+            return MANAGER;
     }
 }

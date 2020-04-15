@@ -7,19 +7,19 @@ public class Birthday implements Serializable {
 
 
     private static  final long serialVersionUID= 42L;
-    private UUID id;
+    private Long id;
     private String fullname;
     private byte[] photo;
     private int age;
 
-    public Birthday(UUID id, String fullname, byte[] photo, int age) {
+    public Birthday(Long id, String fullname, byte[] photo, int age) {
         this.id = id;
         this.fullname = fullname;
         this.photo = photo;
         this.age = age;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
@@ -43,7 +43,7 @@ public class Birthday implements Serializable {
     }
 
     public static final class Builder {
-        private UUID id;
+        private Long id;
         private String fullname;
         private byte[] photo;
         private int age;
@@ -51,7 +51,7 @@ public class Birthday implements Serializable {
         public Builder() {
         }
 
-        public Builder withId(UUID val) {
+        public Builder withId(Long val) {
             id = val;
             return this;
         }

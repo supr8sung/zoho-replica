@@ -1,15 +1,18 @@
 package com.xebia.fs101.zohoreplica.api.response;
 
+import com.xebia.fs101.zohoreplica.entity.User;
+import com.xebia.fs101.zohoreplica.model.Clients;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 import java.util.UUID;
 
 public class LoggedInUserResponse {
-    private UUID userId;
+    private Long userId;
     private String fullname;
     private String email;
-    private String company;
+    private Clients company;
     private String mobile;
     private long followersCount;
     private long followingCount;
@@ -20,10 +23,11 @@ public class LoggedInUserResponse {
     private Set<String> following;
     private Set<String> followers;
     private byte[] photo;
+    private User reportingTo;
 
-    public LoggedInUserResponse(String fullname, String email, String company, String mobile,
+    public LoggedInUserResponse(String fullname, String email, Clients company, String mobile,
                                 long followersCount, long followingCount, LocalTime lastCheckin,
-                                LocalDate birthday, String totalHours, Long checkinId, UUID userId,
+                                LocalDate birthday, String totalHours, Long checkinId, Long userId,
                                 byte[] photo) {
 
         this.fullname = fullname;
@@ -56,6 +60,7 @@ public class LoggedInUserResponse {
         photo = builder.photo;
         followers = builder.followers;
         following = builder.following;
+        reportingTo = builder.reportingTo;
     }
 
     public Long getCheckinId() {
@@ -73,7 +78,7 @@ public class LoggedInUserResponse {
         return email;
     }
 
-    public String getCompany() {
+    public Clients getCompany() {
 
         return company;
     }
@@ -113,7 +118,7 @@ public class LoggedInUserResponse {
         return photo;
     }
 
-    public UUID getUserId() {
+    public Long getUserId() {
 
         return userId;
     }
@@ -128,17 +133,23 @@ public class LoggedInUserResponse {
         return followers;
     }
 
+    public User getReportingTo() {
+
+        return reportingTo;
+    }
+
     public static final class Builder {
+        private User reportingTo;
         private Set<String> following;
         private Set<String> followers;
         private String totalHours;
         private Long checkinId;
-        private UUID userId;
+        private Long userId;
         private byte[] photo;
         private LocalDate birthday;
         private String fullname;
         private String email;
-        private String company;
+        private Clients company;
         private String mobile;
         private long followersCount;
         private long followingCount;
@@ -160,7 +171,7 @@ public class LoggedInUserResponse {
             return this;
         }
 
-        public Builder withCompany(String val) {
+        public Builder withCompany(Clients val) {
 
             company = val;
             return this;
@@ -208,7 +219,7 @@ public class LoggedInUserResponse {
             return this;
         }
 
-        public Builder withUserId(UUID val) {
+        public Builder withUserId(Long val) {
 
             userId = val;
             return this;
@@ -229,6 +240,12 @@ public class LoggedInUserResponse {
         public Builder withFollowers(Set<String> val) {
 
             followers = val;
+            return this;
+        }
+
+        public Builder withResportingTo(User val) {
+
+            reportingTo = val;
             return this;
         }
 

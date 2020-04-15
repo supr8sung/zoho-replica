@@ -9,6 +9,9 @@ public interface QueryConstant {
     String  FIND_BIRTHDAY_QUERY="select * from users where extract(month from birthday)= ?1 " +
             "AND extract(day from birthday)= ?2";
 
-    String DELETE_EXPIRED_TOKENS="delete from user_token where created_at + interval '1 minutes' <= now()";
+    String DELETE_EXPIRED_TOKENS_QUERY ="delete from user_token where created_at + interval '1 minutes' <= now()";
+
+    //String  ALL_REPORTING_QUERY="select CAST(id as varchar) id,fullname from users where city= ?1 and designation > ?2";
+    String  ALL_REPORTING_QUERY="Select * FROM users  where CITY= ?1 and designation > ?2";
 
 }

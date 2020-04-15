@@ -8,13 +8,13 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 
-import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.DELETE_EXPIRED_TOKENS;
+import static com.xebia.fs101.zohoreplica.api.constant.QueryConstant.DELETE_EXPIRED_TOKENS_QUERY;
 
 @Repository
 public interface UserTokenRepository extends JpaRepository<UserToken,Long> {
 
     @Modifying
     @Transactional
-    @Query(nativeQuery = true,value = DELETE_EXPIRED_TOKENS)
+    @Query(nativeQuery = true,value = DELETE_EXPIRED_TOKENS_QUERY)
     void deleteExpiredToken();
 }

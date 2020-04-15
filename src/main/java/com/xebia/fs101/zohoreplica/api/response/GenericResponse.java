@@ -1,6 +1,6 @@
 package com.xebia.fs101.zohoreplica.api.response;
 
-public class ZohoReplicaResponse {
+public class GenericResponse {
 
     private Object data;
     private String message;
@@ -31,16 +31,16 @@ public class ZohoReplicaResponse {
         this.status = status;
     }
 
-    public ZohoReplicaResponse() {
+    public GenericResponse() {
     }
 
-    public ZohoReplicaResponse(Object data, String message, String status) {
+    public GenericResponse(Object data, String message, String status) {
         this.data = data;
         this.message = message;
         this.status = status;
     }
 
-    private ZohoReplicaResponse(Builder builder) {
+    private GenericResponse(Builder builder) {
         data = builder.data;
         message = builder.message;
         status = builder.status;
@@ -70,8 +70,8 @@ public class ZohoReplicaResponse {
             return this;
         }
 
-        public ZohoReplicaResponse build() {
-            return new ZohoReplicaResponse(this);
+        public GenericResponse build() {
+            return new GenericResponse(this);
         }
     }
 }

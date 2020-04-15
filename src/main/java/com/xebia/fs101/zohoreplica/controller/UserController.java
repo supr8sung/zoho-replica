@@ -5,20 +5,23 @@ import com.xebia.fs101.zohoreplica.api.request.ChangePasswordRequest;
 import com.xebia.fs101.zohoreplica.api.request.ForgotPasswordRequest;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.api.response.FollowResponse;
+import com.xebia.fs101.zohoreplica.api.response.GenericResponse;
 import com.xebia.fs101.zohoreplica.api.response.UserSearchResponse;
-import com.xebia.fs101.zohoreplica.api.response.ZohoReplicaResponse;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.model.Birthday;
+import com.xebia.fs101.zohoreplica.security.AdminOnly;
 import com.xebia.fs101.zohoreplica.service.AttendanceService;
 import com.xebia.fs101.zohoreplica.service.MailService;
 import com.xebia.fs101.zohoreplica.service.UserService;
 import com.xebia.fs101.zohoreplica.service.UserTokenService;
-import com.xebia.fs101.zohoreplica.utility.MailUtility;
+import com.xebia.fs101.zohoreplica.utility.StringUtility;
+import org.hibernate.annotations.GeneratorType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,12 +34,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
 import static com.xebia.fs101.zohoreplica.utility.OtpUtility.generateOtp;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -58,39 +63,50 @@ public class UserController {
         return "index";
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody UserRequest userRequest) {
+     @AdminOnly
+    @PostMapping("/user/add")
+    public ResponseEntity<?> add(@Valid @RequestBody UserRequest userRequest, Principal principal) {
 
-        User savedUser = userService.save(userRequest);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "User saved successfully",
-                                                              savedUser.getId());
-        return new ResponseEntity<>(zohoReplicaResponse, CREATED);
+        User savedUser = userService.add(userRequest,principal.getName());
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, "User saved successfully",
+                                                      savedUser.getId());
+        return new ResponseEntity<>(genericResponse, CREATED);
     }
 
-    @GetMapping("/valid")
-    public ResponseEntity<?> validateUsername(@RequestParam String username) {
+    @AdminOnly
+    @DeleteMapping("user/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
+
+        userService.deleteUser(id);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS,
+                                                      "User deleted successfully", "");
+        return new ResponseEntity<>(genericResponse, NO_CONTENT);
+    }
+
+    @GetMapping("/user/valid/{username")
+    public ResponseEntity<?> validateUsername(@PathVariable(value = "username") String username) {
 
         Boolean isUsernameValid = userService.validateUsername(username);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "", isUsernameValid);
-        return new ResponseEntity<>(zohoReplicaResponse, OK);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, "", isUsernameValid);
+        return new ResponseEntity<>(genericResponse, OK);
     }
 
     @GetMapping("/user/{username}")
     public ResponseEntity<?> view(@PathVariable(value = "username") String username) {
 
         User requestedUser = userService.findByName(username);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "",
-                                                              requestedUser.toUserViewResponse());
-        return new ResponseEntity<>(zohoReplicaResponse, OK);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, "",
+                                                      requestedUser.toUserViewResponse());
+        return new ResponseEntity<>(genericResponse, OK);
     }
 
     @GetMapping("/user/view/{id}")
-    public ResponseEntity<?> viewUser(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<?> viewUser(@PathVariable(value = "id") Long id) {
 
         User user = userService.findById(id);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "",
-                                                              user.toUserViewResponse());
-        return new ResponseEntity<>(zohoReplicaResponse, OK);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, "",
+                                                      user.toUserViewResponse());
+        return new ResponseEntity<>(genericResponse, OK);
     }
 
     @GetMapping("/user/{username}/info")
@@ -99,17 +115,17 @@ public class UserController {
         User user = userService.findByName(username);
         FollowResponse followResponse = new FollowResponse(user.getFollowersCount(),
                                                            user.getFollowingCount());
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "", followResponse);
-        return new ResponseEntity<>(zohoReplicaResponse, OK);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, "", followResponse);
+        return new ResponseEntity<>(genericResponse, OK);
     }
 
     @PutMapping("/user/edit")
-    public ResponseEntity<?> edit(@Valid @RequestBody UserRequest userRequest) {
+    public ResponseEntity<?> edit(@Valid @RequestBody UserRequest userRequest,Principal principal) {
 
-        User user = getLoggedInUser();
-        userService.save(userRequest);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "", user);
-        return new ResponseEntity<>(zohoReplicaResponse, CREATED);
+
+        userService.add(userRequest,principal.getName());
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, "", "");
+        return new ResponseEntity<>(genericResponse, CREATED);
     }
 
     @PostMapping("/user/photo/upload")
@@ -117,10 +133,10 @@ public class UserController {
 
         User user = getLoggedInUser();
         User savedUser = userService.uploadPhoto(user, file);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS,
-                                                              "profile picture uploaded",
-                                                              savedUser.getPhoto());
-        return new ResponseEntity<>(zohoReplicaResponse, CREATED);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS,
+                                                      "profile picture uploaded",
+                                                      savedUser.getPhoto());
+        return new ResponseEntity<>(genericResponse, CREATED);
     }
 
     @PostMapping("/user/photo/delete")
@@ -128,9 +144,9 @@ public class UserController {
 
         User user = getLoggedInUser();
         userService.deletePhoto(user);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "profile picture deleted",
-                                                              "");
-        return new ResponseEntity<>(zohoReplicaResponse,OK);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, "profile picture deleted",
+                                                      "");
+        return new ResponseEntity<>(genericResponse, OK);
     }
 
     @PostMapping("/user/follow/{target}")
@@ -139,8 +155,8 @@ public class UserController {
         User requestUser = getLoggedInUser();
         User targetUser = userService.findByName(target.toString());
         String message = userService.follow(requestUser, targetUser);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, message, "");
-        return new ResponseEntity<>(zohoReplicaResponse, CREATED);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, message, "");
+        return new ResponseEntity<>(genericResponse, CREATED);
     }
 
     @PostMapping("/user/unfollow/{target}")
@@ -149,8 +165,8 @@ public class UserController {
         User requestUser = getLoggedInUser();
         User targetUser = userService.findByName(target.toString());
         String message = userService.unfollow(requestUser, targetUser);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, message, "");
-        return new ResponseEntity<>(zohoReplicaResponse, CREATED);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, message, "");
+        return new ResponseEntity<>(genericResponse, CREATED);
     }
 
     @PostMapping("/user/change-password")
@@ -159,10 +175,10 @@ public class UserController {
         User user = userService.findByName(getLoggedInUser().getUsername(),
                                            request.getOldPassword());
         User savedUser = userService.changePassword(user, request.getNewPassword());
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS,
-                                                              "Password changes successfully",
-                                                              savedUser.getUsername());
-        return new ResponseEntity<>(zohoReplicaResponse, CREATED);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS,
+                                                      "Password changes successfully",
+                                                      savedUser.getUsername());
+        return new ResponseEntity<>(genericResponse, CREATED);
     }
 
     @GetMapping("/user/send-otp")
@@ -170,13 +186,13 @@ public class UserController {
 
         User user = getLoggedInUser();
         String otp = generateOtp();
-        String mailBody = MailUtility.generateOtpBody(otp, user.getFullname());
+        String mailBody = StringUtility.generateOtpBody(otp, user.getFullname());
         mailService.sendMail(user.getEmail(), mailBody);
         long tokenId = userTokenService.save(user.getUsername(), otp);
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS,
-                                                              "OTP sent to your registered mail" +
+        GenericResponse genericResponse = getResponse(TXN_SUCESS,
+                                                      "OTP sent to your registered mail" +
                                                                       " id", tokenId);
-        return new ResponseEntity<>(zohoReplicaResponse, OK);
+        return new ResponseEntity<>(genericResponse, OK);
     }
 
     @PostMapping("/user/recover-password")
@@ -186,10 +202,10 @@ public class UserController {
         if (!userTokenService.validateOtp(user.getUsername(), request))
             throw new IllegalArgumentException("Invalid OTP");
         userService.changePassword(user, request.getNewPassword());
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS,
-                                                              "Password Changes Successfully",
-                                                              "");
-        return new ResponseEntity<>(zohoReplicaResponse, CREATED);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS,
+                                                      "Password Changes Successfully",
+                                                      "");
+        return new ResponseEntity<>(genericResponse, CREATED);
     }
 
     @GetMapping("/user/search/{keyword}")
@@ -201,22 +217,38 @@ public class UserController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "",
-                                                              userSearchResponseList);
-        return new ResponseEntity<>(zohoReplicaResponse, OK);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, "",
+                                                      userSearchResponseList);
+        return new ResponseEntity<>(genericResponse, OK);
     }
 
     @GetMapping("/user/birthdays")
     public ResponseEntity<?> birthdays() {
 
         List<Birthday> allBirthdays = userService.allBirthdays();
-        ZohoReplicaResponse zohoReplicaResponse = getResponse(TXN_SUCESS, "", allBirthdays);
-        return new ResponseEntity<>(zohoReplicaResponse, OK);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, "", allBirthdays);
+        return new ResponseEntity<>(genericResponse, OK);
     }
 
-    private ZohoReplicaResponse getResponse(String status, String message, Object data) {
+    @GetMapping("/user/all-reporting/{id}")
+    public ResponseEntity<?> allReporting(@PathVariable(value = "id") Long id){
 
-        return new ZohoReplicaResponse.Builder()
+        GenericResponse genericResponse=getResponse( TXN_SUCESS,"",userService.allReportings(id));
+        return new ResponseEntity<>(genericResponse,OK);
+    }
+
+
+    @PostMapping("/user/hierarchy/{managerId}")
+    public ResponseEntity<?> userHierarchy(@PathVariable(value = "managerId") Long managerId,Principal principal){
+
+        User user = userService.addReportingManager(managerId, principal.getName());
+        GenericResponse genericResponse=getResponse(TXN_SUCESS,"",user);
+        return new ResponseEntity<>(genericResponse,OK);
+    }
+
+    private GenericResponse getResponse(String status, String message, Object data) {
+
+        return new GenericResponse.Builder()
                 .withData(data)
                 .withStatus(status)
                 .withMessage(message)
@@ -237,4 +269,6 @@ public class UserController {
             throw new UsernameNotFoundException("No logged in user found");
         return user;
     }
+
+
 }

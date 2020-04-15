@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.entity.Attendance;
 import com.xebia.fs101.zohoreplica.entity.User;
+import com.xebia.fs101.zohoreplica.model.Clients;
 import com.xebia.fs101.zohoreplica.repository.AttendanceRepository;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
 import com.xebia.fs101.zohoreplica.service.AttendanceService;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.transaction.Transactional;
 import java.time.LocalTime;
 
+import static com.xebia.fs101.zohoreplica.model.Clients.XEBIA;
 import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.ADMIN;
 import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.EMPLOYEE;
 import static java.time.temporal.ChronoUnit.MINUTES;
@@ -62,12 +64,11 @@ class AttendanceControllerTest {
                 .withEmail("supreetsingh@xebi.com")
                 .withPassword("12345")
                 .withMobile("9643496936")
-                .withRole(EMPLOYEE)
-                .withCompany("Xebia")
+
                 .wihtBirthday("1/11/2019")
                 .build();
 
-        user = userRepository.save(userRequest.toUser(passwordEncoder));
+        user = userRepository.save(userRequest.toUser(passwordEncoder, XEBIA));
     }
 
     @AfterEach

@@ -22,7 +22,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     @Modifying
     @Query(nativeQuery = true, value = ATTENDANCE_DETAILS_QUERY)
-    List<Attendance> findAttendanceDetails(LocalDate date, UUID userId);
+    List<Attendance> findAttendanceDetails(LocalDate date, Long userId);
 
 
 

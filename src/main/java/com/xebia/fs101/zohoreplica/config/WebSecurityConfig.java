@@ -35,9 +35,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .authorizeRequests()
                 .antMatchers("/zoho","/reaources/**","/signup","/index","/css/*","/js/*").permitAll()
-                .antMatchers("/zoho/signup").permitAll()
+                .antMatchers("/zoho/user/add").permitAll()
                 .antMatchers("/zoho/valid/**").permitAll()
-                .antMatchers("/zoho/user/search/**").permitAll()
+                .antMatchers("/kafka/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -74,8 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public RoleHierarchyImpl roleHierarchy() {
 
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_EMPLOYER\n"
-                + "ROLE_EMPLOYER > ROLE_EMPLOYEE");
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_MANAGER\n"
+                + "ROLE_ADMIN > ROLE_EMPLOYEE");
         return roleHierarchy;
     }
 

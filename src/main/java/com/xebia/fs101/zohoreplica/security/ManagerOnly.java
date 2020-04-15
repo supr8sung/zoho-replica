@@ -9,6 +9,6 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(METHOD)
 @Retention(RUNTIME)
-@PreAuthorize("hasRole('ROLE_EMPLOYER')")
-public @interface EmployerOnly {
+@PreAuthorize("hasRole('ROLE_MANAGER')")
+public @interface ManagerOnly {
 }

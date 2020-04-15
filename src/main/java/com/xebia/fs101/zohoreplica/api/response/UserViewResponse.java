@@ -1,11 +1,13 @@
 package com.xebia.fs101.zohoreplica.api.response;
 
+import com.xebia.fs101.zohoreplica.model.Clients;
+
 import java.util.Set;
 public class UserViewResponse {
 
     private String fullname;
     private String email;
-    private String company;
+    private Clients company;
     private String mobile;
     private long followersCount;
     private long followingCount;
@@ -14,7 +16,7 @@ public class UserViewResponse {
     private byte[] photo;
 
 
-    public UserViewResponse(String fullname, String email, String company, String mobile,
+    public UserViewResponse(String fullname, String email, Clients company, String mobile,
                             long followersCount, long followingCount, Set<String> followers,
                             Set<String> following, byte[] photo) {
         this.fullname = fullname;
@@ -49,7 +51,7 @@ public class UserViewResponse {
         return email;
     }
 
-    public String getCompany() {
+    public Clients getCompany() {
         return company;
     }
 
@@ -82,7 +84,7 @@ public class UserViewResponse {
         private Set<String> following;
         private String fullname;
         private String email;
-        private String company;
+        private Clients company;
         private String mobile;
         private long followersCount;
         private long followingCount;
@@ -102,7 +104,7 @@ public class UserViewResponse {
             return this;
         }
 
-        public Builder withCompany(String val) {
+        public Builder withCompany(Clients val) {
             company = val;
             return this;
         }
