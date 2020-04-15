@@ -3,6 +3,7 @@ package com.xebia.fs101.zohoreplica.controller;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import com.xebia.fs101.zohoreplica.api.request.ChangePasswordRequest;
 import com.xebia.fs101.zohoreplica.api.request.ForgotPasswordRequest;
+import com.xebia.fs101.zohoreplica.api.request.UserManagerRequest;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.api.response.FollowResponse;
 import com.xebia.fs101.zohoreplica.api.response.GenericResponse;
@@ -15,7 +16,6 @@ import com.xebia.fs101.zohoreplica.service.MailService;
 import com.xebia.fs101.zohoreplica.service.UserService;
 import com.xebia.fs101.zohoreplica.service.UserTokenService;
 import com.xebia.fs101.zohoreplica.utility.StringUtility;
-import org.hibernate.annotations.GeneratorType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,7 +36,6 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
-import java.util.UUID;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
 import static com.xebia.fs101.zohoreplica.utility.OtpUtility.generateOtp;
@@ -83,6 +82,7 @@ public class UserController {
         return new ResponseEntity<>(genericResponse, NO_CONTENT);
     }
 
+    @AdminOnly
     @GetMapping("/user/valid/{username")
     public ResponseEntity<?> validateUsername(@PathVariable(value = "username") String username) {
 
@@ -230,6 +230,7 @@ public class UserController {
         return new ResponseEntity<>(genericResponse, OK);
     }
 
+
     @GetMapping("/user/all-reporting/{id}")
     public ResponseEntity<?> allReporting(@PathVariable(value = "id") Long id){
 
@@ -238,10 +239,11 @@ public class UserController {
     }
 
 
-    @PostMapping("/user/hierarchy/{managerId}")
-    public ResponseEntity<?> userHierarchy(@PathVariable(value = "managerId") Long managerId,Principal principal){
+    @AdminOnly
+    @PostMapping("/user/hierarchy")
+    public ResponseEntity<?> userHierarchy(@Valid @RequestBody UserManagerRequest request){
 
-        User user = userService.addReportingManager(managerId, principal.getName());
+        User user = userService.addReportingManager(request.getUserId(),request.getManagerId() );
         GenericResponse genericResponse=getResponse(TXN_SUCESS,"",user);
         return new ResponseEntity<>(genericResponse,OK);
     }

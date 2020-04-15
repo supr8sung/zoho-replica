@@ -4,7 +4,6 @@ import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.model.Clients;
 import com.xebia.fs101.zohoreplica.model.UserCity;
 import com.xebia.fs101.zohoreplica.model.UserDesignation;
-import com.xebia.fs101.zohoreplica.security.ZohoApplicationRole;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
@@ -12,7 +11,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 
-import static com.xebia.fs101.zohoreplica.security.ZohoApplicationRole.EMPLOYEE;
 import static com.xebia.fs101.zohoreplica.utility.DateUtility.getLocalDate;
 import static com.xebia.fs101.zohoreplica.utility.StringUtility.getRole;
 
@@ -76,8 +74,6 @@ public class UserRequest {
         return password;
     }
 
-
-
     public UserDesignation getDesignation() {
 
         return designation;
@@ -114,7 +110,6 @@ public class UserRequest {
     }
 
     public static final class Builder {
-
         private UserCity city;
         private UserDesignation designation;
         private String birthday;
@@ -157,10 +152,6 @@ public class UserRequest {
             password = val;
             return this;
         }
-
-
-
-
 
         public Builder wihtBirthday(String val) {
 

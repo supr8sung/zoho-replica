@@ -2,7 +2,6 @@ package com.xebia.fs101.zohoreplica.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
 import com.xebia.fs101.zohoreplica.api.response.UserViewResponse;
 import com.xebia.fs101.zohoreplica.model.Birthday;
@@ -245,6 +244,7 @@ public class User {
 
         this.reportingTo = reportingTo;
     }
+
 
     @Override
     public String toString() {

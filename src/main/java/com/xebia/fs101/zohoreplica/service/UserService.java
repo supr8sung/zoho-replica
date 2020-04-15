@@ -230,13 +230,13 @@ public class UserService {
                 Collectors.toList());
     }
 
-    public User addReportingManager(Long managerId, String username) {
+    public User addReportingManager(Long userId, Long managerId) {
 
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("No user found with requested id"));
         User manager = userRepository.findById(managerId).orElseThrow(
                 () -> new UserNotFoundException("No manager found with requested id"));
         user.setReportingTo(manager);
         return userRepository.save(user);
-
     }
 }
