@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect,useRef } from 'react';
 import { withRouter } from 'react-router';
 
 import {fetch} from '../services/httpServices';
@@ -10,24 +10,56 @@ const viewprofile = (props) =>{
     } else{
         proDetails = props.location.userdetails;
     }
-
+    const profileDisplay = useRef(null);
+    const [dpAvailable ] = useState((proDetails.photo) ? true : false); 
+    
     let [followers,setFollowers] = useState(proDetails.followersCount);
     let [following] = useState(proDetails.followingCount);
+    const [followFlag, setFollowFlag] = useState(true);
+    
+
+    const getLoggedInUser = (response) =>{
+        if(response.payload.status === 'S'){
+            let userFollowing =  response.payload.data.following;
+            if(Array.isArray(userFollowing) && userFollowing.length > 0){
+                if(userFollowing.indexOf(proDetails.fullname) === -1){
+                    setFollowFlag(true);
+                } else{
+                    setFollowFlag(false);
+                }
+            }  
+        }
+    }
+
+    useEffect(() =>{
+        fetch.get({
+            url: '/zoho/loggedinuser',
+            callbackHandler: getLoggedInUser
+          }); 
+        if(profileDisplay.current){
+            profileDisplay.current.src = 'data:image/jpg;base64,' + proDetails.photo;
+        }
+    },[]);
 
 
     
-
     const saveDataSuccessHandler = (response)=>{
             if(response.payload.status === 'S'){
-                followers++;
+                if(followFlag){
+                    followers++;
+                } else{
+                    followers--;
+                }
                 setFollowers(followers);
+                setFollowFlag(!followFlag);
             }
             
     }
 
     const handleFollow = () =>{
-        fetch.get({
-            url: '/zoho/user/follow/' + proDetails.fullname,
+        fetch.post({
+            url: followFlag ? '/zoho/user/follow/' + proDetails.fullname :
+            '/zoho/user/unfollow/' + proDetails.fullname ,
             callbackHandler: saveDataSuccessHandler
         });
     }
@@ -38,7 +70,16 @@ const viewprofile = (props) =>{
         <div className="hero-body">
         <div className="container">
                 
-                <div className="columns is-centered">
+                <div className="columns">
+                <div className="displayPic">
+                                
+                                { 
+                                   dpAvailable ? <div id="proImg">
+                                 <img ref={profileDisplay} id="profileImage" src="" alt="profile"/>
+                                 </div>  :  
+                                 <div><i className="fas fa-user-circle profilePic"></i></div>
+                                }
+                         </div>
                 <div className="box">
                 <h4 className="title is-5"><i className="fas fa-info-circle mr-10"></i>Basic Info</h4>
                 <div className="column userProfile">
@@ -80,7 +121,7 @@ const viewprofile = (props) =>{
                     </div>
                     
                 </div>
-                    <button className="button is-success is-rounded" onClick={() => {handleFollow()}}><i className="fas fa-plus follow"></i>Follow</button>
+                    <button className={ followFlag ? "button is-success is-rounded" : "button is-danger is-rounded"} onClick={() => {handleFollow()}}><i className={followFlag ? 'fas fa-plus follow' :'fas fa-minus follow'}></i>{followFlag ? 'Follow' : 'Unfollow'}</button>
                 </div>
                 
             </div>

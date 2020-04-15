@@ -95,12 +95,29 @@ body {
   }
 }
 
+@keyframes expand {
+  
+  50%{
+    width:250px;
+  }
+  100%{
+    width: 550px;
+  }
+}
 .searchParent{
   position: relative;
 }
-/* .searchParent input{
-  
+/* .searchParent input:hover,.searchParent input:active,.searchParent input:focus{
+    animation: expand 1s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
 } */
+
+.searchUsers{
+  animation: expand 1s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
 .searchEmployee{
   position: absolute;
   top: 10px;
@@ -209,6 +226,19 @@ body {
  
 }
 
+#searchProfileImage{
+  border-radius: 160px;
+  height: 50px;
+  width: 50px;
+}
+#searchInline{
+  display: inline-block;
+}
+
+.userlist{
+  margin: 170px;
+}
+
 /* #profileImage:hover{
   opacity: 0.6;
   cursor: pointer;
@@ -227,4 +257,7 @@ body {
 .actions{
   margin: 0px 10px;
   font-size: 25px;
+}
+.searchProfilePic{
+  font-size: 30px;
 }
