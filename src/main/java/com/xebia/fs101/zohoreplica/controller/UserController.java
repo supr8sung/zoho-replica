@@ -7,7 +7,6 @@ import com.xebia.fs101.zohoreplica.api.request.UserManagerRequest;
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
 import com.xebia.fs101.zohoreplica.api.response.FollowResponse;
 import com.xebia.fs101.zohoreplica.api.response.GenericResponse;
-import com.xebia.fs101.zohoreplica.api.response.UserSearchResponse;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.model.Birthday;
 import com.xebia.fs101.zohoreplica.security.AdminOnly;
@@ -177,11 +176,12 @@ public class UserController {
     }
 
     @GetMapping("/user/send-otp")
-    public ResponseEntity<?> forgotPassword(Principal principal) throws InterruptedException{
+    public ResponseEntity<?> forgotPassword(Principal principal) throws InterruptedException {
 
         long savedTokeId = userService.sendMail(principal.getName());
         GenericResponse genericResponse = getResponse(TXN_SUCESS,
-                                                      "OTP sent to your registered email", savedTokeId);
+                                                      "OTP sent to your registered email",
+                                                      savedTokeId);
         return new ResponseEntity<>(genericResponse, OK);
     }
 
@@ -201,12 +201,8 @@ public class UserController {
     @GetMapping("/user/search/{keyword}")
     public ResponseEntity<?> search(@PathVariable(value = "keyword") String keyword) {
 
-
-
-           List<UserSearchResponse> userSearchResponseList = userService.searchByName(keyword);
-
         GenericResponse genericResponse = getResponse(TXN_SUCESS, "",
-                                                      userSearchResponseList);
+                                                      userService.searchByName(keyword));
         return new ResponseEntity<>(genericResponse, OK);
     }
 

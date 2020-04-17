@@ -1,7 +1,7 @@
 package com.xebia.fs101.zohoreplica.service;
 
 import com.xebia.fs101.zohoreplica.api.request.UserRequest;
-import com.xebia.fs101.zohoreplica.api.response.UserSearchResponse;
+import com.xebia.fs101.zohoreplica.api.response.UserViewResponse;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.exception.FileNotUploadException;
 import com.xebia.fs101.zohoreplica.exception.UserNotFoundException;
@@ -188,14 +188,11 @@ public class UserService {
             return USER_NAME_INVALID;
     }
 
-    public List<UserSearchResponse> searchByName(String keyword) {
+    public List<UserViewResponse> searchByName(String keyword) {
 
-        List<UserSearchResponse> matchedUserList =
-                userRepository.search(keyword.toLowerCase()).stream()
-                        .map(e -> new UserSearchResponse(e.getId(), e.getUsername(),
-                                                         e.getFullname(),
-                                                         e.getPhoto())).collect(
-                        Collectors.toList());
+        List<UserViewResponse> matchedUserList = userRepository.search(keyword.toLowerCase()).stream().map(
+                User::toUserViewResponse).collect(Collectors.toList());
+
         matchedUserList.removeIf(value -> value.getUsername().startsWith("admin"));
         return matchedUserList;
     }

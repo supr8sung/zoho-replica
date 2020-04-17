@@ -334,6 +334,8 @@ public class User {
                 .withFollowers(this.followers)
                 .withFollowing(this.following)
                 .withPhoto(this.photo)
+                .withUsername(this.username)
+                .withReportingTo(this.reportingTo)
                 .build();
     }
 
