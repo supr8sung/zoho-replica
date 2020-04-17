@@ -12,10 +12,8 @@ import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.model.Birthday;
 import com.xebia.fs101.zohoreplica.security.AdminOnly;
 import com.xebia.fs101.zohoreplica.service.AttendanceService;
-import com.xebia.fs101.zohoreplica.service.MailService;
 import com.xebia.fs101.zohoreplica.service.UserService;
 import com.xebia.fs101.zohoreplica.service.UserTokenService;
-import com.xebia.fs101.zohoreplica.utility.StringUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,7 +36,6 @@ import java.security.Principal;
 import java.util.List;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
-import static com.xebia.fs101.zohoreplica.utility.OtpUtility.generateOtp;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
@@ -50,8 +47,6 @@ public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
-    private MailService mailService;
-    @Autowired
     private AttendanceService attendanceService;
     @Autowired
     private UserTokenService userTokenService;
@@ -62,11 +57,11 @@ public class UserController {
         return "index";
     }
 
-     @AdminOnly
+    @AdminOnly
     @PostMapping("/user/add")
     public ResponseEntity<?> add(@Valid @RequestBody UserRequest userRequest, Principal principal) {
 
-        User savedUser = userService.add(userRequest,principal.getName());
+        User savedUser = userService.add(userRequest, principal.getName());
         GenericResponse genericResponse = getResponse(TXN_SUCESS, "User saved successfully",
                                                       savedUser.getId());
         return new ResponseEntity<>(genericResponse, CREATED);
@@ -120,10 +115,10 @@ public class UserController {
     }
 
     @PutMapping("/user/edit")
-    public ResponseEntity<?> edit(@Valid @RequestBody UserRequest userRequest,Principal principal) {
+    public ResponseEntity<?> edit(@Valid @RequestBody UserRequest userRequest,
+                                  Principal principal) {
 
-
-        userService.add(userRequest,principal.getName());
+        userService.add(userRequest, principal.getName());
         GenericResponse genericResponse = getResponse(TXN_SUCESS, "", "");
         return new ResponseEntity<>(genericResponse, CREATED);
     }
@@ -182,16 +177,11 @@ public class UserController {
     }
 
     @GetMapping("/user/send-otp")
-    public ResponseEntity<?> forgotPassword() {
+    public ResponseEntity<?> forgotPassword(Principal principal) throws InterruptedException{
 
-        User user = getLoggedInUser();
-        String otp = generateOtp();
-        String mailBody = StringUtility.generateOtpBody(otp, user.getFullname());
-        mailService.sendMail(user.getEmail(), mailBody);
-        long tokenId = userTokenService.save(user.getUsername(), otp);
+        long savedTokeId = userService.sendMail(principal.getName());
         GenericResponse genericResponse = getResponse(TXN_SUCESS,
-                                                      "OTP sent to your registered mail" +
-                                                                      " id", tokenId);
+                                                      "OTP sent to your registered email", savedTokeId);
         return new ResponseEntity<>(genericResponse, OK);
     }
 
@@ -211,12 +201,10 @@ public class UserController {
     @GetMapping("/user/search/{keyword}")
     public ResponseEntity<?> search(@PathVariable(value = "keyword") String keyword) {
 
-        List<UserSearchResponse> userSearchResponseList = null;
-        try {
-            userSearchResponseList = userService.searchByName(keyword);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+
+           List<UserSearchResponse> userSearchResponseList = userService.searchByName(keyword);
+
         GenericResponse genericResponse = getResponse(TXN_SUCESS, "",
                                                       userSearchResponseList);
         return new ResponseEntity<>(genericResponse, OK);
@@ -230,22 +218,21 @@ public class UserController {
         return new ResponseEntity<>(genericResponse, OK);
     }
 
-
     @GetMapping("/user/all-reporting/{id}")
-    public ResponseEntity<?> allReporting(@PathVariable(value = "id") Long id){
+    public ResponseEntity<?> allReporting(@PathVariable(value = "id") Long id) {
 
-        GenericResponse genericResponse=getResponse( TXN_SUCESS,"",userService.allReportings(id));
-        return new ResponseEntity<>(genericResponse,OK);
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, "",
+                                                      userService.allReportings(id));
+        return new ResponseEntity<>(genericResponse, OK);
     }
-
 
     @AdminOnly
     @PostMapping("/user/hierarchy")
-    public ResponseEntity<?> userHierarchy(@Valid @RequestBody UserManagerRequest request){
+    public ResponseEntity<?> userHierarchy(@Valid @RequestBody UserManagerRequest request) {
 
-        User user = userService.addReportingManager(request.getUserId(),request.getManagerId() );
-        GenericResponse genericResponse=getResponse(TXN_SUCESS,"",user);
-        return new ResponseEntity<>(genericResponse,OK);
+        User user = userService.addReportingManager(request.getUserId(), request.getManagerId());
+        GenericResponse genericResponse = getResponse(TXN_SUCESS, "", user);
+        return new ResponseEntity<>(genericResponse, OK);
     }
 
     private GenericResponse getResponse(String status, String message, Object data) {
@@ -271,6 +258,4 @@ public class UserController {
             throw new UsernameNotFoundException("No logged in user found");
         return user;
     }
-
-
 }

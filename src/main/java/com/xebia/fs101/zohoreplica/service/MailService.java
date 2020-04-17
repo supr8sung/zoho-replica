@@ -1,10 +1,13 @@
 package com.xebia.fs101.zohoreplica.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 @Service
-public interface MailService {
+public class MailService {
+    @Value("${email.subject}")
+    protected String subject;
 
-
-    void sendMail(String toEmail, String body);
-
+    @Value("${spring.mail.username}")
+    protected String fromEmail;
 }
