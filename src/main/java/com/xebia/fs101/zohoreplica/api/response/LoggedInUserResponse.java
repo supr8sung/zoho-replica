@@ -139,6 +139,11 @@ public class LoggedInUserResponse {
         return reportingTo;
     }
 
+    public String getUsername() {
+
+        return username;
+    }
+
     public static final class Builder {
         private String username;
         private User reportingTo;
