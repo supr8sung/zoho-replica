@@ -1,7 +1,6 @@
 package com.xebia.fs101.zohoreplica.config;
 
 import com.xebia.fs101.zohoreplica.entity.User;
-import com.xebia.fs101.zohoreplica.model.Clients;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
 import com.xebia.fs101.zohoreplica.security.ZohoApplicationRole;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +25,7 @@ public class ApplicationStartRunner implements CommandLineRunner {
         if(admin==null){
             User user=new User.Builder().withRole(ZohoApplicationRole.ADMIN)
                     .withUsername("admin")
+                    .withFullname("admin")
                     .withPassword(passwordEncoder.encode("12345"))
                     .withEmail("admin@gmail.com")
                     .withDesignation(2)

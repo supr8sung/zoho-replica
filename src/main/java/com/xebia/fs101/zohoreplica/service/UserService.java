@@ -188,13 +188,16 @@ public class UserService {
             return USER_NAME_INVALID;
     }
 
-    public List<UserSearchResponse> searchByName(String keyword)  {
+    public List<UserSearchResponse> searchByName(String keyword) {
 
-        List<User> matchedData = userRepository.search(keyword.toLowerCase());
-
-        return matchedData.stream().map(
-                e -> new UserSearchResponse(e.getId(), e.getFullname(), e.getPhoto())).collect(
-                Collectors.toList());
+        List<UserSearchResponse> matchedUserList =
+                userRepository.search(keyword.toLowerCase()).stream()
+                        .map(e -> new UserSearchResponse(e.getId(), e.getUsername(),
+                                                         e.getFullname(),
+                                                         e.getPhoto())).collect(
+                        Collectors.toList());
+        matchedUserList.removeIf(value -> value.getUsername().startsWith("admin"));
+        return matchedUserList;
     }
 
     public User uploadPhoto(User user, MultipartFile file) throws IOException {
@@ -247,8 +250,8 @@ public class UserService {
         User user = userRepository.findByUsername(name);
         String otp = generateOtp();
         String mailBody = StringUtility.generateOtpBody(otp, user.getFullname());
-        CountDownLatch countDownLatch=new CountDownLatch(1);
-        Callable callable=new GmailService(countDownLatch,user.getUsername(),mailBody);
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        Callable callable = new GmailService(countDownLatch, user.getUsername(), mailBody);
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(callable);
         countDownLatch.await();
