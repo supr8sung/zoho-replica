@@ -6,6 +6,7 @@ import com.xebia.fs101.zohoreplica.model.Clients;
 import java.util.Set;
 
 public class UserViewResponse {
+    private Long id;
     private String fullname;
     private String email;
     private Clients company;
@@ -47,6 +48,7 @@ public class UserViewResponse {
         photo = builder.photo;
         reportingTo = builder.reportingTo;
         username = builder.username;
+        id=builder.id;
     }
 
     public String getFullname() {
@@ -105,6 +107,7 @@ public class UserViewResponse {
     }
 
     public static final class Builder {
+        private Long id;
         private Set<String> followers;
         private Set<String> following;
         private String fullname;
@@ -184,6 +187,10 @@ public class UserViewResponse {
         public Builder withUsername(String val) {
 
             username = val;
+            return this;
+        }
+        public Builder withId(Long val){
+            id=val;
             return this;
         }
 

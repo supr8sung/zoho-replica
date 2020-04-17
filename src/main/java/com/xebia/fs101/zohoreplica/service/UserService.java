@@ -190,9 +190,9 @@ public class UserService {
 
     public List<UserViewResponse> searchByName(String keyword) {
 
-        List<UserViewResponse> matchedUserList = userRepository.search(keyword.toLowerCase()).stream().map(
+        List<UserViewResponse> matchedUserList = userRepository.search(
+                keyword.toLowerCase()).stream().map(
                 User::toUserViewResponse).collect(Collectors.toList());
-
         matchedUserList.removeIf(value -> value.getUsername().startsWith("admin"));
         return matchedUserList;
     }

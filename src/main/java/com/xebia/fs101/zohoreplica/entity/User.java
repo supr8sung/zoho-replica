@@ -336,6 +336,7 @@ public class User {
                 .withPhoto(this.photo)
                 .withUsername(this.username)
                 .withReportingTo(this.reportingTo)
+                .withId(this.id)
                 .build();
     }
 
