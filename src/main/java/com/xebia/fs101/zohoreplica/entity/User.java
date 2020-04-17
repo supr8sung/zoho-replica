@@ -355,6 +355,7 @@ public class User {
                 .withPhoto(this.photo)
                 .withFollowers(this.followers)
                 .withFollowing(this.following)
+                .withUserName(this.username)
                 .build();
     }
 

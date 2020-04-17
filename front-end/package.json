@@ -21,7 +21,8 @@
     "react-toastify": "^4.5.2",
     "redux": "4.0.1",
     "redux-thunk": "2.3.0",
-    "shortid": "^2.2.15"
+    "shortid": "^2.2.15",
+    "yup": "^0.28.3"
   },
   "devDependencies": {
     "http-proxy-middleware": "^1.0.3"

@@ -22,6 +22,7 @@ public class LoggedInUserResponse {
     private Long checkinId;
     private Set<String> following;
     private Set<String> followers;
+    private String username;
     private byte[] photo;
     private User reportingTo;
 
@@ -61,6 +62,7 @@ public class LoggedInUserResponse {
         followers = builder.followers;
         following = builder.following;
         reportingTo = builder.reportingTo;
+        username = builder.username;
     }
 
     public Long getCheckinId() {
@@ -139,6 +141,7 @@ public class LoggedInUserResponse {
     }
 
     public static final class Builder {
+        private String username;
         private User reportingTo;
         private Set<String> following;
         private Set<String> followers;
@@ -246,6 +249,11 @@ public class LoggedInUserResponse {
         public Builder withResportingTo(User val) {
 
             reportingTo = val;
+            return this;
+        }
+        public Builder withUserName(String val) {
+
+            username = val;
             return this;
         }
 

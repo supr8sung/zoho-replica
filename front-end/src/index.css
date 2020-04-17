@@ -235,6 +235,12 @@ body {
   display: inline-block;
 }
 
+.passwordValidation{
+  list-style: square;
+  margin: 5px 18px;
+  font-size: 12px;
+  font-weight: bold;
+}
 .userlist{
   margin: 170px;
 }
@@ -260,4 +266,14 @@ body {
 }
 .searchProfilePic{
   font-size: 30px;
+}
+
+.designation,#designation,#city{
+  width:100%
+}
+.desigField{
+  padding: 0px 0px 10px 0px;
+}
+.errorMessage{
+  color: red;
 }

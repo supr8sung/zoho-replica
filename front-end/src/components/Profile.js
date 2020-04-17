@@ -1,14 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react';
 import {fetch} from '../services/httpServices';
 
-const Profile = (props) =>{
+const Profile = () =>{
    const myRef = useRef(null);
    const oPass = useRef(null);
    const nPass = useRef(null);
    const profileDisplay = useRef(null);
-   
-    const proDetails = JSON.parse(props.profileDetails);
-    const [dpAvailable,setDpAvailable ] = useState((proDetails.photo) ? true : false);
+    const [proDetails,setProdetails] = useState();
+    const [dpAvailable,setDpAvailable ] = useState();
     const [isoldpasserror,setIsoldpasserror] = useState(false);
     const [isnewpasserror,setIsnewpasserror] = useState(false);
     let oldPass ,newPass;
@@ -22,12 +21,33 @@ const Profile = (props) =>{
         myRef.current.classList.add('is-active');
     }
 
-    useEffect(() =>{
-        if(profileDisplay.current){
-            profileDisplay.current.src = 'data:image/jpg;base64,' + proDetails.photo;
+
+    const getUserDetailsHandler = (response) =>{
+        if(response.payload.status === 'S' && response.payload.data){
+            let details = response.payload.data;
+            setProdetails({...details});
+            if(response.payload.data.photo){
+                setDpAvailable(true);
+                if(profileDisplay.current){
+                    profileDisplay.current.src = 'data:image/jpg;base64,' + response.payload.data.photo;
+                }
+            } else{
+                setDpAvailable(false);
+                if(profileDisplay.current){
+                    profileDisplay.current.src = 'data:image/jpg;base64,';
+                }
+            }
         }
-        
-    },[profileDisplay])
+    }
+
+    useEffect(() =>{
+        fetch.get({
+            url: '/zoho/loggedinuser',
+            callbackHandler: getUserDetailsHandler
+        });
+    },[]);
+    
+
 
     const closeModal = () =>{
         myRef.current.classList.remove('is-active');
@@ -163,7 +183,7 @@ const Profile = (props) =>{
                         </div>
                     <div className="box">
                     <h4 className="title is-5"><i className="fas fa-info-circle mr-10"></i>Basic Info</h4>
-                    <div className="column userProfile">
+                   { proDetails ? <div className="column userProfile">
                         <div className="field">
                             <label className="label">UserName</label>
                             <div className="control has-icons-left">
@@ -201,7 +221,7 @@ const Profile = (props) =>{
                             </div>
                         </div>
                         <button className="button is-success is-rounded" onClick={() => {changePassword()}}><i className="fas fa-user-secret follow"></i>Change password</button>
-                    </div>
+                    </div> : null} 
                 
                     </div>
                     

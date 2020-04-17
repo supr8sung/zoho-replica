@@ -11,6 +11,7 @@ const useTimer = () => {
   const [checkin,setCheckin] = useState(false);
   const [attendanceId,setAttendanceId] = useState(null);
   const [prevTotalHours,setPrevTotalHours] = useState("00:00");
+  const [user,setUser] = useState({});
   
   const checkIncheckOut = () => {
     event.preventDefault();
@@ -34,11 +35,16 @@ const useTimer = () => {
   },[]);
 
   function getLoggedInUser(response){
-    setloggedInUserCheckInTime(response.payload.data.lastCheckin);
-    setAttendanceId(response.payload.data.checkinId);
-    setPrevTotalHours(convertTotalHours(response.payload.data.totalHours).prev);
-    setMinutes(convertTotalHours(response.payload.data.totalHours).curr.M);
-    setHours(convertTotalHours(response.payload.data.totalHours).curr.H);
+    if(response.status === 'success'){
+      setUser(response.payload.data);
+      setloggedInUserCheckInTime(response.payload.data.lastCheckin);
+      setAttendanceId(response.payload.data.checkinId);
+      setPrevTotalHours(convertTotalHours(response.payload.data.totalHours).prev);
+      setMinutes(convertTotalHours(response.payload.data.totalHours).curr.M);
+      setHours(convertTotalHours(response.payload.data.totalHours).curr.H);
+    } else{
+    
+    }
   }
 
   useEffect(() =>{
@@ -128,7 +134,8 @@ function saveDataSuccessHandler(response){
     hours,
     timer,
     minutes,
-    checkin
+    checkin,
+    user
   }
 };
 
