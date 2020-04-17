@@ -13,8 +13,7 @@ public class UserTokenService {
 
     public long save(String username, String token) {
 
-        UserToken userToken = userTokenRepository.save(new UserToken(username, token));
-        return userToken.getId();
+        return userTokenRepository.save(new UserToken(username, token)).getId();
     }
 
     public boolean validateOtp(String username, ForgotPasswordRequest request) {

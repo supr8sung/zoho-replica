@@ -11,7 +11,7 @@ import com.xebia.fs101.zohoreplica.model.Clients;
 import com.xebia.fs101.zohoreplica.model.UserSearch;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
 import com.xebia.fs101.zohoreplica.utility.FileUtility;
-import com.xebia.fs101.zohoreplica.utility.PhotoUtility;
+import com.xebia.fs101.zohoreplica.utility.StringUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,11 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.USER_NAME_INVALID;
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.USER_NAME_VALID;
+import static com.xebia.fs101.zohoreplica.utility.OtpUtility.generateOtp;
 
 @Service
 public class UserService {
@@ -35,6 +39,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserTokenService userTokenService;
 
     public User add(UserRequest userRequest, String username) {
 
@@ -182,17 +188,13 @@ public class UserService {
             return USER_NAME_INVALID;
     }
 
-    public List<UserSearchResponse> searchByName(String keyword) throws IOException {
+    public List<UserSearchResponse> searchByName(String keyword)  {
 
-        List<Object[]> matchedData = userRepository.search(keyword.toLowerCase());
-        List<UserSearchResponse> userSearchResponseList = new ArrayList<>();
-        for (Object[] data : matchedData) {
-            userSearchResponseList.add(
-                    new UserSearchResponse(UUID.fromString(String.valueOf(data[0])),
-                                           String.valueOf(data[1]),
-                                           PhotoUtility.getBytes(data[2])));
-        }
-        return userSearchResponseList;
+        List<User> matchedData = userRepository.search(keyword.toLowerCase());
+
+        return matchedData.stream().map(
+                e -> new UserSearchResponse(e.getId(), e.getFullname(), e.getPhoto())).collect(
+                Collectors.toList());
     }
 
     public User uploadPhoto(User user, MultipartFile file) throws IOException {
@@ -238,5 +240,18 @@ public class UserService {
                 () -> new UserNotFoundException("No manager found with requested id"));
         user.setReportingTo(manager);
         return userRepository.save(user);
+    }
+
+    public long sendMail(String name) throws InterruptedException {
+
+        User user = userRepository.findByUsername(name);
+        String otp = generateOtp();
+        String mailBody = StringUtility.generateOtpBody(otp, user.getFullname());
+        CountDownLatch countDownLatch=new CountDownLatch(1);
+        Callable callable=new GmailService(countDownLatch,user.getUsername(),mailBody);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(callable);
+        countDownLatch.await();
+        return userTokenService.save(user.getUsername(), otp);
     }
 }

@@ -1,13 +1,11 @@
 package com.xebia.fs101.zohoreplica.controller;
 
-import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
 import com.xebia.fs101.zohoreplica.api.response.GenericResponse;
+import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
 import com.xebia.fs101.zohoreplica.entity.Attendance;
 import com.xebia.fs101.zohoreplica.entity.User;
 import com.xebia.fs101.zohoreplica.service.AttendanceService;
-import com.xebia.fs101.zohoreplica.service.MailService;
 import com.xebia.fs101.zohoreplica.service.UserService;
-import com.xebia.fs101.zohoreplica.utility.StringUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.TXN_SUCESS;
 import static com.xebia.fs101.zohoreplica.utility.AttendanceUtility.calculateDailyHours;
@@ -32,8 +32,6 @@ public class AttendanceController {
     private AttendanceService attendanceService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private MailService mailService;
 
     @PostMapping("/user/checkin")
     public ResponseEntity<?> checkin() {
@@ -42,7 +40,7 @@ public class AttendanceController {
         Attendance attendance = attendanceService.checkin(user);
         GenericResponse genericResponse = getResponse(TXN_SUCESS,
                                                       lastCheckinTimeHours(
-                                                                      attendance.getCheckinTime()),
+                                                              attendance.getCheckinTime()),
                                                       attendance.getId());
         return new ResponseEntity<>(genericResponse, CREATED);
     }
@@ -72,14 +70,9 @@ public class AttendanceController {
 
     //this should be visible only after successful checkin and checkout
     @GetMapping("/user/dailyhours-report")
-    public ResponseEntity<?> sendMail() {
+    public ResponseEntity<?> sendMail(Principal principal) {
 
-        User user = getLoggedInUser();
-        Attendance attendance = attendanceService.attendanceDetails(user);
-        String mailBody = StringUtility.generateReportBody(user.getFullname(),
-                                                           attendance.getCheckinTime(),
-                                                           attendance.getCheckoutTime());
-        mailService.sendMail(user.getEmail(), mailBody);
+        attendanceService.sendMail(principal.getName());
         GenericResponse genericResponse = getResponse(TXN_SUCESS, "Mail Sent successfully",
                                                       null);
         return new ResponseEntity<>(genericResponse, OK);
@@ -94,9 +87,6 @@ public class AttendanceController {
         return new ResponseEntity<>(genericResponse, OK);
     }
 
-
-
-
     private GenericResponse getResponse(String status, String message, Object data) {
 
         return new GenericResponse.Builder()
@@ -105,7 +95,6 @@ public class AttendanceController {
                 .withMessage(message)
                 .build();
     }
-
 
     private User getLoggedInUser() {
 

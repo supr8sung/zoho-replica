@@ -1,7 +1,6 @@
 package com.xebia.fs101.zohoreplica.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.sun.org.apache.regexp.internal.RE;
 import com.xebia.fs101.zohoreplica.api.response.GenericResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +8,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartException;
 
 import javax.validation.ValidationException;
@@ -76,6 +74,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(genericResponse, OK);
     }
 
+    @ExceptionHandler(InterruptedException.class)
+    public ResponseEntity<?> interrupted(InterruptedException ex){
+        genericResponse=getResponse(TXN_FAILED,ex.getMessage(),"");
+        return new ResponseEntity<>(genericResponse,OK);
+    }
 
     @ExceptionHandler(InvalidFormatException.class)
     public ResponseEntity<?> invalidFormat(InvalidFormatException ex){

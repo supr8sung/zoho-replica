@@ -3,18 +3,19 @@ package com.xebia.fs101.zohoreplica.service;
 import com.xebia.fs101.zohoreplica.api.response.LoggedInUserResponse;
 import com.xebia.fs101.zohoreplica.entity.Attendance;
 import com.xebia.fs101.zohoreplica.entity.User;
-import com.xebia.fs101.zohoreplica.model.Birthday;
 import com.xebia.fs101.zohoreplica.repository.AttendanceRepository;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
-import com.xebia.fs101.zohoreplica.utility.FileUtility;
+import com.xebia.fs101.zohoreplica.utility.StringUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.ALREADY_CHECKED_OUT;
 import static com.xebia.fs101.zohoreplica.api.constant.ApplicationConstant.NOT_CHECKED_IN;
@@ -74,8 +75,6 @@ public class AttendanceService {
         LocalTime lastcheckin = LocalTime.MIN;
         String totalHours = "00:00";
         Long checkinId = NOT_CHECKED_IN;
-
-
         List<Attendance> attendanceDetails = attendanceRepository.findAttendanceDetails(
                 LocalDate.now(),
                 user.getId());
@@ -104,4 +103,15 @@ public class AttendanceService {
         return user.toLoggedInUserResponse(lastcheckin, totalHours, checkinId);
     }
 
+    public void sendMail(String username) {
+
+        User user = userRepository.findByUsername(username);
+        Attendance attendance = attendanceDetails(user);
+        String mailBody = StringUtility.generateReportBody(user.getFullname(),
+                                                           attendance.getCheckinTime(),
+                                                           attendance.getCheckoutTime());
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        new GmailService(countDownLatch, user.getEmail(), mailBody);
+    }
 }
