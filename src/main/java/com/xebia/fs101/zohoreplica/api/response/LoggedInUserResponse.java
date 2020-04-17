@@ -6,7 +6,6 @@ import com.xebia.fs101.zohoreplica.model.Clients;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
-import java.util.UUID;
 
 public class LoggedInUserResponse {
     private Long userId;
@@ -246,12 +245,12 @@ public class LoggedInUserResponse {
             return this;
         }
 
-        public Builder withResportingTo(User val) {
+        public Builder withReportingTo(User val) {
 
             reportingTo = val;
             return this;
         }
-        public Builder withUserName(String val) {
+        public Builder withUsername(String val) {
 
             username = val;
             return this;
