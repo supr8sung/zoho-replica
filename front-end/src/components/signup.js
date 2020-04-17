@@ -4,28 +4,26 @@ import * as Yup from 'yup';
 import {fetch} from '../services/httpServices';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-
+import { withRouter } from 'react-router';
 const SignupForm = (props) => {
+    const myHistory = props.history;
     const phoneRegExp = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
     const validPassword = /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/;
     const notify = (msgObject) => {
         if(msgObject.status === 'S'){
-            toast.warn(msgObject.message, {
+            toast.warn(msgObject.message || 'success', {
                 position: toast.POSITION.TOP_RIGHT
               });
         } else{
-            toast.error(msgObject.message, {
+            toast.error(msgObject.message || 'error', {
                 position: toast.POSITION.TOP_RIGHT
               });
         }
         
     };
-
     const saveDataSuccesshandler = (response) =>{
         if(response.payload.status === 'S'){
-          //  notify({status: 'S',message:response.payload.message});
-            props.action(response.payload.data);
+            myHistory.push({pathname:'/edituser/' + response.payload.data, appState:{empId: response.payload.data}});
         }  else{
             notify({status: 'F',message:response.payload.message});
         }
@@ -77,7 +75,7 @@ const SignupForm = (props) => {
             url: 'zoho/user/valid/' + values.username,
             
             callbackHandler: (response) =>{
-                if(response.status === 'success'){
+                if(response.payload.status === 'S'){
                     if(response.payload.data){
                         validUserSuccessHandler(values);
                     } else{
@@ -95,7 +93,7 @@ const SignupForm = (props) => {
 
   return (
     <form onSubmit={formik.handleSubmit}>
-        <ToastContainer />
+        <ToastContainer autoClose={8000}/>
     <div className="field">
         <label htmlFor="username" className="label">UserName</label>
         <div className="control">
@@ -239,4 +237,4 @@ const SignupForm = (props) => {
   );
 };
 
-export default SignupForm;
+export default withRouter(SignupForm);

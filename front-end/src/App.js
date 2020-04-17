@@ -10,6 +10,7 @@ import Profile from './components/Profile';
 import loggedOut from './components/loggedout';
 //import {fetch} from './services/httpServices';
 import viewprofile from './components/viewprofile';
+import modifyUserDetails from './components/modifyUserDetails';
 //import { UserProvider } from './services/user-context';
 //import {useEffect} from 'react';
 
@@ -26,6 +27,7 @@ const App = (props) =>{
                             <Route path="/profile" component={Profile}/>
                             <Route path="/viewprofile/:id" component={viewprofile}/>
                             <Route path="/loggedout" component={loggedOut}/>
+                            <Route path="/edituser/:id" component={modifyUserDetails}/>
                             <Route component={PageNotFound}/>
                     
                     </Switch>

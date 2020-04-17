@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import {fetch} from '../services/httpServices';
 
-import { withRouter } from 'react-router'
+import { withRouter } from 'react-router';
 
 class Header extends React.Component{
     constructor(props){
@@ -15,7 +15,6 @@ class Header extends React.Component{
 
    getUserDetailsHandler = (response) =>{
         if(response.payload.status === 'S' && response.payload.data){
-            // const state = {...this.loggedInuser};
             let details = response.payload.data;
             this.setState({loggedInuser: {...details}});
         }
@@ -60,6 +59,13 @@ class Header extends React.Component{
 
     viewSearchProfile = (id) => {
         const loggedInuser = this.state.loggedInuser;
+        if(loggedInuser.email === 'admin@gmail.com'){
+            //this.props.history.push("/");
+            this.props.history.push({pathname:'/edituser/'+ id,appState:{empId: id}});
+            this.showAutoCompleteOptions = false;
+            this.myRef.current.value = '';
+            return;
+        }
         if(loggedInuser.userId === id){
             this.props.history.push({pathname:'/profile',profileDetails: loggedInuser});
             this.showAutoCompleteOptions = false;

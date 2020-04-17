@@ -78,7 +78,7 @@ public class UserController {
     }
 
     @AdminOnly
-    @GetMapping("/user/valid/{username")
+    @GetMapping("/user/valid/{username}")
     public ResponseEntity<?> validateUsername(@PathVariable(value = "username") String username) {
 
         Boolean isUsernameValid = userService.validateUsername(username);
