@@ -277,17 +277,17 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.message").value("Password not matched"));
     }
 
-//    @Test
-//    void validate_a_username_if_it_is_already_taken_or_not() throws Exception {
-//
-//        this.mockMvc.perform(get("/zoho/user/valid/{username}","supr8sung")
-//                                     .accept(MediaType.APPLICATION_JSON)
-//                                     .with(httpBasic("admin", "12345"))
-//                                     .contentType(MediaType.APPLICATION_JSON))
-//                .andDo(print())
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.data").value(false));
-//    }
+    @Test
+    void validate_a_username_if_it_is_already_taken_or_not() throws Exception {
+
+        this.mockMvc.perform(get("/zoho/user/valid/{username}", "supr8sung")
+                                     .accept(MediaType.APPLICATION_JSON)
+                                     .with(httpBasic("admin", "12345"))
+                                     .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(false));
+    }
 
     @Test
     void should_change_password_after_providing_otp_sent_to_mail() throws Exception {
@@ -306,6 +306,28 @@ class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("S"));
         this.mockMvc.perform(get("/login").with(httpBasic("supr8sung", "123456")))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void should_give_list_of_users_having_birthday() throws Exception {
+
+        UserRequest userRequest = new UserRequest.Builder()
+                .withUsername("random")
+                .withMobile("9643496936")
+                .withPassword("12345")
+                .withEmail("random@gmail.com")
+                .withCity(PUNE)
+                .withFullname("random chickbum")
+                .withDesignation(CONSULTANT)
+                .wihtBirthday("23/04/1988")
+                .build();
+        User user = userRepository.save(userRequest.toUser(passwordEncoder, XEBIA));
+        this.mockMvc.perform(get("/zoho/user/birthdays")
+                                     .accept(MediaType.APPLICATION_JSON)
+                                     .with(httpBasic("random", "12345"))
+                                     .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
