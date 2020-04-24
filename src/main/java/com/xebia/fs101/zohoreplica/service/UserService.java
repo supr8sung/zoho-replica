@@ -10,16 +10,17 @@ import com.xebia.fs101.zohoreplica.model.Birthday;
 import com.xebia.fs101.zohoreplica.model.Clients;
 import com.xebia.fs101.zohoreplica.model.UserSearch;
 import com.xebia.fs101.zohoreplica.repository.UserRepository;
-import com.xebia.fs101.zohoreplica.utility.FileUtility;
 import com.xebia.fs101.zohoreplica.utility.StringUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -41,6 +42,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private UserTokenService userTokenService;
+    @Autowired
+    private CacheManager cacheManager;
 
     public User add(UserRequest userRequest, String username) {
 
@@ -148,20 +151,18 @@ public class UserService {
                 .anyMatch(e -> e.equals(requestUser.getUsername()));
     }
 
-    public List<Birthday> allBirthdays() {
+    @Scheduled(cron = "0 59 23 * * * ")
+    public void clearCache() {
 
-        List<Birthday> allBirthDays = new ArrayList<>();
-        try {
-            allBirthDays = FileUtility.getAllBirthDays();
-            return allBirthDays;
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return allBirthDays;
+
+        cacheManager.getCacheNames().forEach(
+                e -> Objects.requireNonNull(cacheManager.getCache(e)).clear());
+        calculateBirthdays();
     }
 
-    // @Scheduled(cron = "")
-    public void calculateBirthdays() {
+    @Cacheable("birthdays")
+    public List<Birthday> calculateBirthdays() {
+
 
         LocalDate localDate = LocalDate.now();
         int month = localDate.getMonthValue();
@@ -170,11 +171,7 @@ public class UserService {
                 .stream()
                 .map(User::getBirthdayDetails)
                 .collect(Collectors.toList());
-        try {
-            FileUtility.saveBirthdayDetails(allBirthdays);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return allBirthdays;
     }
 
     public Boolean validateUsername(String username) {
@@ -215,10 +212,6 @@ public class UserService {
     public void deleteUser(Long id) {
 
         userRepository.deleteById(id);
-    }
-
-    public void setUserHierarchy() {
-        //userRepository.
     }
 
     public List<UserSearch> allReportings(Long id) {

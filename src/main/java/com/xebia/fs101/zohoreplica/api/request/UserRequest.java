@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 
 import static com.xebia.fs101.zohoreplica.utility.DateUtility.getLocalDate;
@@ -20,6 +21,7 @@ public class UserRequest {
     @NotBlank
     private String fullname;
     @NotBlank
+    @Size(min = 10)
     private String mobile;
     @NotBlank
     @Email
