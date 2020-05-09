@@ -255,6 +255,7 @@ public class LoggedInUserResponse {
             reportingTo = val;
             return this;
         }
+
         public Builder withUsername(String val) {
 
             username = val;

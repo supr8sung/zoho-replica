@@ -209,7 +209,7 @@ public class UserController {
     @GetMapping("/user/birthdays")
     public ResponseEntity<?> birthdays() {
 
-        List<Birthday> allBirthdays = userService.allBirthdays();
+        List<Birthday> allBirthdays = userService.calculateBirthdays();
         GenericResponse genericResponse = getResponse(TXN_SUCESS, "", allBirthdays);
         return new ResponseEntity<>(genericResponse, OK);
     }
