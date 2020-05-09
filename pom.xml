@@ -14,9 +14,6 @@
     <name>zoho-replica</name>
     <description>Demo project for Spring Boot</description>
 
-
-
-
     <properties>
         <java.version>1.8</java.version>
         <frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
@@ -72,15 +69,20 @@
 
 
         <dependency>
-             <groupId>org.assertj</groupId>
-             <artifactId>assertj-core</artifactId>
-             <version>3.11.1</version>
-             <scope>test</scope>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.11.1</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -113,7 +115,7 @@
 
 
     <build>
-        <finalName>spring-security-react</finalName>
+        <finalName>docker-zoho</finalName>
         <resources>
             <!-- <resource>
                 <directory>src/main/resources</directory>
